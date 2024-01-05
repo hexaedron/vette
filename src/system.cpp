@@ -29,7 +29,7 @@ void system_initSystick(void)
   NVIC_EnableIRQ(SysTicK_IRQn);
 
   SysTick->SR   = 0;
-  SysTick->CMP  = (FUNCONF_SYSTEM_CORE_CLOCK / 1 - 1);  // 1 c
+  SysTick->CMP  = (FUNCONF_SYSTEM_CORE_CLOCK * 10 - 1);  // 10 c
   SysTick->CNT  = 0; 
   SysTick->CTLR |= STK_CTRL_STRE | STK_CTRL_STE | STK_CTRL_STIE | STK_CTRL_STCK;
 }
@@ -57,8 +57,6 @@ bool system_isSysTick(void)
 
 /**
 *   Обработчик прерывания от системного таймера
-*
-*   Прерывание возникает 10 раз в секунду
 */
 extern "C" __attribute__((interrupt("WCH-Interrupt-fast")))
 void SysTick_Handler(void)
@@ -67,8 +65,4 @@ void SysTick_Handler(void)
   SysTick->SR = 0;
 }
 
-
-/**
-*
-*/
 

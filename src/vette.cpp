@@ -22,7 +22,11 @@ int main()
 	{
 		if (system_isSysTick())
 		{
-			myUART.write("Hello from Cube\n\r");
+			while(myUART.available())
+			{
+				myUART.write(myUART.read());
+			}
+			myUART.write("\r\n");
 		}
 	}
 }
