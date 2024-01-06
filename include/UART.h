@@ -100,7 +100,7 @@ void UART::beginHD(unsigned long baud)
     /////////////GPIOD->CFGLR &= ~(0xf<<(4*5));
     /////////////GPIOD->CFGLR |= (GPIO_Speed_10MHz | GPIO_CNF_OUT_OD)<<(4*5);
     /////////////GPIOC->BSHR = TX;
-    GPIO_pinMode(GPIO_port_D, GPIO_pinMode_O_openDrain, GPIO_Speed_10MHz);
+    GPIO_pinMode(TX, GPIO_pinMode_O_openDrain, GPIO_Speed_10MHz);
     GPIO_digitalWrite_hi(TX);
 
     // Set Baudrate

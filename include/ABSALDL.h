@@ -91,7 +91,7 @@ typedef struct
 // *23          Vehicle Speed when Fault Code 1 is set (LSB)
 //               km/Hr = (256MSB + LSB)/16
 //               Mi/Hr = (256MSB + LSB)/25.75
-    uint8_t initionCyclesSinceFaultCodeSet;
+    uint8_t ignitionCyclesSinceFaultCodeSet;
 // *24          Ignition Cycles since Fault Code 1 Set
 //               count = N
 } PACKED ABS_FAULT_CODE;
@@ -162,9 +162,9 @@ typedef struct
     const char* desc;
 } ABSCODE;
 
-const ABSCODE ABS_codes[] = 
+const ABSCODE ABS_codes[30] = 
 {
-//  Code#      Description
+//Code#       Description
   {21,        "Right Front Wheel Speed Sensor Fault"},
   {23,        "Right Front Wheel Speed Sensor Continuity Fault"},
   {25,        "Left Front Wheel Speed Sensor Fault"},
@@ -196,3 +196,16 @@ const ABSCODE ABS_codes[] =
   {76,        "Lateral Accelerometer Plausibility Fault"},
   {83,        "Brake Fluid Level Low"}
 };
+
+const char* getABSMessage(uint8_t msg)
+{
+    for(uint8_t i = 0; i < 30; i++)
+    {
+        if(ABS_codes[i].code == msg)
+        {
+            return ABS_codes[i].desc;
+        }
+    }
+
+    return "UNDEFINED";
+}

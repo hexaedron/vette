@@ -21,16 +21,22 @@ int main()
 	SystemInit();
 	system_initSystick();
 	UART myUART(115200);
+	
+	uint8_t i = 20;
 
 	__enable_irq();
 	while (true)
 	{
+		
 		if (system_isSysTick())
 		{
-			while(myUART.available())
-			{
-				myUART.write(myUART.read());
-			}
+			myUART.write(getABSMessage(i));
+			i++;
+			//while(myUART.available())
+			//{
+			//	myUART.write(myUART.read());
+			//}
+			if(i > 83) {i=20;}
 			myUART.write("\r\n");
 		}
 	}
