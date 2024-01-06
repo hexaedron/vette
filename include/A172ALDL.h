@@ -63,8 +63,6 @@
 
 #include <stdint.h>
 
-#define PACKED __attribute__ ((__packed__))
-
 typedef struct 
 {
     uint8_t msgID;

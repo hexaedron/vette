@@ -7,7 +7,9 @@
 #include <string.h>    // strlen
 #include <stdlib.h>    // itoa
 
+#define PACKED __attribute__ ((__packed__))
 #include "include/A172ALDL.h"
+#include "include/ABSALDL.h"
 #include "include/UART.h"
 
 
