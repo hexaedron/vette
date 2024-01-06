@@ -63,6 +63,8 @@
 
 #include <stdint.h>
 
+#define PACKED __attribute__ ((__packed__))
+
 typedef struct 
 {
     uint8_t msgID;
@@ -335,7 +337,7 @@ typedef struct
          //7      1 = NOT USED
   uint8_t checksum;
 
-} __attribute__ ((__packed__)) A172ALDL;
+} PACKED A172ALDL;
 
 const int16_t MAT_temp_celsius_x10[256]
 { 

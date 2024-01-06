@@ -1,12 +1,15 @@
 #include "ch32v003fun.h"
-#include "ch32v003_GPIO_branchless.h"
-#include <stdio.h>
+#include "extralibs/ch32v003_GPIO_branchless.h"
+
+#include "include/gpio_pins.h"
+
 #include <stdbool.h>
-#include <string.h>
+#include <string.h>    // strlen
+#include <stdlib.h>    // itoa
+
 #include "include/A172ALDL.h"
 #include "include/UART.h"
 
-#include "include/gpio_pins.h"
 
 void system_initSystick(void);
 bool system_isSysTick(void);

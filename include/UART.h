@@ -14,7 +14,7 @@ class UART
     UART() {};
     UART(unsigned long baud);
     void begin(unsigned long);
-    //void begin(unsigned long baudrate, uint16_t config);
+    void beginHD(unsigned long);
     void end();
     int available(void);
     int peek(void);
@@ -68,6 +68,40 @@ void UART::begin(unsigned long baud)
     USART1->CTLR1 = USART_WordLength_8b | USART_Parity_No | USART_Mode_Rx | USART_Mode_Tx;
     USART1->CTLR2 = USART_StopBits_1;
     USART1->CTLR3 = USART_HardwareFlowControl_None;
+
+    // Set Baudrate
+    uint32_t integerDivider = ((25 * APB_CLOCK)) / (OVER8DIV * baud);
+    uint32_t fractionalDivider = integerDivider % 100;
+
+    USART1->BRR = ((integerDivider / 100) << 4) | (((fractionalDivider * (OVER8DIV * 2) + 50) / 100) & 7);
+
+    // Enable Interrupt
+    USART1->CTLR1 |= USART_FLAG_RXNE;
+    NVIC_EnableIRQ(USART1_IRQn);
+
+    // Enable UART
+    USART1->CTLR1 |= CTLR1_UE_Set;
+}
+
+void UART::beginHD(unsigned long baud) 
+{
+    // Hardware Serial Pins D5 / D6
+    RCC->APB2PCENR |= RCC_APB2Periph_GPIOD | RCC_APB2Periph_USART1; // Enable UART
+
+    GPIOD->CFGLR &= ~(0xf<<(4*6));
+    GPIOD->CFGLR |= (GPIO_CNF_IN_FLOATING)<<(4*6);
+
+    USART1->CTLR1 = USART_WordLength_8b | USART_Parity_No | USART_Mode_Rx | USART_Mode_Tx;
+    USART1->CTLR2 = USART_StopBits_1;
+    USART1->CTLR3 = USART_HardwareFlowControl_None | USART_CTLR3_HDSEL;
+
+    // From RM:
+    // After setting to half duplex mode, you need to set the IO port of TX to open-drain output high mode. 
+    /////////////GPIOD->CFGLR &= ~(0xf<<(4*5));
+    /////////////GPIOD->CFGLR |= (GPIO_Speed_10MHz | GPIO_CNF_OUT_OD)<<(4*5);
+    /////////////GPIOC->BSHR = TX;
+    GPIO_pinMode(GPIO_port_D, GPIO_pinMode_O_openDrain, GPIO_Speed_10MHz);
+    GPIO_digitalWrite_hi(TX);
 
     // Set Baudrate
     uint32_t integerDivider = ((25 * APB_CLOCK)) / (OVER8DIV * baud);
