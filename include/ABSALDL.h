@@ -99,19 +99,23 @@ typedef struct
 typedef struct 
 {
 // WORD#       DESCRIPTION
-    uint8_t sysID1;
+
+
 //  1           System Identification
 //                 (00 = B/D, K-Special, E/K/V, and Y-Car)
-    uint8_t sysID2;
+    uint8_t sysID1;
+
 //  2           System Identification
 //                 Display number in second two xx
 //                 $01 - Y car
 //                 $02 - B & D car
 //                 $03 - E, K, & V Car
-    char controllerID[8];
+    uint8_t sysID2;
+
 //  3-10        Controller ID (8 ASCII codes for controller identification)
 //               Display codes as they are, no conversion necessary.
-    uint8_t systemStatus;
+    char controllerID[8];
+
 //  11          System status word
 //      # 7      not used
 //        6      Pump monitoring                   0 = pump off     1 = pump on
@@ -121,36 +125,47 @@ typedef struct
 //        2      not used
 //        1      not used
 //        0      not used
-    uint8_t valveRelayVoltage;
+    uint8_t systemStatus;
+
 //  12          Valve relay voltage
 //               V = .085N
-    uint8_t lateralAcceleration;
+    uint8_t valveRelayVoltage;
+
 //  13          Lateral acceleration
 //#              G's = .01N               (this is a signed variable where N 0 to
 //               volts = 2.7v + .01875N    127 is positive and N 128 to 255 are
 //                                         two's complement negative numbers.)
-    uint8_t engineRPM;
+    uint8_t lateralAcceleration;
+
 //  14          Engine speed
 //               RPM = 30N
-    uint8_t throttleAngle;
+    uint8_t engineRPM;
+
 //  15          Throttle Angle
 //               % = N/2.55
-    uint8_t RFWheelSpeed;
+    uint8_t throttleAngle;
+
 //  16          Right Front Wheel Speed
 //               km/Hr = N/2
 //               Mi/Hr = .3107N
-    uint8_t LFWheelSpeed;
+    uint8_t RFWheelSpeed;
+
 //  17          Left Front Wheel Speed
 //               km/Hr = N/2
 //               Mi/Hr = .3107N
-    uint8_t RRWheelSpeed;
+    uint8_t LFWheelSpeed;
+
 //  18          Right Rear Wheel Speed
 //               km/Hr = N/2
 //               Mi/Hr = .3107N
-    uint8_t LRWheelSpeed;
+    uint8_t RRWheelSpeed;
+
 //  19          Left Rear Wheel Speed
 //               km/Hr = N/2
 //               Mi/Hr = .3107N
+    uint8_t LRWheelSpeed;
+
+// Up to 3 fault codes
     ABS_FAULT_CODE fc1;
     ABS_FAULT_CODE fc2;
     ABS_FAULT_CODE fc3;
