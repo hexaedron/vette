@@ -31,15 +31,20 @@ int main()
 	UART myUART;
 	myUART.begin(115200);
 
+	char str[50] = {0};
+
 	__enable_irq();
 	while (true)
 	{
 		if (system_isSysTick())
 		{
-			while(myUART.available())
-			{
-				myUART.write(myUART.read());
-			}
+			//while(myUART.available())
+			//{
+			//	myUART.write(myUART.read());
+			//}
+			myUART.fillBuff((uint8_t*)str);
+			myUART.write(str);
+			memset(str, 0, 50);
 			myUART.write("\n\rTick\n\r");
 		}
 	}

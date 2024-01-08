@@ -17,6 +17,7 @@ class UART
     int available(void);
     int peek(void);
     int read(void);
+    void fillBuff(uint8_t*);
     void flush(void);
     int availableForWrite();
     size_t write(uint8_t);
@@ -127,6 +128,17 @@ int UART::read()
     }
 
     return c;
+}
+
+void UART::fillBuff(uint8_t* buf)
+{
+    uint8_t offset = 0;
+
+    while (this->available())
+    {
+        buf[offset] = (uint8_t)this->read();
+        offset++;
+    } 
 }
 
 int UART::peek(void)
