@@ -11,8 +11,6 @@ volatile uint8_t rxBufferTail = 0;
 class UART
 {
   public:
-    //UART();
-    //UART(unsigned long);
     void begin(unsigned long);
     void beginHD(unsigned long);
     void end();

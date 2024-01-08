@@ -8,6 +8,7 @@
 #include <stdlib.h>    // itoa
 
 #define PACKED __attribute__ ((__packed__))
+#include "include/ALDL_cmd.h"
 #include "include/A172ALDL.h"
 #include "include/ABSALDL.h"
 #include "include/UART.h"
@@ -22,7 +23,7 @@ int main()
 	system_initSystick();
 
 	UART myUART;
-	myUART.beginHD(115200);
+	myUART.begin(115200);
 
 	__enable_irq();
 	while (true)
