@@ -7,6 +7,12 @@
 #include <string.h>    // strlen
 #include <stdlib.h>    // itoa
 
+
+#define SSD1306_128X64
+#define printf(x, y) // To avoid printf() in 1306 lib
+#include "include/ssd1306_i2c.h"
+#include "include/ssd1306.h"
+
 #define PACKED __attribute__ ((__packed__))
 #include "include/ALDL_cmd.h"
 #include "include/A172ALDL.h"
