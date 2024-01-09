@@ -132,7 +132,7 @@ typedef struct
     uint8_t valveRelayVoltage;
 
 //  13          Lateral acceleration
-//#              G's = .01N               (this is a signed variable where N 0 to
+//               G's = .01N               (this is a signed variable where N 0 to
 //               volts = 2.7v + .01875N    127 is positive and N 128 to 255 are
 //                                         two's complement negative numbers.)
     uint8_t lateralAcceleration;

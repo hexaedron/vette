@@ -20,8 +20,12 @@
 #include "include/UART.h"
 
 
+// from system.cpp
 void system_initSystick(void);
 bool system_isSysTick(void);
+uint32_t getSecDiv10(void);
+
+#include "include/simpleTimer.h"
 
 int main()
 {
@@ -33,19 +37,24 @@ int main()
 
 	char str[50] = {0};
 
+	simpleTimer tmr10s(100);
+
 	__enable_irq();
 	while (true)
 	{
-		if (system_isSysTick())
+		if (tmr10s.ready())
 		{
-			//while(myUART.available())
+			//if (system_isSysTick())
 			//{
-			//	myUART.write(myUART.read());
+				//while(myUART.available())
+				//{
+				//	myUART.write(myUART.read());
+				//}
+				myUART.fillBuff((uint8_t*)str);
+				myUART.write(str);
+				memset(str, 0, 50);
+				myUART.write("\n\rTick\n\r");
 			//}
-			myUART.fillBuff((uint8_t*)str);
-			myUART.write(str);
-			memset(str, 0, 50);
-			myUART.write("\n\rTick\n\r");
 		}
 	}
 }
