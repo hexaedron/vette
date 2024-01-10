@@ -1,12 +1,11 @@
-
 #include <ch32v003fun.h>
 #include <stdbool.h>
 
 #include "include/cube_defs.h"
 
 
-static volatile bool _systick;
-static volatile uint32_t secDiv10 = 0;
+//static volatile bool _systick;
+static volatile uint32_t _millis = 0;
 
 
 extern "C" __attribute__((interrupt("WCH-Interrupt-fast")))
@@ -25,49 +24,57 @@ void HardFault_Handler(void)
 
 void system_initSystick(void)
 {
-  _systick = false;
+  //_systick = false;
 
   NVIC_EnableIRQ(SysTicK_IRQn);
 
   SysTick->SR   = 0;
-  SysTick->CMP  = (FUNCONF_SYSTEM_CORE_CLOCK / 10 - 1);  // 100 ms
+  SysTick->CMP  = (FUNCONF_SYSTEM_CORE_CLOCK / 1000 - 1);  // 1 ms
   SysTick->CNT  = 0; 
   SysTick->CTLR |= STK_CTRL_STRE | STK_CTRL_STE | STK_CTRL_STIE | STK_CTRL_STCK;
 }
 
-// Use this to measure time in 100 ms intervals
-uint32_t getSecDiv10(void)
+// Arduino-like millis()
+volatile uint32_t millis(void)
 {
-  return secDiv10;
+  uint32_t tmp;
+
+   __disable_irq();
+  {
+    tmp = _millis;
+  }
+  __enable_irq();
+
+  return (uint32_t)tmp;
 }
 
 /**
 *
 */
-bool system_isSysTick(void)
-{
-   bool tmp;
-
-  __disable_irq();
-  {
-    tmp = _systick;
-    _systick = false;
-  }
-  __enable_irq();
-
-  return tmp;
-}
+//bool system_isSysTick(void)
+//{
+//   bool tmp;
+//
+//  __disable_irq();
+//  {
+//    tmp = _systick;
+//    _systick = false;
+//  }
+//  __enable_irq();
+//
+//  return tmp;
+//}
 
 
 /**
-*   Обработчик прерывания от системного таймера
+*   Systick interrupt handler. It only counts millis.
 */
 extern "C" __attribute__((interrupt("WCH-Interrupt-fast")))
 void SysTick_Handler(void)
 {
-  _systick = true;
+  //_systick = true;
+  _millis++;
   SysTick->SR = 0;
-  secDiv10++;
 }
 
 

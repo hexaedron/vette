@@ -23,7 +23,7 @@
 // from system.cpp
 void system_initSystick(void);
 bool system_isSysTick(void);
-uint32_t getSecDiv10(void);
+uint32_t millis(void);
 
 #include "include/simpleTimer.h"
 
@@ -37,7 +37,7 @@ int main()
 
 	char str[50] = {0};
 
-	simpleTimer tmr10s(100);
+	simpleTimer tmr10s(10000);
 
 	__enable_irq();
 	while (true)

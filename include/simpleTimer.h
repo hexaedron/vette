@@ -2,40 +2,41 @@ class simpleTimer
 {
   public:
 
-    simpleTimer () {}
+    simpleTimer () {};
 
     simpleTimer (uint32_t nprd) 
     {
       start(nprd);
-    }
+    };
 
     void start(uint32_t nprd) 
     {
       prd = nprd;
-      start();
-    }
+      start_int();
+    };
 
-    void start() 
+    void start_int() 
     {
-      tmr = getSecDiv10();
+      tmr = millis();
       if (!tmr) tmr = 1;
-    }
+    };
 
     void stop() 
     {
       tmr = 0;
-    }
+    };
 
     bool ready() 
     {
-      if (tmr && getSecDiv10() - tmr >= prd) 
+      if (tmr && millis() - tmr >= prd) 
       {
-        start();
+        start_int();
         return 1;
       }
       return 0;
-    }
+    };
 
   private:
-    uint32_t tmr = 0, prd = 0;
+      uint32_t tmr;
+      uint32_t prd;
 };
