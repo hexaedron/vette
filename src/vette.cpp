@@ -37,7 +37,7 @@ int main()
 
 	char str[50] = {0};
 
-	simpleTimer tmr10s(10000);
+	simpleTimer tmr10s(3000);
 
 	__enable_irq();
 	while (true)

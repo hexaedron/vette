@@ -6,11 +6,6 @@ class simpleTimer
 
     simpleTimer (uint32_t nprd) 
     {
-      start(nprd);
-    };
-
-    void start(uint32_t nprd) 
-    {
       prd = nprd;
       start_int();
     };

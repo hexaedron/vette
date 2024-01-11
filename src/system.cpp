@@ -4,7 +4,6 @@
 #include "include/cube_defs.h"
 
 
-//static volatile bool _systick;
 static volatile uint32_t _millis = 0;
 
 
@@ -24,8 +23,6 @@ void HardFault_Handler(void)
 
 void system_initSystick(void)
 {
-  //_systick = false;
-
   NVIC_EnableIRQ(SysTicK_IRQn);
 
   SysTick->SR   = 0;
@@ -35,7 +32,7 @@ void system_initSystick(void)
 }
 
 // Arduino-like millis()
-volatile uint32_t millis(void)
+uint32_t millis(void)
 {
   uint32_t tmp;
 
@@ -45,25 +42,8 @@ volatile uint32_t millis(void)
   }
   __enable_irq();
 
-  return (uint32_t)tmp;
+  return tmp;
 }
-
-/**
-*
-*/
-//bool system_isSysTick(void)
-//{
-//   bool tmp;
-//
-//  __disable_irq();
-//  {
-//    tmp = _systick;
-//    _systick = false;
-//  }
-//  __enable_irq();
-//
-//  return tmp;
-//}
 
 
 /**
