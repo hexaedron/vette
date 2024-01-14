@@ -2,10 +2,12 @@
 #include <stdbool.h>
 
 #include "include/cube_defs.h"
+#include "include/uint64Class.h"
 
 
-static volatile uint32_t _millis = 0;
-
+//static volatile uint32_t _millis_low  = 0UL; 
+//static volatile uint32_t _millis_high = 0UL; 
+static volatile uint32_t _millis  = 0ULL; 
 
 extern "C" __attribute__((interrupt("WCH-Interrupt-fast")))
 void NMI_Handler(void)
@@ -21,7 +23,7 @@ void HardFault_Handler(void)
   }
 }
 
-void system_initSystick(void)
+volatile void system_initSystick(void)
 {
   NVIC_EnableIRQ(SysTicK_IRQn);
 
@@ -32,11 +34,11 @@ void system_initSystick(void)
 }
 
 // Arduino-like millis()
-uint32_t millis(void)
+volatile uint32_t millis(void)
 {
   uint32_t tmp;
 
-   __disable_irq();
+  __disable_irq();
   {
     tmp = _millis;
   }
@@ -45,6 +47,25 @@ uint32_t millis(void)
   return tmp;
 }
 
+//volatile int64_manual millis(void)
+//{
+//  int64_manual tmp;
+//  static volatile uint32_t l, h;
+//
+//  __disable_irq();
+//  {
+//    //tmp.setLo(_millis_low);
+//    //tmp.setHi(_millis_high);
+//    l=_millis_low;
+//    h=_millis_high;
+//  }
+//  __enable_irq();
+//
+//  tmp.setLo(l);
+//  tmp.setHi(h);
+//  return tmp;
+//}
+
 
 /**
 *   Systick interrupt handler. It only counts millis.
@@ -52,7 +73,17 @@ uint32_t millis(void)
 extern "C" __attribute__((interrupt("WCH-Interrupt-fast")))
 void SysTick_Handler(void)
 {
-  //_systick = true;
+  
+  //if(_millis_low != __UINT32_MAX__)
+  //{
+  //    _millis_low++;
+  //}
+  //else
+  //{
+  //    _millis_low = 0UL;
+  //    _millis_high++; 
+  //}
+
   _millis++;
   SysTick->SR = 0;
 }
