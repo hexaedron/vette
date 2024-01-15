@@ -27,6 +27,10 @@ bool system_isSysTick(void);
 //#include "include/uint64Class.h"
 //int64_manual millis(void);
 uint32_t millis(void);
+void millisFlush(void);
+//#include "include/timeKeeperClass.h"
+//timeKeeper timeKeep;
+
 #include "include/simpleTimer.h"
 
 int main()
@@ -39,7 +43,7 @@ int main()
 
 	char str[50] = {0};
 
-	simpleTimer tmr10s(3000UL);
+	simpleTimer tmr10s(10000UL);
 
 	__enable_irq();
 	while (true)

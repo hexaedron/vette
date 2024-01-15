@@ -1,53 +1,12 @@
 #pragma once
 
-//class simpleTimer 
-//{
-//  public:
-//
-//    simpleTimer () {};
-//
-//    simpleTimer (uint32_t nprd) 
-//    {
-//      prd.setLo(nprd);
-//      start_int();
-//    };
-//
-//    void start_int() 
-//    {
-//      tmr = millis();
-//      if (tmr.isNUL()) tmr.set1();
-//    };
-//
-//    void stop() 
-//    {
-//      tmr.set0();
-//    };
-//
-//    bool ready() 
-//    {
-//      int64_manual tmp = (millis() - tmr);
-//      if (!tmr.isNUL() && (tmp >= prd)) 
-//      {
-//        start_int();
-//        return 1;
-//      }
-//      return 0;
-//    };
-//
-//  private:
-//      int64_manual tmr;
-//      int64_manual prd;
-//};
-
-#pragma once
-
 class simpleTimer 
 {
   public:
 
     simpleTimer () {};
 
-    simpleTimer (uint64_t nprd) 
+    simpleTimer (uint32_t nprd) 
     {
       prd = nprd;
       start_int();
