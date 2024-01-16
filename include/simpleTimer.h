@@ -1,38 +1,16 @@
 #pragma once
+#include <cstdint>
+
+uint32_t millis(void);
 
 class simpleTimer 
 {
   public:
-
-    simpleTimer () {};
-
-    simpleTimer (uint32_t nprd) 
-    {
-      prd = nprd;
-      start_int();
-    };
-
-    void start_int() 
-    {
-      tmr = millis();
-      if (tmr == 0UL) tmr = 1UL;
-    };
-
-    void stop() 
-    {
-      tmr = 0UL;
-    };
-
-    bool ready() 
-    {
-      uint32_t tmp = (millis() - tmr);
-      if ((tmr != 0UL) && (tmp >= prd)) 
-      {
-        start_int();
-        return 1;
-      }
-      return 0;
-    };
+    simpleTimer();
+    simpleTimer (uint32_t);
+    void start_int();
+    void stop();
+    bool ready();
 
   private:
       uint32_t tmr;

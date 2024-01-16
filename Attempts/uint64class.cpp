@@ -5,6 +5,12 @@ int64_manual::int64_manual()
     this->set0();
 }
 
+int64_manual::int64_manual(const int64_manual& t)
+{
+    this->hi = t.hi;
+    this->lo = t.lo;
+}
+
 void int64_manual::setHi(uint32_t newHi)
 {
     this->hi = newHi;

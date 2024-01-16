@@ -1,10 +1,11 @@
 #pragma once
 #include <cstdint>
 
-class int64_manual
+volatile class int64_manual
 {
     public:
         int64_manual();
+        int64_manual(const int64_manual&);
         void operator++ (int);
         void inc(void);
         bool operator>= (const int64_manual&);
@@ -17,7 +18,7 @@ class int64_manual
         uint32_t getHi(void);
         uint32_t getLo(void);
     private: 
-        volatile uint32_t hi, lo;
+        uint32_t hi, lo;
 };
 
 

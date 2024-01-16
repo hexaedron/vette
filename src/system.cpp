@@ -3,7 +3,7 @@
 
 #include "include/cube_defs.h"
 
-static volatile uint32_t _millis  = 0UL; 
+static volatile uint32_t _millis  = 0ULL;  
 
 extern "C" __attribute__((interrupt("WCH-Interrupt-fast")))
 void NMI_Handler(void)
@@ -34,14 +34,15 @@ uint32_t millis(void)
 {
   uint32_t tmp;
 
-  __disable_irq();
+  NVIC_DisableIRQ(SysTicK_IRQn);
   {
     tmp = _millis;
   }
-  __enable_irq();
+  NVIC_EnableIRQ(SysTicK_IRQn);
 
   return tmp;
 }
+
 
 // millis() which flushes the counter for further use in uint64_t counters
 void millisFlush(void)
@@ -58,7 +59,7 @@ void millisFlush(void)
 */
 extern "C" __attribute__((interrupt("WCH-Interrupt-fast")))
 void SysTick_Handler(void)
-{
+{ 
   _millis++;
   SysTick->SR = 0;
 }
