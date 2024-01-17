@@ -1,7 +1,10 @@
 #pragma once
 #include <cstdint>
 
+#include "include/u64Class.h"
+
 uint32_t millis(void);
+u64 millis64(void);
 
 class simpleTimer 
 {
@@ -13,6 +16,6 @@ class simpleTimer
     bool ready();
 
   private:
-      uint32_t tmr;
-      uint32_t prd;
+      u64 tmr;
+      u64 prd;
 };

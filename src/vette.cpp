@@ -2,6 +2,7 @@
 #include "extralibs/ch32v003_GPIO_branchless.h"
 
 #include "include/gpio_pins.h"
+#include "include/cube_defs.h"
 
 #include <stdbool.h>
 #include <string.h>    // strlen
@@ -23,7 +24,8 @@
 // from system.cpp
 void system_initSystick(void);
 bool system_isSysTick(void);
-void millisFlush(void);
+
+//void millisFlush(void);
 //#include "include/timeKeeperClass.h"
 //timeKeeper timeKeep;
 
