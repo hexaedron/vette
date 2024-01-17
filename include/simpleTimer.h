@@ -1,21 +1,18 @@
 #pragma once
 #include <cstdint>
 
-#include "include/u64Class.h"
-
-uint32_t millis(void);
-u64 millis64(void);
+uint64_t millis(void);
 
 class simpleTimer 
 {
   public:
     simpleTimer();
-    simpleTimer (uint32_t);
+    simpleTimer (uint64_t);
     void start_int();
     void stop();
     bool ready();
 
   private:
-      u64 tmr;
-      u64 prd;
+      uint64_t tmr;
+      uint64_t prd;
 };

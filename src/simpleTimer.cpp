@@ -5,7 +5,7 @@ simpleTimer::simpleTimer ()
 
 }
 
-simpleTimer::simpleTimer (uint32_t nprd) 
+simpleTimer::simpleTimer (uint64_t nprd) 
 {
   prd = nprd;
   start_int();
@@ -13,19 +13,18 @@ simpleTimer::simpleTimer (uint32_t nprd)
 
 void simpleTimer::start_int() 
 {
-  tmr = millis64();
-  if (tmr == 0UL) tmr = 1UL;
+  tmr = millis();
+  if (tmr == 0ULL) tmr = 1ULL;
 }
 
 void simpleTimer::stop() 
 {
-  tmr = 0UL;
+  tmr = 0ULL;
 }
 
 bool simpleTimer::ready() 
 {
-  u64 tmp=millis64() - tmr;
-  if ( !(tmr == 0UL) && ( (tmp) >= prd ) )
+  if ( !(tmr == 0ULL) && ( (millis() - tmr) >= prd ) )
   {
     start_int();
     return true;
