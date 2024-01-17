@@ -18,7 +18,7 @@
 #include "include/A172ALDL.h"
 #include "include/ABSALDL.h"
 #include "include/UART.h"
-
+#include "include/tim2Encoder.h"
 
 // from system.cpp
 void system_initSystick(void);

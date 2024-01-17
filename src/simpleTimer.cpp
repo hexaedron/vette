@@ -24,11 +24,11 @@ void simpleTimer::stop()
 
 bool simpleTimer::ready() 
 {
-  if ( ( tmr != 0UL) && (millis() - tmr >= prd) )
+  if ( (tmr != 0UL) && ( (millis() - tmr) >= prd ) )
   {
     start_int();
     return true;
   }
-  
+
   return false;
 }
