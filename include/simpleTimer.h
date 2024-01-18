@@ -8,6 +8,8 @@ class simpleTimer
   public:
     simpleTimer();
     simpleTimer (uint64_t);
+    simpleTimer (uint32_t);
+    simpleTimer (int32_t);
     void start_int();
     void stop();
     bool ready();

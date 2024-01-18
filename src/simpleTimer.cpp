@@ -11,6 +11,18 @@ simpleTimer::simpleTimer (uint64_t nprd)
   start_int();
 }
 
+simpleTimer::simpleTimer (uint32_t nprd) 
+{
+  prd = (uint64_t)nprd;
+  start_int();
+}
+
+simpleTimer::simpleTimer (int32_t nprd) 
+{
+  prd = (uint64_t)nprd;
+  start_int();
+}
+
 void simpleTimer::start_int() 
 {
   tmr = millis();

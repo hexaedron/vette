@@ -37,7 +37,7 @@ int main()
 
 	char str[50] = {0};
 
-	simpleTimer tmr10s(3000ULL);
+	simpleTimer tmr10s(3000UL);
 
 	while (true)
 	{

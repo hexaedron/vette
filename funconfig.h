@@ -8,4 +8,3 @@
 #define UART_BAUD_RATE 115200
 
 #endif
-
