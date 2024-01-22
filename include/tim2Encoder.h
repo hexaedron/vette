@@ -3,9 +3,9 @@
 class tim2Encoder
 {
     public:
-        void init(uint32_t);
-        tim2Encoder() {};
+        //tim2Encoder() {};
         tim2Encoder(uint32_t);
+        void init(uint32_t);
         int32_t getDelta();
     
     private:
@@ -28,17 +28,17 @@ void tim2Encoder::init(uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
 
 	AFIO->PCFR1 |= remapMode; //set remap mode 
 
-	// PC2 is T2CH1_, Input w/ Pullup/down
-	GPIOC->CFGLR &= ~(0xf<<(4*2)); //clear old values
-	GPIOC->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*2); //set new ones
+	// PD4 is T2CH1_, Input w/ Pullup/down
+	GPIOD->CFGLR &= ~(0xf<<(4*4)); //clear old values
+	GPIOD->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*4); //set new ones
 	//1 = pull-up, 0 = pull-down
-	GPIOC->OUTDR |= 1<<2;
+	GPIOC->OUTDR |= 1<<4;
 
-	// PC5 is T2CH2_, Input w/ Pullup/down
-	GPIOC->CFGLR &= ~(0xf<<(4*5)); //clear values
-	GPIOC->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*5); //set new ones
+	// PD3 is T2CH2_, Input w/ Pullup/down
+	GPIOD->CFGLR &= ~(0xf<<(4*3)); //clear values
+	GPIOD->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*3); //set new ones
 	//1 = pull-up, 0 = pull-down
-	GPIOC->OUTDR |= 1<<5;
+	GPIOC->OUTDR |= 1<<3;
 	
 	// Reset TIM2 to init all regs
 	RCC->APB1PRSTR |= RCC_APB1Periph_TIM2;
@@ -61,6 +61,11 @@ void tim2Encoder::init(uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
 
 	// Enable TIM2
 	TIM2->CTLR1 |= TIM_CEN;
+
+
+
+    this->count      = TIM2->CNT;
+    this->last_count = TIM2->CNT;
 }
 
 int32_t tim2Encoder::getDelta(void)
@@ -68,5 +73,5 @@ int32_t tim2Encoder::getDelta(void)
     this->count = TIM2->CNT;
     int32_t tmp = (int32_t)this->count - this->last_count;
     this->last_count = this->count;
-    return tmp;
+    return tmp >> 2;
 }

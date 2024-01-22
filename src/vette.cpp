@@ -35,25 +35,31 @@ int main()
 	UART myUART;
 	myUART.begin(115200);
 
-	char str[50] = {0};
+	tim2Encoder enc;
+	enc.init();
 
-	simpleTimer tmr10s(3000UL);
+	char buf[10];
+
+	simpleTimer tmr(1000UL);
 
 	while (true)
 	{
-		if (tmr10s.ready())
-		{
-			//if (system_isSysTick())
-			//{
-				//while(myUART.available())
-				//{
-				//	myUART.write(myUART.read());
-				//}
-				myUART.fillBuff((uint8_t*)str);
-				myUART.write(str);
-				memset(str, 0, 50);
-				myUART.write("\n\rTick\n\r");
-			//}
+		if (tmr.ready())
+		{			
+			int32_t delta = enc.getDelta();
+
+			if(delta < 0)
+			{
+				itoa(delta, buf, 10);
+				myUART.write(buf);
+				myUART.write("\n\r");
+			}
+			else if (delta > 0)
+			{
+				itoa(delta, buf, 10);
+				myUART.write(buf);
+				myUART.write("\n\r");
+			}
 		}
 	}
 }
