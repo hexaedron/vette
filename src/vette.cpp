@@ -6,10 +6,11 @@
 #include <stdbool.h>
 #include <string.h>    // strlen
 #include <stdlib.h>    // itoa
+#include <stdio.h>	   // printf
 
 
 #define SSD1306_128X64
-#define printf(x, y) // To avoid printf() in 1306 lib
+//#define printf(x, y) // To avoid printf() in 1306 lib
 #include "include/ssd1306_i2c.h"
 #include "include/ssd1306.h"
 
@@ -30,8 +31,15 @@ bool system_isSysTick(void);
 int main()
 {
 	SystemInit();
+	//Delay_Ms( 200 );	
 	system_initSystick();
 
+
+	//if(!ssd1306_i2c_init())
+	//{
+	//	ssd1306_init();
+	//}
+	
 	UART myUART;
 	myUART.begin(115200);
 
@@ -41,6 +49,9 @@ int main()
 	char buf[10];
 
 	simpleTimer tmr(1000UL);
+
+	//ssd1306_setbuf(0);
+	//ssd1306_drawstr(0,16, "This is a test", 1);
 
 	while (true)
 	{

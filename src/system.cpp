@@ -46,7 +46,7 @@ uint64_t millis(void)
 /**
 *   Systick interrupt handler. It only counts millis.
 */
-extern "C" __attribute__((interrupt))
+extern "C" __attribute__((interrupt)) __attribute__((section(".srodata")))
 void SysTick_Handler(void)
 { 
   _millis++;
