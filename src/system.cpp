@@ -3,7 +3,10 @@
 
 #include "include/cube_defs.h"
 
-static volatile uint64_t _millis  = 0ULL;   
+//Globals
+static volatile uint64_t     _millis  = 0ULL;    // Millisecons counter
+static volatile bool         _btn     = false;   // Button pressed flag
+static volatile uint32_t     _pin_num = 0;       // Pins bitmask for EXTI
 
 extern "C" __attribute__((interrupt))
 void NMI_Handler(void)
@@ -29,11 +32,57 @@ void system_initSystick(void)
   SysTick->CTLR |= STK_CTRL_STRE | STK_CTRL_STE | STK_CTRL_STIE | STK_CTRL_STCK;
 }
 
+void system_initEXTI(int portno, int pin, bool risingEdge = true, bool fallingEdge = false)
+{ 
+  // Setup pin-change-interrupt.  This will trigger when the voltage on the
+  // pin rises above the  schmitt trigger threshold.
+  AFIO->EXTICR = portno << (pin * 2);
+  EXTI->INTENR = 1 << pin;     // Enable the interrupt request signal for external interrupt channel
+  
+  if(risingEdge) EXTI->RTENR   = 1 << pin;     // Rising edge trigger
+  if(fallingEdge) EXTI->FTENR  = 1 << pin;     // Falling edge trigger
+  
+  _pin_num |= 1 << pin; // Set the state of interrupt mask
+
+  NVIC_EnableIRQ(EXTI7_0_IRQn);
+}
+
+bool btnPressed(void)
+{
+  volatile bool tmp;
+  
+  // critical section
+  NVIC_DisableIRQ(EXTI7_0_IRQn);
+  {
+    tmp = _btn;
+  }
+  NVIC_EnableIRQ(EXTI7_0_IRQn);
+
+
+  if(tmp)
+  {
+    // critical section
+    NVIC_DisableIRQ(EXTI7_0_IRQn);
+    {
+      _btn = false;
+    }
+    NVIC_EnableIRQ(EXTI7_0_IRQn);
+    
+    return true;
+
+  }
+  else
+  {
+    return false;
+  }
+}
+
 // Arduino-like millis()
 uint64_t millis(void)
 {
   uint64_t tmp;
 
+  // critical section
   NVIC_DisableIRQ(SysTicK_IRQn);
   {
     tmp = _millis;
@@ -51,4 +100,11 @@ void SysTick_Handler(void)
 { 
   _millis++;
   SysTick->SR = 0;
+}
+
+extern "C" __attribute__((interrupt))
+void EXTI7_0_IRQHandler(void) 
+{
+  _btn = true;
+  EXTI->INTFR = _pin_num; // Acknowledge the only interrupt we use in our init functions
 }

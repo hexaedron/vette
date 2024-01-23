@@ -25,14 +25,20 @@
 // from system.cpp
 void system_initSystick(void);
 bool system_isSysTick(void);
+void system_initEXTI(int portno, int pin, bool risingEdge = true, bool fallingEdge = false);
+bool btnPressed(void);
 
 #include "include/simpleTimer.h"
 
 int main()
 {
 	SystemInit();
-	//Delay_Ms( 200 );	
+	Delay_Ms( 200 );	
 	system_initSystick();
+	
+	funGpioInitAll();
+	GPIOC->CFGLR = (GPIO_Speed_In | GPIO_CNF_IN_PUPD)<<(4*6); //PC6 for input w/Pull-up
+	system_initEXTI(GPIO_port_C, 6); //PC6
 
 
 	//if(!ssd1306_i2c_init())
@@ -70,6 +76,11 @@ int main()
 				itoa(delta, buf, 10);
 				myUART.write(buf);
 				myUART.write("\n\r");
+			}
+
+			if(btnPressed())
+			{
+				myUART.write("Button pressed!\n\r");
 			}
 		}
 	}
