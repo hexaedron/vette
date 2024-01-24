@@ -49,8 +49,7 @@ int main()
 	UART myUART;
 	myUART.begin(115200);
 
-	tim2Encoder enc;
-	enc.init();
+	tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
 
 	char buf[10];
 

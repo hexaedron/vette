@@ -23,22 +23,88 @@ tim2Encoder::tim2Encoder(uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
 void tim2Encoder::init(uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
 {
     // Enable GPIOC, TIM2, and AFIO *very important!*
-	RCC->APB2PCENR |= RCC_APB2Periph_AFIO | RCC_APB2Periph_GPIOC;
-	RCC->APB1PCENR |= RCC_APB1Periph_TIM2;
+	RCC->APB2PCENR |= RCC_APB2Periph_AFIO | RCC_APB1Periph_TIM2;
 
 	AFIO->PCFR1 |= remapMode; //set remap mode 
 
-	// PD4 is T2CH1_, Input w/ Pullup/down
-	GPIOD->CFGLR &= ~(0xf<<(4*4)); //clear old values
-	GPIOD->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*4); //set new ones
-	//1 = pull-up, 0 = pull-down
-	GPIOC->OUTDR |= 1<<4;
+	switch (remapMode) // We need to configure pins according to remap method 
+	{
+		case AFIO_PCFR1_TIM2_REMAP_NOREMAP:
 
-	// PD3 is T2CH2_, Input w/ Pullup/down
-	GPIOD->CFGLR &= ~(0xf<<(4*3)); //clear values
-	GPIOD->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*3); //set new ones
-	//1 = pull-up, 0 = pull-down
-	GPIOC->OUTDR |= 1<<3;
+			RCC->APB2PCENR |= RCC_APB2Periph_GPIOD;
+			RCC->APB1PCENR |= RCC_APB1Periph_TIM2;
+			
+			// PD4 is T2CH1_, Input w/ Pullup/down
+			GPIOD->CFGLR &= ~(0xf<<(4*4)); //clear old values
+			GPIOD->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*4); //set new ones
+			//1 = pull-up, 0 = pull-down
+			GPIOD->OUTDR |= 1<<4;
+
+			// PD3 is T2CH2_, Input w/ Pullup/down
+			GPIOD->CFGLR &= ~(0xf<<(4*3)); //clear values
+			GPIOD->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*3); //set new ones
+			//1 = pull-up, 0 = pull-down
+			GPIOD->OUTDR |= 1<<3;
+
+		break;
+
+		case AFIO_PCFR1_TIM2_REMAP_PARTIALREMAP1:
+
+			RCC->APB2PCENR |= RCC_APB2Periph_GPIOC;
+
+			// PC5 is T2CH1_, Input w/ Pullup/down
+			GPIOC->CFGLR &= ~(0xf<<(4*5)); //clear old values
+			GPIOC->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*5); //set new ones
+			//1 = pull-up, 0 = pull-down
+			GPIOC->OUTDR |= 1<<5;
+
+			// PC2 is T2CH2_, Input w/ Pullup/down
+			GPIOC->CFGLR &= ~(0xf<<(4*2)); //clear values
+			GPIOC->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*2); //set new ones
+			//1 = pull-up, 0 = pull-down
+			GPIOC->OUTDR |= 1<<2;
+		break;
+
+		case AFIO_PCFR1_TIM2_REMAP_PARTIALREMAP2:
+
+			RCC->APB2PCENR |= RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOD;
+
+			// PC1 is T2CH1_, Input w/ Pullup/down
+			GPIOC->CFGLR &= ~(0xf<<(4*1)); //clear old values
+			GPIOC->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*1); //set new ones
+			//1 = pull-up, 0 = pull-down
+			GPIOC->OUTDR |= 1<<1;
+
+			// PD3 is T2CH2_, Input w/ Pullup/down
+			GPIOD->CFGLR &= ~(0xf<<(4*3)); //clear values
+			GPIOD->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*3); //set new ones
+			//1 = pull-up, 0 = pull-down
+			GPIOD->OUTDR |= 1<<3;
+
+		break;
+
+		case AFIO_PCFR1_TIM2_REMAP_FULLREMAP:
+			
+			RCC->APB2PCENR |= RCC_APB2Periph_GPIOC;
+			
+			// PC1 is T2CH1_, Input w/ Pullup/down
+			GPIOC->CFGLR &= ~(0xf<<(4*1)); //clear old values
+			GPIOC->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*1); //set new ones
+			//1 = pull-up, 0 = pull-down
+			GPIOC->OUTDR |= 1<<1;
+
+			// PC7 is T2CH2_, Input w/ Pullup/down
+			GPIOC->CFGLR &= ~(0xf<<(4*7)); //clear values
+			GPIOC->CFGLR |= (GPIO_CNF_IN_PUPD)<<(4*7); //set new ones
+			//1 = pull-up, 0 = pull-down
+			GPIOC->OUTDR |= 1<<7;
+
+		break;
+		
+		default:
+		break;
+	}
+	
 	
 	// Reset TIM2 to init all regs
 	RCC->APB1PRSTR |= RCC_APB1Periph_TIM2;
