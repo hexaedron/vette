@@ -22,8 +22,9 @@ tim2Encoder::tim2Encoder(uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
 
 void tim2Encoder::init(uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
 {
-    // Enable GPIOC, TIM2, and AFIO *very important!*
-	RCC->APB2PCENR |= RCC_APB2Periph_AFIO | RCC_APB1Periph_TIM2;
+    // Enable TIM2 and AFIO *very important!*
+	RCC->APB2PCENR |= RCC_APB2Periph_AFIO;
+	RCC->APB1PCENR |= RCC_APB1Periph_TIM2;
 
 	AFIO->PCFR1 |= remapMode; //set remap mode 
 
@@ -32,7 +33,6 @@ void tim2Encoder::init(uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
 		case AFIO_PCFR1_TIM2_REMAP_NOREMAP:
 
 			RCC->APB2PCENR |= RCC_APB2Periph_GPIOD;
-			RCC->APB1PCENR |= RCC_APB1Periph_TIM2;
 			
 			// PD4 is T2CH1_, Input w/ Pullup/down
 			GPIOD->CFGLR &= ~(0xf<<(4*4)); //clear old values
