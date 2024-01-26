@@ -337,6 +337,72 @@ typedef struct
 
 } PACKED A172ALDL;
 
+const char* MALFFLG_codes[40] =
+{
+       //MALFFLG1:
+       "MAT sensor low",
+       "Throttle sensor position low",
+       "Throttle sensor position high",
+       "Lo res. pulse failure",
+       "Coolant sensor low temp.",
+       "Coolant sensor high temp.",
+       "Left oxygen sensor failed",
+       "No reference pulses",
+       
+       //MALFFLG2:
+       "MAP sensor low",
+       "MAP sensor high",
+       "EGR giagnostic",
+       "QDM #3",
+       "QDM #3",
+       "QDM #3",
+       "MAT sensor high",
+       "Vehicle speed sensor",
+
+       //MALFFLG3:
+       "PROM error",
+       "Fuel enable failure",
+       "Left oxygen sensor rich",
+       "Left oxygen sensor lean",
+       "ESC failure",
+       "EST grounded",
+       "EST open",
+       "Hi res. pulse failure",
+
+       //MALFFLG4:
+       "Right oxygen sensor failure",
+       "Oil temp. sensor high",
+       "C.V.  A/C compressor fault",
+       "",
+       "Fuel lean malfunction",
+       "",
+       "System voltage problem",
+       "Oil temperature sensor low",
+
+       //MALFFLG5:
+       "Gear switch failure",
+       "A/C evaporator temp sensor failure",
+       "A/C clutch circuit open",
+       "A/C relay shorted",
+       "A/C pressure transducer degraded",
+       "A/C pressure transducer open or shorted",
+       "Right oxygen sensor rich",
+       "Right oxygen sensor lean"
+};
+
+const char* FANMW_codes[8] =
+{
+       //FAN CONTROL MODE WORD
+       "Fan 1 enabled (all pid fan 1 steps added)",
+       "SPI failed (used for aldl)",
+       "Fan 1 requested",
+       "Fan 2 enabled (all pid fan 2 steps added)",
+       "Fan 2 requested",
+       "Fan 1 enabled by high oil temperature",
+       "High rpm fan enable",
+       ""
+};
+
 const int16_t MAT_temp_celsius_x10[256]
 { 
   1513, 1499, 1486, 1473, 1460, 1447, 1434, 1421, 1408, 1394, 1381, 1368, 1355, 1342, 1329, 1316, 
