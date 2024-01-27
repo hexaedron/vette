@@ -1,6 +1,5 @@
 /*
  * Single-File-Header for SH1106 I2C interface
- * 05-07-2023 E. Brombaugh
  */
 
 #ifndef _SH1106_I2C_H
@@ -12,10 +11,7 @@
 #define SH1106_I2C_ADDR 0x3c
 
 // I2C Bus clock rate - must be lower the Logic clock rate
-#define SH1106_I2C_CLKRATE 1000000
-
-// I2C Logic clock rate - must be higher than Bus clock rate
-#define SH1106_I2C_PRERATE 2000000
+#define SH1106_I2C_CLKRATE 4000000
 
 // uncomment this for high-speed 36% duty cycle, otherwise 33%
 #define SH1106_I2C_DUTY
@@ -39,49 +35,16 @@ volatile uint8_t sh1106_i2c_send_buffer[64], *sh1106_i2c_send_ptr, sh1106_i2c_se
  */
 void sh1106_i2c_setup(void)
 {
-	uint16_t tempreg;
 	
 	// Reset I2C1 to init all regs
 	RCC->APB1PRSTR |= RCC_APB1Periph_I2C1;
 	RCC->APB1PRSTR &= ~RCC_APB1Periph_I2C1;
-	
-	// set freq
-//	tempreg = I2C1->CTLR2;
-//	tempreg &= ~I2C_CTLR2_FREQ;
-//	tempreg |= (FUNCONF_SYSTEM_CORE_CLOCK/SH1106_I2C_PRERATE)&I2C_CTLR2_FREQ;
-//	I2C1->CTLR2 = tempreg;
-//	
-//	// Set clock config
-//	tempreg = 0;
-//#if (SH1106_I2C_CLKRATE <= 100000)
-//		// standard mode good to 100kHz
-//		tempreg = (FUNCONF_SYSTEM_CORE_CLOCK/(2*SH1106_I2C_CLKRATE))&SH1106_I2C_CKCFGR_CCR;
-//#else
-//		// fast mode over 100kHz
-//	#ifndef SH1106_I2C_DUTY
-//		// 33% duty cycle
-//		tempreg = (FUNCONF_SYSTEM_CORE_CLOCK/(3*SH1106_I2C_CLKRATE))&SH1106_I2C_CKCFGR_CCR;
-//	#else
-//		// 36% duty cycle
-//		tempreg = (FUNCONF_SYSTEM_CORE_CLOCK/(25*SH1106_I2C_CLKRATE))&I2C_CKCFGR_CCR;
-//		tempreg |= I2C_CKCFGR_DUTY;
-//	#endif
-//		tempreg |= I2C_CKCFGR_FS;
-//#endif
-//	I2C1->CKCFGR = tempreg;
-
-
-		// standard mode good to 100kHz
-	//	tempreg = (FUNCONF_SYSTEM_CORE_CLOCK/(2*SH1106_I2C_CLKRATE))&I2C_CKCFGR_CCR;
-	//	tempreg |= I2C_CKCFGR_FS;
-    //
-	//I2C1->CKCFGR = tempreg;
 
 	// Set I2C module clock frequency (in MHz)
   	I2C1->CTLR2 = 8;
 
   // Set bus clock configuration
-  	I2C1->CKCFGR = (FUNCONF_SYSTEM_CORE_CLOCK / (2 * 400000)) | I2C_CKCFGR_FS ; //|  I2C_CKCFGR_DUTY ;//| I2C_CKCFGR_CCR ;
+  	I2C1->CKCFGR = (FUNCONF_SYSTEM_CORE_CLOCK / (2 * SH1106_I2C_CLKRATE)) | I2C_CKCFGR_FS ; 
 #ifdef SH1106_I2C_IRQ
 	// enable IRQ driven operation
 	NVIC_EnableIRQ(I2C1_EV_IRQn);

@@ -1,6 +1,5 @@
 /*
- * Single-File-Header for using SPI OLED
- * 05-05-2023 E. Brombaugh
+ * Single-File-Header for using SH1106 OLED
  */
 
 #ifndef _SH1106_H
@@ -34,7 +33,6 @@
 #ifdef SH1106_128X64
 #define SH1106_W 128
 #define SH1106_H 64
-#define SH1106_FULLUSE
 #define SH1106_OFFSET 0
 #endif
 
@@ -148,11 +146,8 @@ const uint8_t sh1106_init_array[] =
     #else												   // XXXXXXXXX
       0x14,						   // XXXXXXXXX
 	#endif
-    //SH1106_MEMORYMODE,                    // 0x20 XXXXXXXXXXXXXX
-//    sh1106_command(PAGE);                                  // 0x2 Paged XXXXXXXXXXX
     HORIZONTAL,                                  // 0x0 Horizontal XXXXXXXXXXX
     SH1106_SET_PAGE_ADDRESS, // start at page address 0 XXXXXXXXX
-//    sh1106_command(SH1106_SEGREMAP | 0x1);				   // ?????????????
     SH1106_COMSCANDEC,					   // XXXXXXXXXX
     SH1106_SETLOWCOLUMN,				   // XXXXXXXXXX
     SH1106_SETHIGHCOLUMN,				   // XXXXXXXXXX
@@ -191,19 +186,6 @@ void sh1106_setbuf(uint8_t color)
 	memset(sh1106_buffer, color ? 0xFF : 0x00, sizeof(sh1106_buffer));
 }
 
-#ifndef SH1106_FULLUSE
-/*
- * expansion array for OLED with every other row unused
- */
-const uint8_t expand[16] =
-{
-	0x00,0x02,0x08,0x0a,
-	0x20,0x22,0x28,0x2a,
-	0x80,0x82,0x88,0x8a,
-	0xa0,0xa2,0xa8,0xaa,
-};
-#endif
-
 /*
  * Send the frame buffer
  */
@@ -214,25 +196,11 @@ void sh1106_refresh(void)
 		sh1106_cmd(SH1106_SET_PAGE_ADDRESS + page);
         sh1106_cmd(0x02); // low column start address
         sh1106_cmd(0x10); // high column start address
-        //for (int pixel = 0; pixel < SH1106_W; pixel++)
-        //{
-				// I2C
-				for (uint16_t i=0; i<(SH1106_W); i+=SH1106_PSZ) 
-				{
-				  // send a bunch of data in one xmission
-				  //sh1106_cmd(0x40);
-				  //for (uint8_t x=0; x<16; x++) 
-				  //{
-					//uint8_t data = sh1106_buffer[i];
-					sh1106_data(&sh1106_buffer[i + (page*SH1106_W)], SH1106_PSZ);
-					//sh1106_data(&sh1106_buffer[i], SH1106_PSZ);
-					//sh1106_i2c_send(SH1106_I2C_ADDR, &data, 1);
-					//i++;
-				  //}
-				  //i--;
-				}
-			}
-		//}
+		for (uint16_t i=0; i<(SH1106_W); i+=SH1106_PSZ) 
+		{
+			sh1106_data(&sh1106_buffer[i + (page * SH1106_W)], SH1106_PSZ);
+		}
+	}
 }
 
 /*
