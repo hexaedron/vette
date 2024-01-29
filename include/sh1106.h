@@ -35,6 +35,8 @@
 #define SH1106_OFFSET 0
 #endif
 
+#define FONT_WIDTH 5
+
 /*
  * send OLED command byte
  */
@@ -542,33 +544,34 @@ void sh1106_drawchar(uint8_t x, uint8_t y, uint8_t chr, uint8_t color)
 	uint16_t i, j, col;
 	uint8_t d;
 	
-	for(i=0;i<5;i++)
-	{		
+	for(i = 0; i < FONT_WIDTH; i++)
+	{	
+
 		if((chr-32) <= 95)
 		{ 
 			d = fontdata[(chr-32)*5+i];
 		}
-		else if((chr-32) >= 96 && (chr-32) <= 111)
+		else if(chr == 184) //ё
 		{
-			d = fontdata[(chr-32+47)*5+i];
+			d = fontdata[(159)*5+i];
 		}
-		else if ((chr-32) <= 159)
+		else if(chr == 168) //Ё
 		{
-			d = fontdata[(chr-32-17)*5+i];
+			d = fontdata[(160)*5+i];
 		}
-		else
+		else 
 		{
-			d = fontdata[(chr-32-1)*5+i];
+			d = fontdata[(chr-97)*5+i];
 		}
-		
-		for(j=0;j<8;j++)
+
+		for(j = 0; j < 8; j++)
 		{
 			if(d&0x80)
 				col = color;
 			else
 				col = (~color)&1;
 			
-			sh1106_drawPixel(x+i, y-j, col);
+			sh1106_drawPixel(x + i, y - j, col);
 			
 			// next bit
 			d <<= 1;
@@ -586,7 +589,7 @@ void sh1106_drawstr(uint8_t x, uint8_t y, char *str, uint8_t color)
 	while((c=*str++))
 	{
 		sh1106_drawchar(x, y, c, color);
-		x += 6;
+		x += FONT_WIDTH + 1;
 		if(x>120)
 			break;
 	}
@@ -596,10 +599,10 @@ void sh1106_drawstr(uint8_t x, uint8_t y, char *str, uint8_t color)
  * enum for font size
  */
 typedef enum {
-    fontsize_8x8 = 1,
-    fontsize_16x16 = 2,
-    fontsize_32x32 = 4,
-	fontsize_64x64 = 8,
+    fontsize_5x8 = 1,
+    fontsize_10x16 = 2,
+    fontsize_20x32 = 4,
+	fontsize_40x64 = 8,
 } font_size_t;
 
 /*
@@ -651,8 +654,8 @@ void sh1106_drawstr_sz(uint8_t x, uint8_t y, char *str, uint8_t color, font_size
 	while((c=*str++))
 	{
 		sh1106_drawchar_sz(x, y, c, color, font_size);
-		x += 8 * font_size;
-		if(x>128 - 8 * font_size)
+		x += (FONT_WIDTH + 1) * font_size;
+		if(x>128 - FONT_WIDTH * font_size)
 			break;
 	}
 }

@@ -80,7 +80,7 @@ int main()
 	/////ssd1306_drawstr(0,16, "This is a test", 1);
 	/////sh1106_setbuf(0b10000001);
 	//sh1106_drawstr(0,16, (char*)"This is a test", 1);
-	sh1106_drawstr(0,32, (char*)"Àà 123 $%^!", 1);
+	sh1106_drawstr(0,32, (char*)"¨Åå¸ ìî¸ İòî òåñò àáâÀÁÂ", 1);
 	//sh1106_drawCircle(SH1106_W/2, SH1106_H/2, 15, 1);
 	sh1106_refresh();
 
