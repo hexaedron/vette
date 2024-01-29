@@ -81,6 +81,7 @@ const char *errstr[] =
 #define SH1106_LEFT_HORIZONTAL_SCROLL 0x27
 #define SH1106_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL 0x29
 #define SH1106_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL 0x2A
+
 #define SH1106_MAX_PAGE_COUNT  8
 
 /* choose VCC mode */
@@ -173,6 +174,7 @@ uint8_t sh1106::data(uint8_t *data, uint8_t sz)
 void sh1106::setbuf(uint8_t color)
 {
 	memset(buffer, color ? 0xFF : 0x00, sizeof(buffer));
+    pageUpdateMask = 0xFF;
 }
 
 /*
@@ -182,7 +184,11 @@ void sh1106::refresh(void)
 {
 	for (uint16_t page = 0; page < SH1106_MAX_PAGE_COUNT; page++)
     {
-		cmd(SH1106_SET_PAGE_ADDRESS + page);
+		// Update only dirty pages.
+        if(!(((pageUpdateMask) >> (page)) & 0x01))
+            continue;
+        
+        cmd(SH1106_SET_PAGE_ADDRESS + page);
         cmd(0x02); // low column start address
         cmd(0x10); // high column start address
 		for (uint16_t i=0; i<(SH1106_W); i+=SH1106_PSZ) 
@@ -190,6 +196,8 @@ void sh1106::refresh(void)
 			data(&buffer[i + (page * SH1106_W)], SH1106_PSZ);
 		}
 	}
+
+    pageUpdateMask = 0;
 }
 
 /*
@@ -205,6 +213,8 @@ void sh1106::drawPixel(uint8_t x, uint8_t y, uint8_t color)
 	if(y >= SH1106_H)
 		return;
 	
+    pageUpdateMask |= (1 << (x % SH1106_MAX_PAGE_COUNT) );
+
 	/* compute buffer address */
 	addr = x + SH1106_W*(y/8);
 	
@@ -228,6 +238,8 @@ void sh1106::xorPixel(uint8_t x, uint8_t y)
 	if(y >= SH1106_H)
 		return;
 	
+    pageUpdateMask |= (1 << (x / SH1106_MAX_PAGE_COUNT) );
+
 	/* compute buffer address */
 	addr = x + SH1106_W*(y/8);
 	

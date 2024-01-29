@@ -203,7 +203,7 @@ class sh1106
 		uint8_t buffer[SH1106_W * SH1106_H / 8];
 
 		// Mask used to update only pages we need to update
-		uint8_t pageUpdateMask = 0;
+		uint8_t pageUpdateMask = 0xFF;
 };
 
 #endif
