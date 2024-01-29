@@ -11,7 +11,7 @@
 #define SH1106_I2C_ADDR 0x3c
 
 // I2C Bus clock rate - must be lower the Logic clock rate
-#define SH1106_I2C_CLKRATE 4000000
+#define SH1106_I2C_CLKRATE 400000
 
 // uncomment this for high-speed 36% duty cycle, otherwise 33%
 #define SH1106_I2C_DUTY
