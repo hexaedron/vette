@@ -1,5 +1,9 @@
 #include "include/sh1106.h"
 
+#ifndef NEED_PRINTF
+    #define printf(x, y) // To avoid printf() in 1106 lib
+#endif
+
 /*
 * error descriptions
 */
@@ -12,45 +16,178 @@ const char *errstr[] =
 	"transmit complete",
 };
 
+// event codes we use
+#define  SH1106_I2C_EVENT_MASTER_MODE_SELECT ((uint32_t)0x00030001)  /* BUSY, MSL and SB flag */
+#define  SH1106_I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED ((uint32_t)0x00070082)  /* BUSY, MSL, ADDR, TXE and TRA flags */
+#define  SH1106_I2C_EVENT_MASTER_BYTE_TRANSMITTED ((uint32_t)0x00070084)  /* TRA, BUSY, MSL, TXE and BTF flags */
+
+#define FONT_WIDTH 5
+
+// comfortable packet size for this OLED
+#define SH1106_PSZ 32
+
+// SH1106 I2C address
+#define SH1106_I2C_ADDR 0x3c
+
+// I2C Bus clock rate - must be lower the Logic clock rate
+#define SH1106_I2C_CLKRATE 400000
+
+// uncomment this for high-speed 36% duty cycle, otherwise 33%
+#define SH1106_I2C_DUTY
+
+// I2C Timeout count
+#define TIMEOUT_MAX 400000
+
+// uncomment this to enable IRQ-driven operation
+//#define SH1106_I2C_IRQ
+
+
+#define SH1106_SETCONTRAST 0x81
+#define SH1106_DISPLAYALLON_RESUME 0xA4
+#define SH1106_DISPLAYALLON 0xA5
+#define SH1106_NORMALDISPLAY 0xA6
+#define SH1106_INVERTDISPLAY 0xA7
+#define SH1106_DISPLAYOFF 0xAE
+#define SH1106_DISPLAYON 0xAF
+#define SH1106_OUTPUT_FOLLOWS_RAM 0xA4
+#define SH1106_SETDISPLAYOFFSET 0xD3
+#define SH1106_SETCOMPINS 0xDA
+#define SH1106_SETVCOMDETECT 0xDB
+#define SH1106_SETDISPLAYCLOCKDIV 0xD5
+#define SH1106_SETPRECHARGE 0xD9
+#define SH1106_SETMULTIPLEX 0xA8
+#define SH1106_SETLOWCOLUMN 0x00
+#define SH1106_SETHIGHCOLUMN 0x10
+#define SH1106_SET_SEGMENT_REMAP	0xA1 // 0 to 127
+#define SH1106_SETSTARTLINE 0x40
+#define SH1106_MEMORYMODE 0x20
+#define SH1106_COLUMNADDR 0x21
+#define SH1106_PAGEADDR   0x22
+#define SH1106_SET_PAGE_ADDRESS	0xB0 /* sets the page address from 0 to 7 */
+#define SH1106_COMSCANINC 0xC0
+#define SH1106_COMSCANDEC 0xC8
+#define SH1106_SEGREMAP 0xA0
+#define SH1106_CHARGEPUMP 0x8D
+#define SH1106_EXTERNALVCC 0x1
+#define SH1106_SWITCHCAPVCC 0x2
+// 0xFF --fake command to mark end
+#define SH1106_TERMINATE_CMDS 0xFF
+
+// Scrolling #defines
+#define SH1106_ACTIVATE_SCROLL 0x2F
+#define SH1106_DEACTIVATE_SCROLL 0x2E
+#define SH1106_SET_VERTICAL_SCROLL_AREA 0xA3
+#define SH1106_RIGHT_HORIZONTAL_SCROLL 0x26
+#define SH1106_LEFT_HORIZONTAL_SCROLL 0x27
+#define SH1106_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL 0x29
+#define SH1106_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL 0x2A
+#define SH1106_MAX_PAGE_COUNT  8
+
+/* choose VCC mode */
+#define SH1106_EXTERNALVCC 0x1
+#define SH1106_SWITCHCAPVCC 0x2
+//#define vccstate SH1106_EXTERNALVCC
+#define vccstate SH1106_SWITCHCAPVCC
+
+typedef enum
+{
+    HORIZONTAL = 0,
+    VERTICAL,
+    PAGE,
+    INVALID,
+    END_MEMORY_ADDRESSING_MODES
+} MEMORY_ADDRESSING_MODES;
+
+// OLED initialization commands for 128x32
+const uint8_t init_array[] =
+{
+    SH1106_DISPLAYOFF,                    // 0xAE
+    SH1106_SETDISPLAYCLOCKDIV,            // 0xD5
+
+
+    // Init sequence for 128x64 OLED module
+    0xF0,                                 // the suggested ratio 0xF0 XXXXXXXX
+    SH1106_SETMULTIPLEX,                  // 0xA8 XXXXXXXXX
+    0x3F,								   // XXXXXXXXXXX
+    SH1106_OUTPUT_FOLLOWS_RAM,            // 0xA4 XXXXXXXXX
+    SH1106_SETDISPLAYOFFSET,              // 0xD3 XXXXXXXXX
+    0x0,                                  // no offset  XXXXXXXXX
+    SH1106_SETSTARTLINE | 0x0,            // line #0
+    SH1106_CHARGEPUMP,                    // 0x8D XXXXXXXXXX
+    #if (vccstate == SH1106_EXTERNALVCC)					   // XXXXXXXXX
+      0x10,						   // XXXXXXXXX
+    #else												   // XXXXXXXXX
+      0x14,						   // XXXXXXXXX
+	#endif
+    HORIZONTAL,                                  // 0x0 Horizontal XXXXXXXXXXX
+    SH1106_SET_PAGE_ADDRESS, // start at page address 0 XXXXXXXXX
+    SH1106_COMSCANDEC,					   // XXXXXXXXXX
+    SH1106_SETLOWCOLUMN,				   // XXXXXXXXXX
+    SH1106_SETHIGHCOLUMN,				   // XXXXXXXXXX
+    SH1106_SETCOMPINS,                    // 0xDA XXXXXXXXX
+    0x12,								   // XXXXXXXXXX
+    SH1106_SETCONTRAST,                   // 0x81 XXXXXXXX
+    #if (vccstate == SH1106_EXTERNALVCC)					   // XXXXXXX
+      0x9F,						   // XXXXXXX
+    #else					   							   // XXXXXXX
+      0xCF,					       // XXXXXXX
+    #endif
+	SH1106_SET_SEGMENT_REMAP,             // 0xA1 XXXXXXXX
+    SH1106_SETPRECHARGE,                  // 0xd9 XXXXXXXXX
+    #if (vccstate == SH1106_EXTERNALVCC)					   // XXXXXXXXX
+     0x22,						   // XXXXXXXXX
+    #else												   // XXXXXXXXX
+      0xF1,						   // XXXXXXXXX
+    #endif
+	SH1106_SETVCOMDETECT,                 // 0xDB XXXXXXXX
+    0x20,								   // 0.77xVcc XXXXXXX
+    SH1106_DISPLAYALLON_RESUME,           // 0xA4 XXXXXXXXXX
+    SH1106_NORMALDISPLAY,                 // 0xA6  XXXXXXXXXX
+	SH1106_DISPLAYON,
+	
+	SH1106_TERMINATE_CMDS
+};
+
+
 /*
  * send OLED command byte
  */
-uint8_t sh1106::sh1106_cmd(uint8_t cmd)
+uint8_t sh1106::cmd(uint8_t cmd)
 {
-	sh1106_pkt_send(&cmd, 1, 1);
+	pkt_send(&cmd, 1, 1);
 	return 0;
 }
 
 /*
  * send OLED data packet (up to 32 bytes)
  */
-uint8_t sh1106::sh1106_data(uint8_t *data, uint8_t sz)
+uint8_t sh1106::data(uint8_t *data, uint8_t sz)
 {
-	sh1106_pkt_send(data, sz, 0);
+	pkt_send(data, sz, 0);
 	return 0;
 }
 
 /*
  * set the buffer to a color
  */
-void sh1106::sh1106_setbuf(uint8_t color)
+void sh1106::setbuf(uint8_t color)
 {
-	memset(sh1106_buffer, color ? 0xFF : 0x00, sizeof(sh1106_buffer));
+	memset(buffer, color ? 0xFF : 0x00, sizeof(buffer));
 }
 
 /*
  * Send the frame buffer
  */
-void sh1106::sh1106_refresh(void)
+void sh1106::refresh(void)
 {
 	for (uint16_t page = 0; page < SH1106_MAX_PAGE_COUNT; page++)
     {
-		sh1106_cmd(SH1106_SET_PAGE_ADDRESS + page);
-        sh1106_cmd(0x02); // low column start address
-        sh1106_cmd(0x10); // high column start address
+		cmd(SH1106_SET_PAGE_ADDRESS + page);
+        cmd(0x02); // low column start address
+        cmd(0x10); // high column start address
 		for (uint16_t i=0; i<(SH1106_W); i+=SH1106_PSZ) 
 		{
-			sh1106_data(&sh1106_buffer[i + (page * SH1106_W)], SH1106_PSZ);
+			data(&buffer[i + (page * SH1106_W)], SH1106_PSZ);
 		}
 	}
 }
@@ -58,7 +195,7 @@ void sh1106::sh1106_refresh(void)
 /*
  * plot a pixel in the buffer
  */
-void sh1106::sh1106_drawPixel(uint8_t x, uint8_t y, uint8_t color)
+void sh1106::drawPixel(uint8_t x, uint8_t y, uint8_t color)
 {
 	uint16_t addr;
 	
@@ -73,15 +210,15 @@ void sh1106::sh1106_drawPixel(uint8_t x, uint8_t y, uint8_t color)
 	
 	/* set/clear bit in buffer */
 	if(color)
-		sh1106_buffer[addr] |= (1<<(y&7));
+		buffer[addr] |= (1<<(y&7));
 	else
-		sh1106_buffer[addr] &= ~(1<<(y&7));
+		buffer[addr] &= ~(1<<(y&7));
 }
 
 /*
  * plot a pixel in the buffer
  */
-void sh1106::sh1106_xorPixel(uint8_t x, uint8_t y)
+void sh1106::xorPixel(uint8_t x, uint8_t y)
 {
 	uint16_t addr;
 	
@@ -94,14 +231,14 @@ void sh1106::sh1106_xorPixel(uint8_t x, uint8_t y)
 	/* compute buffer address */
 	addr = x + SH1106_W*(y/8);
 	
-	sh1106_buffer[addr] ^= (1<<(y&7));
+	buffer[addr] ^= (1<<(y&7));
 }
 
 /*
  * draw a an image from an array, directly into to the display buffer
  * the color modes allow for overwriting and even layering (sprites!)
  */
-void sh1106::sh1106_drawImage(uint8_t x, uint8_t y, const unsigned char* input, uint8_t width, uint8_t height, uint8_t color_mode) {
+void sh1106::drawImage(uint8_t x, uint8_t y, const unsigned char* input, uint8_t width, uint8_t height, uint8_t color_mode) {
 	uint8_t x_absolute;
 	uint8_t y_absolute;
 	uint8_t pixel;
@@ -134,27 +271,27 @@ void sh1106::sh1106_drawImage(uint8_t x, uint8_t y, const unsigned char* input, 
 				switch (color_mode) {
 					case 0:
 						// write pixels as they are
-						sh1106_buffer[buffer_addr] = (sh1106_buffer[buffer_addr] & ~v_mask) | (input_pixel ? v_mask : 0);
+						buffer[buffer_addr] = (buffer[buffer_addr] & ~v_mask) | (input_pixel ? v_mask : 0);
 						break;
 					case 1:
 						// write pixels after inversion
-						sh1106_buffer[buffer_addr] = (sh1106_buffer[buffer_addr] & ~v_mask) | (!input_pixel ? v_mask : 0);
+						buffer[buffer_addr] = (buffer[buffer_addr] & ~v_mask) | (!input_pixel ? v_mask : 0);
 						break;
 					case 2:
 						// 0 clears pixel
-						sh1106_buffer[buffer_addr] &= input_pixel ? 0xFF : ~v_mask;
+						buffer[buffer_addr] &= input_pixel ? 0xFF : ~v_mask;
 						break;
 					case 3:
 						// 1 sets pixel
-						sh1106_buffer[buffer_addr] |= input_pixel ? v_mask : 0;
+						buffer[buffer_addr] |= input_pixel ? v_mask : 0;
 						break;
 					case 4:
 						// 0 sets pixel
-						sh1106_buffer[buffer_addr] |= !input_pixel ? v_mask : 0;
+						buffer[buffer_addr] |= !input_pixel ? v_mask : 0;
 						break;
 					case 5:
 						// 1 clears pixel
-						sh1106_buffer[buffer_addr] &= input_pixel ? ~v_mask : 0xFF;
+						buffer[buffer_addr] &= input_pixel ? ~v_mask : 0xFF;
 						break;
 				}
 			}
@@ -171,21 +308,21 @@ void sh1106::sh1106_drawImage(uint8_t x, uint8_t y, const unsigned char* input, 
 /*
  *  fast vert line
  */
-void sh1106::sh1106_drawFastVLine(uint8_t x, uint8_t y, uint8_t h, uint8_t color)
+void sh1106::drawFastVLine(uint8_t x, uint8_t y, uint8_t h, uint8_t color)
 {
 	// clipping
 	if((x >= SH1106_W) || (y >= SH1106_H)) return;
 	if((y+h-1) >= SH1106_H) h = SH1106_H-y;
 	while(h--)
 	{
-        sh1106_drawPixel(x, y++, color);
+        drawPixel(x, y++, color);
 	}
 }
 
 /*
  *  fast horiz line
  */
-void sh1106::sh1106_drawFastHLine(uint8_t x, uint8_t y, uint8_t w, uint8_t color)
+void sh1106::drawFastHLine(uint8_t x, uint8_t y, uint8_t w, uint8_t color)
 {
 	// clipping
 	if((x >= SH1106_W) || (y >= SH1106_H)) return;
@@ -193,7 +330,7 @@ void sh1106::sh1106_drawFastHLine(uint8_t x, uint8_t y, uint8_t w, uint8_t color
 
 	while (w--)
 	{
-        sh1106_drawPixel(x++, y, color);
+        drawPixel(x++, y, color);
 	}
 }
 
@@ -218,7 +355,7 @@ void sh1106::gfx_swap(uint16_t *z0, uint16_t *z1)
 /*
  * Bresenham line draw routine swiped from Wikipedia
  */
-void sh1106::sh1106_drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t color)
+void sh1106::drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t color)
 {
 	int16_t steep;
 	int16_t deltax, deltay, error, ystep, x, y;
@@ -255,10 +392,10 @@ void sh1106::sh1106_drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
 		/* plot point */
 		if(steep)
 			/* flip point & plot */
-			sh1106_drawPixel(y, x, color);
+			drawPixel(y, x, color);
 		else
 			/* just plot */
-			sh1106_drawPixel(x, y, color);
+			drawPixel(x, y, color);
 
 		/* update error */
 		error = error - deltay;
@@ -275,7 +412,7 @@ void sh1106::sh1106_drawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
 /*
  *  draws a circle
  */
-void sh1106::sh1106_drawCircle(int16_t x, int16_t y, int16_t radius, int8_t color)
+void sh1106::drawCircle(int16_t x, int16_t y, int16_t radius, int8_t color)
 {
     /* Bresenham algorithm */
     int16_t x_pos = -radius;
@@ -284,10 +421,10 @@ void sh1106::sh1106_drawCircle(int16_t x, int16_t y, int16_t radius, int8_t colo
     int16_t e2;
 
     do {
-        sh1106_drawPixel(x - x_pos, y + y_pos, color);
-        sh1106_drawPixel(x + x_pos, y + y_pos, color);
-        sh1106_drawPixel(x + x_pos, y - y_pos, color);
-        sh1106_drawPixel(x - x_pos, y - y_pos, color);
+        drawPixel(x - x_pos, y + y_pos, color);
+        drawPixel(x + x_pos, y + y_pos, color);
+        drawPixel(x + x_pos, y - y_pos, color);
+        drawPixel(x - x_pos, y - y_pos, color);
         e2 = err;
         if (e2 <= y_pos) {
             err += ++y_pos * 2 + 1;
@@ -304,7 +441,7 @@ void sh1106::sh1106_drawCircle(int16_t x, int16_t y, int16_t radius, int8_t colo
 /*
  *  draws a filled circle
  */
-void sh1106::sh1106_fillCircle(int16_t x, int16_t y, int16_t radius, int8_t color)
+void sh1106::fillCircle(int16_t x, int16_t y, int16_t radius, int8_t color)
 {
     /* Bresenham algorithm */
     int16_t x_pos = -radius;
@@ -313,12 +450,12 @@ void sh1106::sh1106_fillCircle(int16_t x, int16_t y, int16_t radius, int8_t colo
     int16_t e2;
 
     do {
-        sh1106_drawPixel(x - x_pos, y + y_pos, color);
-        sh1106_drawPixel(x + x_pos, y + y_pos, color);
-        sh1106_drawPixel(x + x_pos, y - y_pos, color);
-        sh1106_drawPixel(x - x_pos, y - y_pos, color);
-        sh1106_drawFastHLine(x + x_pos, y + y_pos, 2 * (-x_pos) + 1, color);
-        sh1106_drawFastHLine(x + x_pos, y - y_pos, 2 * (-x_pos) + 1, color);
+        drawPixel(x - x_pos, y + y_pos, color);
+        drawPixel(x + x_pos, y + y_pos, color);
+        drawPixel(x + x_pos, y - y_pos, color);
+        drawPixel(x - x_pos, y - y_pos, color);
+        drawFastHLine(x + x_pos, y + y_pos, 2 * (-x_pos) + 1, color);
+        drawFastHLine(x + x_pos, y - y_pos, 2 * (-x_pos) + 1, color);
         e2 = err;
         if (e2 <= y_pos) {
             err += ++y_pos * 2 + 1;
@@ -335,18 +472,18 @@ void sh1106::sh1106_fillCircle(int16_t x, int16_t y, int16_t radius, int8_t colo
 /*
  *  draw a rectangle
  */
-void sh1106::sh1106_drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
+void sh1106::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
 {
-	sh1106_drawFastVLine(x, y, h, color);
-	sh1106_drawFastVLine(x+w-1, y, h, color);
-	sh1106_drawFastHLine(x, y, w, color);
-	sh1106_drawFastHLine(x, y+h-1, w, color);
+	drawFastVLine(x, y, h, color);
+	drawFastVLine(x+w-1, y, h, color);
+	drawFastHLine(x, y, w, color);
+	drawFastHLine(x, y+h-1, w, color);
 }
 
 /*
  * fill a rectangle
  */
-void sh1106::sh1106_fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
+void sh1106::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
 {
 	uint8_t m, n=y, iw = w;
 	
@@ -359,7 +496,7 @@ void sh1106::sh1106_fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t
 		while(w--)
 		{
 			/* invert pixels */
-			sh1106_drawPixel(m++, n, color);
+			drawPixel(m++, n, color);
 		}
 		n++;
 	}
@@ -368,7 +505,7 @@ void sh1106::sh1106_fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t
 /*
  * invert a rectangle in the buffer
  */
-void sh1106::sh1106_xorrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
+void sh1106::xorrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 {
 	uint8_t m, n=y, iw = w;
 	
@@ -381,7 +518,7 @@ void sh1106::sh1106_xorrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 		while(w--)
 		{
 			/* invert pixels */
-			sh1106_xorPixel(m++, n);
+			xorPixel(m++, n);
 		}
 		n++;
 	}
@@ -390,7 +527,7 @@ void sh1106::sh1106_xorrect(uint8_t x, uint8_t y, uint8_t w, uint8_t h)
 /*
  * Draw character to the display buffer
  */
-void sh1106::sh1106_drawchar(uint8_t x, uint8_t y, uint8_t chr, uint8_t color)
+void sh1106::drawchar(uint8_t x, uint8_t y, uint8_t chr, uint8_t color)
 {
 	uint16_t i, j, col;
 	uint8_t d;
@@ -421,7 +558,7 @@ void sh1106::sh1106_drawchar(uint8_t x, uint8_t y, uint8_t chr, uint8_t color)
 			else
 				col = (~color)&1;
 			
-			sh1106_drawPixel(x + i, y - j, col);
+			drawPixel(x + i, y - j, col);
 			
 			// next bit
 			d <<= 1;
@@ -432,13 +569,13 @@ void sh1106::sh1106_drawchar(uint8_t x, uint8_t y, uint8_t chr, uint8_t color)
 /*
  * draw a string to the display
  */
-void sh1106::sh1106_drawstr(uint8_t x, uint8_t y, char *str, uint8_t color)
+void sh1106::drawstr(uint8_t x, uint8_t y, char *str, uint8_t color)
 {
 	uint8_t c;
 	
 	while((c=*str++))
 	{
-		sh1106_drawchar(x, y, c, color);
+		drawchar(x, y, c, color);
 		x += FONT_WIDTH + 1;
 		if(x>120)
 			break;
@@ -448,7 +585,7 @@ void sh1106::sh1106_drawstr(uint8_t x, uint8_t y, char *str, uint8_t color)
 /*
  * Draw character to the display buffer, scaled to size
  */
-void sh1106::sh1106_drawchar_sz(uint8_t x, uint8_t y, uint8_t chr, uint8_t color, font_size_t font_size)
+void sh1106::drawchar_sz(uint8_t x, uint8_t y, uint8_t chr, uint8_t color, font_size_t font_size)
 {
     uint16_t i, j, col;
     uint8_t d;
@@ -491,7 +628,7 @@ void sh1106::sh1106_drawchar_sz(uint8_t x, uint8_t y, uint8_t chr, uint8_t color
 			{
                 for (uint8_t l = 0; l < font_scale; l++) 
 				{
-                    sh1106_drawPixel(x + (i * font_scale) + k, y - (j * font_scale) - l, col);
+                    drawPixel(x + (i * font_scale) + k, y - (j * font_scale) - l, col);
                 }
             }
 
@@ -504,13 +641,13 @@ void sh1106::sh1106_drawchar_sz(uint8_t x, uint8_t y, uint8_t chr, uint8_t color
 /*
  * draw a string to the display buffer, scaled to size
  */
-void sh1106::sh1106_drawstr_sz(uint8_t x, uint8_t y, char *str, uint8_t color, font_size_t font_size)
+void sh1106::drawstr_sz(uint8_t x, uint8_t y, char *str, uint8_t color, font_size_t font_size)
 {
 	uint8_t c;
 	
 	while((c=*str++))
 	{
-		sh1106_drawchar_sz(x, y, c, color, font_size);
+		drawchar_sz(x, y, c, color, font_size);
 		x += (FONT_WIDTH + 1) * font_size;
 		if(x>128 - FONT_WIDTH * font_size)
 			break;
@@ -520,27 +657,29 @@ void sh1106::sh1106_drawstr_sz(uint8_t x, uint8_t y, char *str, uint8_t color, f
 /*
  * initialize I2C and OLED
  */
-uint8_t sh1106::sh1106_init(void)
+uint8_t sh1106::init(void)
 {
-	// pulse reset
-	sh1106_rst();
+	i2c_init();
+    
+    // pulse reset
+	rst();
 	
 	// initialize OLED
-	uint8_t *cmd_list = (uint8_t *)sh1106_init_array;
+	uint8_t *cmd_list = (uint8_t *)init_array;
 	while(*cmd_list != SH1106_TERMINATE_CMDS)
 	{
-		if(sh1106_cmd(*cmd_list++))
+		if(cmd(*cmd_list++))
 			return 1;
 	}
 	
 	// clear display
-	sh1106_setbuf(0);
-	sh1106_refresh();
+	setbuf(0);
+	refresh();
 	
 	return 0;
 }
 
-void sh1106::sh1106_i2c_setup(void)
+void sh1106::i2c_setup(void)
 {
 	
 	// Reset I2C1 to init all regs
@@ -550,7 +689,7 @@ void sh1106::sh1106_i2c_setup(void)
 	// Set I2C module clock frequency (in MHz)
   	I2C1->CTLR2 = 8;
 
-  // Set bus clock configuration
+    // Set bus clock configuration
   	I2C1->CKCFGR = (FUNCONF_SYSTEM_CORE_CLOCK / (2 * SH1106_I2C_CLKRATE)) | I2C_CKCFGR_FS ; 
 	
 	// Enable I2C
@@ -563,13 +702,13 @@ void sh1106::sh1106_i2c_setup(void)
 /*
  * error handler
  */
-uint8_t sh1106::sh1106_i2c_error(uint8_t err)
+uint8_t sh1106::i2c_error(uint8_t err)
 {
 	// report error
-	printf("sh1106_i2c_error - timeout waiting for %s\n\r", errstr[err]);
+	printf("i2c_error - timeout waiting for %s\n\r", errstr[err]);
 	
 	// reset & initialize I2C
-	sh1106_i2c_setup();
+	i2c_setup();
 
 	return 1;
 }
@@ -577,7 +716,7 @@ uint8_t sh1106::sh1106_i2c_error(uint8_t err)
 /*
  * check for 32-bit event codes
  */
-uint8_t sh1106::sh1106_i2c_chk_evt(uint32_t event_mask)
+uint8_t sh1106::i2c_chk_evt(uint32_t event_mask)
 {
 	/* read order matters here! STAR1 before STAR2!! */
 	uint32_t status = I2C1->STAR1 | (I2C1->STAR2<<16);
@@ -588,7 +727,7 @@ uint8_t sh1106::sh1106_i2c_chk_evt(uint32_t event_mask)
 /*
  * low-level packet send for blocking polled operation via i2c
  */
-uint8_t sh1106::sh1106_i2c_send(uint8_t addr, uint8_t *data, uint8_t sz)
+uint8_t sh1106::i2c_send(uint8_t addr, uint8_t *data, uint8_t sz)
 {
 	int32_t timeout;
 	
@@ -596,25 +735,25 @@ uint8_t sh1106::sh1106_i2c_send(uint8_t addr, uint8_t *data, uint8_t sz)
 	timeout = TIMEOUT_MAX;
 	while((I2C1->STAR2 & I2C_STAR2_BUSY) && (timeout--));
 	if(timeout==-1)
-		return sh1106_i2c_error(0);
+		return i2c_error(0);
 
 	// Set START condition
 	I2C1->CTLR1 |= I2C_CTLR1_START;
 	
 	// wait for master mode select
 	timeout = TIMEOUT_MAX;
-	while((!sh1106_i2c_chk_evt(SH1106_I2C_EVENT_MASTER_MODE_SELECT)) && (timeout--));
+	while((!i2c_chk_evt(SH1106_I2C_EVENT_MASTER_MODE_SELECT)) && (timeout--));
 	if(timeout==-1)
-		return sh1106_i2c_error(1);
+		return i2c_error(1);
 	
 	// send 7-bit address + write flag
 	I2C1->DATAR = addr<<1;
 
 	// wait for transmit condition
 	timeout = TIMEOUT_MAX;
-	while((!sh1106_i2c_chk_evt(SH1106_I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) && (timeout--));
+	while((!i2c_chk_evt(SH1106_I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)) && (timeout--));
 	if(timeout==-1)
-		return sh1106_i2c_error(2);
+		return i2c_error(2);
 
 	// send data one byte at a time
 	while(sz--)
@@ -623,7 +762,7 @@ uint8_t sh1106::sh1106_i2c_send(uint8_t addr, uint8_t *data, uint8_t sz)
 		timeout = TIMEOUT_MAX;
 		while(!(I2C1->STAR1 & I2C_STAR1_TXE) && (timeout--));
 		if(timeout==-1)
-			return sh1106_i2c_error(3);
+			return i2c_error(3);
 		
 		// send command
 		I2C1->DATAR = *data++;
@@ -631,9 +770,9 @@ uint8_t sh1106::sh1106_i2c_send(uint8_t addr, uint8_t *data, uint8_t sz)
 
 	// wait for tx complete
 	timeout = TIMEOUT_MAX;
-	while((!sh1106_i2c_chk_evt(SH1106_I2C_EVENT_MASTER_BYTE_TRANSMITTED)) && (timeout--));
+	while((!i2c_chk_evt(SH1106_I2C_EVENT_MASTER_BYTE_TRANSMITTED)) && (timeout--));
 	if(timeout==-1)
-		return sh1106_i2c_error(4);
+		return i2c_error(4);
 
 	// set STOP condition
 	I2C1->CTLR1 |= I2C_CTLR1_STOP;
@@ -645,7 +784,7 @@ uint8_t sh1106::sh1106_i2c_send(uint8_t addr, uint8_t *data, uint8_t sz)
 /*
  * high-level packet send for I2C
  */
-uint8_t sh1106::sh1106_pkt_send(uint8_t *data, uint8_t sz, uint8_t cmd)
+uint8_t sh1106::pkt_send(uint8_t *data, uint8_t sz, uint8_t cmd)
 {
 	uint8_t pkt[33];
 	
@@ -660,13 +799,13 @@ uint8_t sh1106::sh1106_pkt_send(uint8_t *data, uint8_t sz, uint8_t cmd)
 		pkt[0] = 0x40;
 		memcpy(&pkt[1], data, sz);
 	}
-	return sh1106_i2c_send(SH1106_I2C_ADDR, pkt, sz+1);
+	return i2c_send(SH1106_I2C_ADDR, pkt, sz+1);
 }
 
 /*
  * init I2C and GPIO
  */
-uint8_t sh1106::sh1106_i2c_init(void)
+uint8_t sh1106::i2c_init(void)
 {
 	// Enable GPIOC and I2C
 	RCC->APB2PCENR |= RCC_APB2Periph_GPIOC;
@@ -682,7 +821,11 @@ uint8_t sh1106::sh1106_i2c_init(void)
 
 
 	// load I2C regs
-	sh1106_i2c_setup();
+	i2c_setup();
 	
 	return 0;
 }
+
+#ifndef NEED_PRINTF
+    #undef printf // To avoid printf() in 1106 lib
+#endif

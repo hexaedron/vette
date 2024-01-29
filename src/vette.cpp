@@ -43,10 +43,8 @@ int main()
 	//Delay_Ms( 500 );	
 
 	sh1106 OLEDScreen;
-	if(!OLEDScreen.sh1106_i2c_init())
-	{
-		OLEDScreen.sh1106_init();
-	}
+	OLEDScreen.init();
+	
 	//Delay_Ms( 500 );	
 	system_initSystick();
 	
@@ -81,9 +79,9 @@ int main()
 	/////ssd1306_drawstr(0,16, "This is a test", 1);
 	/////sh1106_setbuf(0b10000001);
 	//sh1106_drawstr(0,16, (char*)"This is a test", 1);
-	OLEDScreen.sh1106_drawstr_sz(0,32, (char*)"Тест test", 1, fontsize_10x16);
+	OLEDScreen.drawstr_sz(0,32, (char*)"Тест test", 1, fontsize_5x8);
 	//sh1106_drawCircle(SH1106_W/2, SH1106_H/2, 15, 1);
-	OLEDScreen.sh1106_refresh();
+	OLEDScreen.refresh();
 
 	uint8_t t = 0;
 	while (true)
