@@ -14,6 +14,9 @@
 
 #define SH1106_128X64
 
+// Uncomment for debug prinf()
+//#define NEED_PRINTF
+
 // characteristics of each type
 #if !defined (SH1106_64X32) && !defined (SH1106_128X32) && !defined (SH1106_128X64)
 	#error "Please define the SH1106_WXH resolution used in your application"
