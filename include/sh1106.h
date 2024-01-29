@@ -9,6 +9,16 @@
 #include <string.h>
 #include "font_5x8.h"
 
+/*
+ * enum for font size
+ */
+typedef enum {
+    fontsize_5x8   = 1,
+    fontsize_10x16 = 2,
+    fontsize_20x32 = 4,
+	fontsize_40x64 = 8,
+} font_size_t;
+
 // comfortable packet size for this OLED
 #define SH1106_PSZ 32
 
@@ -546,7 +556,6 @@ void sh1106_drawchar(uint8_t x, uint8_t y, uint8_t chr, uint8_t color)
 	
 	for(i = 0; i < FONT_WIDTH; i++)
 	{	
-
 		if((chr-32) <= 95)
 		{ 
 			d = fontdata[(chr-32)*5+i];
@@ -596,16 +605,6 @@ void sh1106_drawstr(uint8_t x, uint8_t y, char *str, uint8_t color)
 }
 
 /*
- * enum for font size
- */
-typedef enum {
-    fontsize_5x8 = 1,
-    fontsize_10x16 = 2,
-    fontsize_20x32 = 4,
-	fontsize_40x64 = 8,
-} font_size_t;
-
-/*
  * Draw character to the display buffer, scaled to size
  */
 void sh1106_drawchar_sz(uint8_t x, uint8_t y, uint8_t chr, uint8_t color, font_size_t font_size)
@@ -617,10 +616,25 @@ void sh1106_drawchar_sz(uint8_t x, uint8_t y, uint8_t chr, uint8_t color, font_s
     uint8_t font_scale = (uint8_t)font_size;
 
     // Loop through each row of the font data
-    for (i = 0; i < 8; i++)
+    for (i = 0; i < FONT_WIDTH; i++)
     {
         // Retrieve the font data for the current row
-        d = fontdata[(chr << 3) + i];
+        if((chr-32) <= 95)
+		{ 
+			d = fontdata[(chr-32)*5+i];
+		}
+		else if(chr == 184) //ё
+		{
+			d = fontdata[(159)*5+i];
+		}
+		else if(chr == 168) //Ё
+		{
+			d = fontdata[(160)*5+i];
+		}
+		else 
+		{
+			d = fontdata[(chr-97)*5+i];
+		}
 
         // Loop through each column of the font data
         for (j = 0; j < 8; j++)
@@ -632,9 +646,11 @@ void sh1106_drawchar_sz(uint8_t x, uint8_t y, uint8_t chr, uint8_t color, font_s
                 col = (~color) & 1;
 
             // Draw the pixel at the original size and scaled size using nested for-loops
-            for (uint8_t k = 0; k < font_scale; k++) {
-                for (uint8_t l = 0; l < font_scale; l++) {
-                    sh1106_drawPixel(x + (j * font_scale) + k, y + (i * font_scale) + l, col);
+            for (uint8_t k = 0; k < font_scale; k++) 
+			{
+                for (uint8_t l = 0; l < font_scale; l++) 
+				{
+                    sh1106_drawPixel(x + (i * font_scale) + k, y - (j * font_scale) - l, col);
                 }
             }
 
