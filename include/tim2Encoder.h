@@ -4,8 +4,8 @@ class tim2Encoder
 {
     public:
         //tim2Encoder() {};
-        tim2Encoder(uint32_t);
-        void init(uint32_t);
+        tim2Encoder(const uint32_t);
+        void init(const uint32_t);
         int32_t getDelta();
     
     private:
@@ -13,14 +13,14 @@ class tim2Encoder
         uint16_t last_count;
 };
 
-tim2Encoder::tim2Encoder(uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
+tim2Encoder::tim2Encoder(const uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
 {
     this->init(remapMode);
     this->count      = TIM2->CNT;
     this->last_count = TIM2->CNT;
 }
 
-void tim2Encoder::init(uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
+void tim2Encoder::init(const uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
 {
     // Enable TIM2 and AFIO *very important!*
 	RCC->APB2PCENR |= RCC_APB2Periph_AFIO;
