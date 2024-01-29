@@ -7,7 +7,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include "font_8x8.h"
+#include "font_5x8.h"
 
 // comfortable packet size for this OLED
 #define SH1106_PSZ 32
@@ -20,7 +20,6 @@
 #ifdef SH1106_64X32
 #define SH1106_W 64
 #define SH1106_H 32
-#define SH1106_FULLUSE
 #define SH1106_OFFSET 32
 #endif
 
@@ -543,9 +542,25 @@ void sh1106_drawchar(uint8_t x, uint8_t y, uint8_t chr, uint8_t color)
 	uint16_t i, j, col;
 	uint8_t d;
 	
-	for(i=0;i<8;i++)
-	{
-		d = fontdata[(chr<<3)+i];
+	for(i=0;i<5;i++)
+	{		
+		if((chr-32) <= 95)
+		{ 
+			d = fontdata[(chr-32)*5+i];
+		}
+		else if((chr-32) >= 96 && (chr-32) <= 111)
+		{
+			d = fontdata[(chr-32+47)*5+i];
+		}
+		else if ((chr-32) <= 159)
+		{
+			d = fontdata[(chr-32-17)*5+i];
+		}
+		else
+		{
+			d = fontdata[(chr-32-1)*5+i];
+		}
+		
 		for(j=0;j<8;j++)
 		{
 			if(d&0x80)
@@ -553,7 +568,7 @@ void sh1106_drawchar(uint8_t x, uint8_t y, uint8_t chr, uint8_t color)
 			else
 				col = (~color)&1;
 			
-			sh1106_drawPixel(x+j, y+i, col);
+			sh1106_drawPixel(x+i, y-j, col);
 			
 			// next bit
 			d <<= 1;
@@ -571,7 +586,7 @@ void sh1106_drawstr(uint8_t x, uint8_t y, char *str, uint8_t color)
 	while((c=*str++))
 	{
 		sh1106_drawchar(x, y, c, color);
-		x += 8;
+		x += 6;
 		if(x>120)
 			break;
 	}
