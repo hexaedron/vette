@@ -33,6 +33,8 @@ int main()
 
 	sh1106 OLEDScreen;
 	OLEDScreen.init();
+	OLEDScreen.flipH();
+	OLEDScreen.flipV();
 	
 	//Delay_Ms( 500 );	
 	system_initSystick();

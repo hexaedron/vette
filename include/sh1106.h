@@ -65,6 +65,12 @@ public:
 	// Send the frame buffer
 	void refresh( void );
 
+	// Flip vertically
+	void flipV( void );
+
+	// Flip horisontally
+	void flipH( void );
+
 	// plot a pixel in the buffer
 	void drawPixel( uint8_t x, uint8_t y, uint8_t color );
 
