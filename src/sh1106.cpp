@@ -700,12 +700,14 @@ uint8_t sh1106::init( void )
 void sh1106::flipV( void )
 {
 	cmd(SH1106_SET_SEGMENT_REMAP_FLIP);
+	pageUpdateMask = 0xFF;
 }
 
 // Flip horisontally
 void sh1106::flipH( void )
 {
 	cmd(SH1106_COMSCANINC);
+	pageUpdateMask = 0xFF;
 }
 
 void sh1106::i2c_setup( void )
