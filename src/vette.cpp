@@ -52,7 +52,7 @@ int main()
 	simpleTimer tmr(1000UL);
 
 	
-	OLEDScreen.drawstr_sz(0,32, (char*)"Тест test", 1, fontsize_5x8);
+	OLEDScreen.drawstr_sz(0,32, (char*)"Тест test", 1, fontsize_20x32);
 	OLEDScreen.refresh();
 
 	uint8_t t = 0;

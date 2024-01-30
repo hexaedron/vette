@@ -45,9 +45,13 @@
  */
 typedef enum
 {
-	fontsize_5x8 = 1,
+	fontsize_5x8   = 1,
 	fontsize_10x16 = 2,
+	fontsize_15x24 = 3,
 	fontsize_20x32 = 4,
+	fontsize_25x40 = 5,
+	fontsize_30x48 = 6,
+	fontsize_35x56 = 7,
 	fontsize_40x64 = 8,
 } font_size_t;
 
