@@ -39,7 +39,7 @@ void system_initEXTI(int portno, int pin, bool risingEdge = true, bool fallingEd
   AFIO->EXTICR = portno << (pin * 2);
   EXTI->INTENR = 1 << pin;     // Enable the interrupt request signal for external interrupt channel
   
-  if(risingEdge) EXTI->RTENR   = 1 << pin;     // Rising edge trigger
+  if(risingEdge)  EXTI->RTENR  = 1 << pin;     // Rising edge trigger
   if(fallingEdge) EXTI->FTENR  = 1 << pin;     // Falling edge trigger
   
   _pin_num |= 1 << pin; // Set the state of interrupt mask

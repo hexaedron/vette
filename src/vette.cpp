@@ -7,7 +7,7 @@
 #include <stdlib.h>    // itoa
 #include <stdio.h>	   // printf
 
-#include "include/sh1106.h"
+#include "sh1106.h"
 
 
 #define PACKED __attribute__ ((__packed__))
@@ -33,8 +33,8 @@ int main()
 
 	sh1106 OLEDScreen;
 	OLEDScreen.init();
-	OLEDScreen.flipH();
-	OLEDScreen.flipV();
+	//OLEDScreen.flipH();
+	//OLEDScreen.flipV();
 	
 	//Delay_Ms( 500 );	
 	system_initSystick();
@@ -54,10 +54,13 @@ int main()
 	simpleTimer tmr(1000UL);
 
 	
-	OLEDScreen.drawstr_sz(0,32, (char*)"Тест test", 1, fontsize_20x32);
-	OLEDScreen.refresh();
+	//OLEDScreen.drawstr_sz(0,32, (char*)"Тест test", 1, fontsize_10x16);
+	//OLEDScreen.refresh();
 
-	uint8_t t = 0;
+	funPinMode(PA1, GPIO_Speed_10MHz | GPIO_CNF_OUT_PP);
+	funPinMode(PA2, GPIO_Speed_10MHz | GPIO_CNF_OUT_PP);
+
+	bool t = false;
 	while (true)
 	{
 		
@@ -65,9 +68,21 @@ int main()
 		{			
 			int32_t delta = enc.getDelta();
 
-			OLEDScreen.drawCircle(15 + t, SH1106_H/2, 15, 1);
-			t+=3;
-			if(t > (64-15) ) (t=0);
+			if(t)
+			{
+				OLEDScreen.drawstr_sz(0,32, (char*)"PA1 вкл.", 1, fontsize_10x16);
+				t = !t;
+				funDigitalWrite(PA1, FUN_HIGH);
+				funDigitalWrite(PA2, FUN_LOW);
+			}
+			else
+			{
+				OLEDScreen.drawstr_sz(0,32, (char*)"PA2 вкл.", 1, fontsize_10x16);
+				t = !t;
+				funDigitalWrite(PA1, FUN_LOW);
+				funDigitalWrite(PA2, FUN_HIGH);
+			}
+
 			OLEDScreen.refresh();
 
 			if(delta < 0)
