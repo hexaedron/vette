@@ -1,14 +1,14 @@
+#include "ch32v003fun.h"
 #include "include/FSM.h"
+#include "include/tim2Encoder.h"
+#include "include/simpleTimer.h"
 
+// from system.cpp
+bool btnPressed(void);
+
+extern tim2Encoder enc;
 
 // https://menginventor.github.io/FSM_coder/#
-
-// void setup(){
-//     fsm_init();//initialize FSM, Needed
-// }
-// void loop(){
-//     fsm_update();//update FSM, Needed
-// }
 
 
 // This section gennerated by FSM Coder
