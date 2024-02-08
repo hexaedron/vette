@@ -7,16 +7,10 @@
 #include <stdlib.h>    // itoa
 #include <stdio.h>	   // printf
 
-#include "sh1106.h"
-
-
 #define PACKED __attribute__ ((__packed__))
 #include "include/ALDL_cmd.h"
 #include "include/A172ALDL.h"
 #include "include/ABSALDL.h"
-
-#include "include/UART.h"
-#include "include/tim2Encoder.h"
 
 #include "include/FSM.h"
 
@@ -24,11 +18,6 @@
 void system_initSystick(void);
 void system_initEXTI(int portno, int pin, bool risingEdge = true, bool fallingEdge = false);
 bool btnPressed(void);
-
-#include "include/simpleTimer.h"
-
-UART myUART;
-sh1106 OLEDScreen;
 
 int main()
 {
@@ -38,13 +27,7 @@ int main()
 	funPinMode(PC6, GPIO_Speed_In | GPIO_CNF_IN_PUPD);
 	system_initEXTI(GPIO_PortSourceGPIOC, 6); //PC6 
 
-	myUART.beginHD(8192);
-	OLEDScreen.init();
 	fsm_init();
-
-	
-	OLEDScreen.drawFrame(1);
-
 	
 	while (true)
 	{		

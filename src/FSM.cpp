@@ -3,13 +3,17 @@
 #include "include/tim2Encoder.h"
 #include "include/simpleTimer.h"
 #include "sh1106.h"
+#include "include/UART.h"
+
+#include "include/logo.h"
 
 // from system.cpp
 bool btnPressed(void);
 
 tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
 simpleTimer tmr(1000UL);
-extern sh1106 OLEDScreen;
+sh1106 OLEDScreen;
+UART myUART;
 
 // https://menginventor.github.io/FSM_coder/#
 
@@ -35,7 +39,22 @@ void fsm_init_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
-        OLEDScreen.drawstr(2,9,(char*)"Test", 1);
+        myUART.beginHD(8192);
+        OLEDScreen.init();
+        OLEDScreen.drawImage(10, 2, vette_logo, 96, 64, 0);
+        OLEDScreen.drawchar(6, 15, 'P', 1);
+        OLEDScreen.drawchar(6, 25, 'r', 1);
+        OLEDScreen.drawchar(6, 35, 'e', 1);
+        OLEDScreen.drawchar(6, 45, 's', 1);
+        OLEDScreen.drawchar(6, 55, 's', 1);
+
+        OLEDScreen.drawchar(116, 10, 'B', 1);
+        OLEDScreen.drawchar(116, 20, 'u', 1);
+        OLEDScreen.drawchar(116, 30, 't', 1);
+        OLEDScreen.drawchar(116, 40, 't', 1);
+        OLEDScreen.drawchar(116, 50, 'o', 1);
+        OLEDScreen.drawchar(116, 60, 'n', 1);
+        OLEDScreen.drawFrame(1);
         OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
