@@ -27,6 +27,9 @@ bool btnPressed(void);
 
 #include "include/simpleTimer.h"
 
+UART myUART;
+sh1106 OLEDScreen;
+
 int main()
 {
 	SystemInit();	
@@ -34,12 +37,6 @@ int main()
 	funGpioInitAll();
 	funPinMode(PC6, GPIO_Speed_In | GPIO_CNF_IN_PUPD);
 	system_initEXTI(GPIO_PortSourceGPIOC, 6); //PC6 
-
-
-	UART myUART;
-	sh1106 OLEDScreen;
-	tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
-	simpleTimer tmr(1000UL);
 
 	myUART.beginHD(8192);
 	OLEDScreen.init();

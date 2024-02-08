@@ -2,11 +2,14 @@
 #include "include/FSM.h"
 #include "include/tim2Encoder.h"
 #include "include/simpleTimer.h"
+#include "sh1106.h"
 
 // from system.cpp
 bool btnPressed(void);
 
-extern tim2Encoder enc;
+tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
+simpleTimer tmr(1000UL);
+extern sh1106 OLEDScreen;
 
 // https://menginventor.github.io/FSM_coder/#
 
@@ -32,16 +35,19 @@ void fsm_init_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
+        OLEDScreen.drawstr(2,9,(char*)"Test", 1);
+        OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
 
 
-	if ( true )
+	if ( btnPressed() )
 	{
 		fsm_state = &fsm_drawECUErrors_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
+
 	fsm_enter_state_flag = false; // Reset flag
 }
 
