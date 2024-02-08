@@ -2,318 +2,146 @@
     "state": {
         "init": {
             "text": "init",
-            "x": -23.91351766851949,
-            "y": 874.1387710157724,
+            "x": 42.98757583460514,
+            "y": 633.4834021763597,
             "radius": 50,
             "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
         },
-        "drawECUErrors1": {
-            "text": "drawECUErrors1",
-            "x": 331.983626986412,
-            "y": 298.3727446840838,
+        "drawECUErrors": {
+            "text": "drawECUErrors",
+            "x": 40.57677273869422,
+            "y": 142.94138847384124,
             "radius": 67.91170738539883,
             "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
         },
-        "getECUParameters1": {
-            "text": "getECUParameters1",
-            "x": 964.5299382657134,
-            "y": 166.33110914496368,
+        "drawECUParameters1": {
+            "text": "drawECUParameters1",
+            "x": 240.67504320379282,
+            "y": -94.67062289177733,
             "radius": 86.16023656083392,
             "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
         },
-        "draw\nABSErrors1": {
-            "text": "draw\nABSErrors1",
-            "x": 1072.8105836129341,
-            "y": 768.9383325588099,
-            "radius": 73.788053737233,
+        "drawABSParameters": {
+            "text": "drawABSParameters",
+            "x": 393.5420695484508,
+            "y": 605.728772315979,
+            "radius": 88.28431685970864,
             "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
         },
-        "getABSParameters": {
-            "text": "getABSParameters",
-            "x": 1036.1942247754644,
-            "y": 1204.4170633932645,
-            "radius": 75.32722000756054,
+        "drawECUParameters2": {
+            "text": "drawECUParameters2",
+            "x": 548.4469023853316,
+            "y": -128.39478752516607,
+            "radius": 97.4544199243448,
             "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
         },
-        "drawECUErrors2": {
-            "text": "drawECUErrors2",
-            "x": 489.0427408888347,
-            "y": 138.40804744742027,
-            "radius": 74.36290229440854,
-            "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
-        },
-        "drawECUErrors3": {
-            "text": "drawECUErrors3",
-            "x": 724.7670581053281,
-            "y": 103.47084014830634,
-            "radius": 74.08163554107776,
-            "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
-        },
-        "drawABSErrors2": {
-            "text": "drawABSErrors2",
-            "x": 1068.7908177075294,
-            "y": 953.1653490501075,
-            "radius": 70.40626892523998,
-            "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
-        },
-        "getECUParameters2\n": {
-            "text": "getECUParameters2\n",
-            "x": 1198.3428268565463,
-            "y": 210.0313128705347,
-            "radius": 80.68947371828745,
-            "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
-        },
-        "getECUErrors\n\n": {
-            "text": "getECUErrors\n\n",
-            "x": 268.8185469447161,
-            "y": 508.180860465749,
-            "radius": 69.59830037655418,
-            "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
-        },
-        "getABSErrors\n": {
-            "text": "getABSErrors\n",
-            "x": 1082.9543983698657,
-            "y": 553.4249643987912,
+        "drawABSErrors": {
+            "text": "drawABSErrors",
+            "x": 978.8999771426784,
+            "y": 327.331944430204,
             "radius": 79.17367084389775,
+            "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
+        },
+        "drawFanStatus": {
+            "text": "drawFanStatus",
+            "x": 867.8738922868124,
+            "y": -29.629577346310157,
+            "radius": 65.02990354292209,
             "code": "// Declare local/static variable here.\n\nif (fsm_enter_state_flag){\n    //Run once when enter this state.\n\n}\n//Run repeatly for update.\n\n"
         }
     },
     "text": {},
     "arrow": {
-        "1": {
-            "srcStateIdx": 2,
-            "dstStateIdx": 10,
-            "points": [
-                331.983626986412,
-                298.3727446840838,
-                435.5431520311819,
-                192.89737519962782
-            ],
-            "code": "",
-            "textX": 383.30063471226026,
-            "textY": 252.50318908881223
-        },
-        "3": {
-            "srcStateIdx": 10,
-            "dstStateIdx": 12,
-            "points": [
-                489.0427408888347,
-                138.40804744742027,
-                649.5075391949858,
-                114.62521507428126
-            ],
-            "code": "",
-            "textX": 572.6611319057822,
-            "textY": 155.83310824897316
-        },
-        "7": {
-            "srcStateIdx": 12,
-            "dstStateIdx": 4,
-            "points": [
-                724.7670581053281,
-                103.47084014830634,
-                879.2518632306551,
-                143.97317478650496
-            ],
-            "code": "",
-            "textX": 789.5951427824124,
-            "textY": 160.85210912231054
-        },
-        "10": {
-            "srcStateIdx": 2,
-            "dstStateIdx": 4,
-            "points": [
-                331.983626986412,
-                298.3727446840838,
-                772,
-                298.45258833660375,
-                891.8394289348196,
-                216.21414397322405
-            ],
-            "code": "",
-            "textX": 772,
-            "textY": 298.45258833660375
-        },
-        "12": {
-            "srcStateIdx": 10,
-            "dstStateIdx": 4,
-            "points": [
-                489.0427408888347,
-                138.40804744742027,
-                555,
-                202.43768087299011,
-                876.7103616119041,
-                174.07380033136076
-            ],
-            "code": "",
-            "textX": 555,
-            "textY": 202.43768087299011
-        },
-        "14": {
-            "srcStateIdx": 12,
-            "dstStateIdx": 10,
-            "points": [
-                724.7670581053281,
-                103.47084014830634,
-                665,
-                72.41749368267996,
-                560.5426750907279,
-                111.59289770048933
-            ],
-            "code": "",
-            "textX": 665,
-            "textY": 72.41749368267996
-        },
-        "16": {
-            "srcStateIdx": 10,
+        "0": {
+            "srcStateIdx": 0,
             "dstStateIdx": 2,
             "points": [
-                489.0427408888347,
-                138.40804744742027,
-                328,
-                139.42789784999366,
-                330.2319833178191,
-                228.4829845328291
-            ],
-            "code": "",
-            "textX": 328,
-            "textY": 139.42789784999366
-        },
-        "18": {
-            "srcStateIdx": 14,
-            "dstStateIdx": 8,
-            "points": [
-                1068.7908177075294,
-                953.1653490501075,
-                1046.1430327260316,
-                1127.7325136165305
-            ],
-            "code": "",
-            "textX": 1195.4187172683137,
-            "textY": 647.0147090607228
-        },
-        "21": {
-            "srcStateIdx": 4,
-            "dstStateIdx": 16,
-            "points": [
-                964.5299382657134,
-                166.33110914496368,
-                1081.061387383734,
-                116.97705539276288,
-                1133.5660204848436,
-                158.6356474882256
-            ],
-            "code": "",
-            "textX": 1081.061387383734,
-            "textY": 116.97705539276288
-        },
-        "23": {
-            "srcStateIdx": 16,
-            "dstStateIdx": 4,
-            "points": [
-                1198.3428268565463,
-                210.0313128705347,
-                1068.061387383734,
-                298.0051621731178,
-                1019.0210713153964,
-                235.63438272871258
-            ],
-            "code": "",
-            "textX": 1068.061387383734,
-            "textY": 298.0051621731178
-        },
-        "26": {
-            "srcStateIdx": 0,
-            "dstStateIdx": 18,
-            "points": [
-                -23.91351766851949,
-                874.1387710157724,
-                222.8453344196911,
-                565.6541024871138
+                42.98757583460514,
+                633.4834021763597,
+                40.92035457372622,
+                212.8522515858374
             ],
             "code": "",
             "textX": 99.46590837558581,
             "textY": 719.8964367514432
         },
-        "28": {
-            "srcStateIdx": 8,
-            "dstStateIdx": 18,
+        "2": {
+            "srcStateIdx": 6,
+            "dstStateIdx": 2,
             "points": [
-                1036.1942247754644,
-                1204.4170633932645,
-                321.8443692506917,
-                556.2909299479933
+                393.5420695484508,
+                605.728772315979,
+                82.97405255332876,
+                198.53021373451043
             ],
             "code": "",
             "textX": 749.8125842061103,
             "textY": 691.5073252433856
         },
-        "30": {
-            "srcStateIdx": 18,
-            "dstStateIdx": 2,
-            "points": [
-                268.8185469447161,
-                508.180860465749,
-                311.25292124033314,
-                367.2315240687978
-            ],
-            "code": "",
-            "textX": 290.03573409252465,
-            "textY": 437.7061922672734
-        },
-        "32": {
-            "srcStateIdx": 16,
-            "dstStateIdx": 20,
-            "points": [
-                1198.3428268565463,
-                210.0313128705347,
-                1109.4470518394835,
-                474.58335841700136
-            ],
-            "code": "",
-            "textX": 1153.8949393480148,
-            "textY": 342.30733564376806
-        },
-        "34": {
-            "srcStateIdx": 20,
+        "4": {
+            "srcStateIdx": 10,
             "dstStateIdx": 6,
             "points": [
-                1082.9543983698657,
-                553.4249643987912,
-                1076.4678741534926,
-                691.2363021469307
+                978.8999771426784,
+                327.331944430204,
+                475.0748602133826,
+                566.9516925237527
             ],
             "code": "",
             "textX": 1079.7111362616793,
             "textY": 622.330633272861
         },
-        "36": {
-            "srcStateIdx": 6,
-            "dstStateIdx": 14,
+        "6": {
+            "srcStateIdx": 12,
+            "dstStateIdx": 10,
             "points": [
-                1072.8105836129341,
-                768.9383325588099,
-                1070.4139488577337,
-                878.7767860807613
+                867.8738922868124,
+                -29.629577346310157,
+                954.7916589737683,
+                249.82095273650896
             ],
             "code": "",
-            "textX": 1071.612266235334,
-            "textY": 823.8575593197857
+            "textX": 1173.300632750798,
+            "textY": 439.2413782742482
         },
-        "39": {
-            "srcStateIdx": 14,
-            "dstStateIdx": 6,
+        "9": {
+            "srcStateIdx": 2,
+            "dstStateIdx": 4,
             "points": [
-                1068.7908177075294,
-                953.1653490501075,
-                1208.4217599220608,
-                944.2614182065548,
-                1120.4033887199403,
-                830.4680506328689
+                40.57677273869422,
+                142.94138847384124,
+                183.88722840392953,
+                -27.236422364755242
             ],
             "code": "",
-            "textX": 1208.4217599220608,
-            "textY": 944.2614182065548
+            "textX": 709.737080512188,
+            "textY": 204.50936143748334
+        },
+        "12": {
+            "srcStateIdx": 4,
+            "dstStateIdx": 8,
+            "points": [
+                240.67504320379282,
+                -94.67062289177733,
+                449.5842201021269,
+                -117.56188882453921
+            ],
+            "code": "",
+            "textX": 352.4681802403852,
+            "textY": -106.92037882570506
+        },
+        "14": {
+            "srcStateIdx": 8,
+            "dstStateIdx": 12,
+            "points": [
+                548.4469023853316,
+                -128.39478752516607,
+                801.9244761775351,
+                -50.020803351396694
+            ],
+            "code": "",
+            "textX": 675.1856892814332,
+            "textY": -89.20779543828135
         }
     },
     "globalCode": "void setup(){\n    fsm_init();//initialize FSM, Needed\n}\nvoid loop(){\n    fsm_update();//update FSM, Needed\n}\n"
