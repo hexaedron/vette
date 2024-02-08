@@ -18,6 +18,8 @@
 #include "include/UART.h"
 #include "include/tim2Encoder.h"
 
+#include "include/FSM.h"
+
 // from system.cpp
 void system_initSystick(void);
 bool system_isSysTick(void);
@@ -28,79 +30,28 @@ bool btnPressed(void);
 
 int main()
 {
-	SystemInit();
-	//Delay_Ms( 500 );	
-
-	sh1106 OLEDScreen;
-	OLEDScreen.init();
-	//OLEDScreen.flipH();
-	//OLEDScreen.flipV();
-	
-	//Delay_Ms( 500 );	
-	system_initSystick();
-	
+	SystemInit();	
+	system_initSystick();	
 	funGpioInitAll();
 	funPinMode(PC6, GPIO_Speed_In | GPIO_CNF_IN_PUPD);
 	system_initEXTI(GPIO_PortSourceGPIOC, 6); //PC6 
 
 
 	UART myUART;
-	myUART.begin(115200);
-
+	sh1106 OLEDScreen;
 	tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
-
-	char buf[10];
-
 	simpleTimer tmr(1000UL);
+
+	myUART.beginHD(8192);
+	OLEDScreen.init();
+	fsm_init();
 
 	
 	OLEDScreen.drawFrame(1);
 
-	funPinMode(PA1, GPIO_Speed_10MHz | GPIO_CNF_OUT_PP);
-	funPinMode(PA2, GPIO_Speed_10MHz | GPIO_CNF_OUT_PP);
-
-	bool t = false;
+	
 	while (true)
-	{
-		
-		if (tmr.ready())
-		{			
-			int32_t delta = enc.getDelta();
-
-			if(t)
-			{
-				OLEDScreen.drawstr_sz(2,32, (char*)"PA1 вкл.", 1, fontsize_10x16);
-				t = !t;
-				funDigitalWrite(PA1, FUN_HIGH);
-				funDigitalWrite(PA2, FUN_LOW);
-			}
-			else
-			{
-				OLEDScreen.drawstr_sz(2,32, (char*)"PA2 вкл.", 1, fontsize_10x16);
-				t = !t;
-				funDigitalWrite(PA1, FUN_LOW);
-				funDigitalWrite(PA2, FUN_HIGH);
-			}
-
-			OLEDScreen.refresh();
-
-			if(delta < 0)
-			{
-				itoa(delta, buf, 10);
-				myUART.write(buf);
-				myUART.write("\n\r");
-			}
-			else if (delta > 0)
-			{
-				itoa(delta, buf, 10);
-				myUART.write(buf);
-				myUART.write("\n\r");
-			}
-
-			if(btnPressed())
-			{
-				myUART.write("Button pressed!\n\r");
-			}
-		}
+	{		
+		fsm_update();
 	}
 }

@@ -14,6 +14,7 @@
 // This section gennerated by FSM Coder
 void ( *fsm_state )( void ); // use function pointer as state variable;
 bool fsm_enter_state_flag = true;
+
 void fsm_init()
 {
 	fsm_state = &fsm_init_state;
