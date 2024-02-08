@@ -54,8 +54,7 @@ int main()
 	simpleTimer tmr(1000UL);
 
 	
-	//OLEDScreen.drawstr_sz(0,32, (char*)"Тест test", 1, fontsize_10x16);
-	//OLEDScreen.refresh();
+	OLEDScreen.drawFrame(1);
 
 	funPinMode(PA1, GPIO_Speed_10MHz | GPIO_CNF_OUT_PP);
 	funPinMode(PA2, GPIO_Speed_10MHz | GPIO_CNF_OUT_PP);
@@ -70,14 +69,14 @@ int main()
 
 			if(t)
 			{
-				OLEDScreen.drawstr_sz(0,32, (char*)"PA1 вкл.", 1, fontsize_10x16);
+				OLEDScreen.drawstr_sz(2,32, (char*)"PA1 вкл.", 1, fontsize_10x16);
 				t = !t;
 				funDigitalWrite(PA1, FUN_HIGH);
 				funDigitalWrite(PA2, FUN_LOW);
 			}
 			else
 			{
-				OLEDScreen.drawstr_sz(0,32, (char*)"PA2 вкл.", 1, fontsize_10x16);
+				OLEDScreen.drawstr_sz(2,32, (char*)"PA2 вкл.", 1, fontsize_10x16);
 				t = !t;
 				funDigitalWrite(PA1, FUN_LOW);
 				funDigitalWrite(PA2, FUN_HIGH);
