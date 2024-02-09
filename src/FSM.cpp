@@ -78,6 +78,11 @@ void fsm_drawECUErrors_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
+		OLEDScreen.setbuf(0);
+		//OLEDScreen.drawFastHLine(0, 96, 24, 0);
+		OLEDScreen.drawFrame(1);
+		OLEDScreen.drawImage(94, 0, errors_logo, 24, 8, 0);
+		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
 
