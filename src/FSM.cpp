@@ -5,7 +5,7 @@
 #include "sh1106.h"
 #include "include/UART.h"
 
-#include "include/logo.h"
+#include "include/bitmaps.h"
 #include "include/line_nums.h"
 
 // from system.cpp
@@ -79,9 +79,9 @@ void fsm_drawECUErrors_state()
 	{
 		// Run once when enter this state.
 		OLEDScreen.setbuf(0);
-		//OLEDScreen.drawFastHLine(0, 96, 24, 0);
 		OLEDScreen.drawFrame(1);
-		OLEDScreen.drawImage(94, 0, errors_logo, 24, 8, 0);
+		OLEDScreen.drawImage(94, 0, errors_bitmap, 24, 8, 0);
+		OLEDScreen.drawPixel(100, 0, 0);
 		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
