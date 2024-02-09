@@ -87,7 +87,7 @@ void fsm_drawECUErrors_state()
 	// Run repeatly for update.
 
 
-	if ( true )
+	if ( btnPressed() )
 	{
 		fsm_state = &fsm_drawECUParameters1_state;
 		fsm_enter_state_flag = true;
@@ -103,11 +103,16 @@ void fsm_drawECUParameters1_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
+		OLEDScreen.setbuf(0);
+		OLEDScreen.drawFrame(1);
+		OLEDScreen.drawImage(94, 0, params_bitmap, 24, 8, 0);
+		OLEDScreen.drawPixel(100, 0, 0);
+		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
 
 
-	if ( true )
+	if ( btnPressed()  )
 	{
 		fsm_state = &fsm_drawECUParameters2_state;
 		fsm_enter_state_flag = true;
@@ -123,11 +128,15 @@ void fsm_drawABSParameters_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
+		OLEDScreen.setbuf(0);
+		OLEDScreen.drawFrame(1);
+		OLEDScreen.drawImage(94, 0, abs_bitmap, 16, 8, 0);
+		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
 
 
-	if ( true )
+	if ( btnPressed() )
 	{
 		fsm_state = &fsm_drawECUErrors_state;
 		fsm_enter_state_flag = true;
@@ -147,7 +156,7 @@ void fsm_drawECUParameters2_state()
 	// Run repeatly for update.
 
 
-	if ( true )
+	if ( btnPressed() )
 	{
 		fsm_state = &fsm_drawFanStatus_state;
 		fsm_enter_state_flag = true;
@@ -163,11 +172,15 @@ void fsm_drawABSErrors_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
+		OLEDScreen.setbuf(0);
+		OLEDScreen.drawFrame(1);
+		OLEDScreen.drawImage(86, 0, abs_err_bitmap, 32, 8, 0);
+		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
 
 
-	if ( true )
+	if ( btnPressed() )
 	{
 		fsm_state = &fsm_drawABSParameters_state;
 		fsm_enter_state_flag = true;
@@ -183,11 +196,15 @@ void fsm_drawFanStatus_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
+		OLEDScreen.setbuf(0);
+		OLEDScreen.drawFrame(1);
+		OLEDScreen.drawImage(94, 0, fan_bitmap, 16, 8, 0);
+		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
 
 
-	if ( true )
+	if ( btnPressed() )
 	{
 		fsm_state = &fsm_drawABSErrors_state;
 		fsm_enter_state_flag = true;
