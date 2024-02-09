@@ -6,6 +6,7 @@
 #include "include/UART.h"
 
 #include "include/logo.h"
+#include "include/line_nums.h"
 
 // from system.cpp
 bool btnPressed(void);
@@ -48,12 +49,12 @@ void fsm_init_state()
         OLEDScreen.drawchar(6, 45, 's', 1);
         OLEDScreen.drawchar(6, 55, 's', 1);
 
-        OLEDScreen.drawchar(116, 10, 'B', 1);
-        OLEDScreen.drawchar(116, 20, 'u', 1);
-        OLEDScreen.drawchar(116, 30, 't', 1);
-        OLEDScreen.drawchar(116, 40, 't', 1);
-        OLEDScreen.drawchar(116, 50, 'o', 1);
-        OLEDScreen.drawchar(116, 60, 'n', 1);
+        OLEDScreen.drawchar(116, line_1, 'B', 1);
+        OLEDScreen.drawchar(116, line_2, 'u', 1);
+        OLEDScreen.drawchar(116, line_3, 't', 1);
+        OLEDScreen.drawchar(116, line_4, 't', 1);
+        OLEDScreen.drawchar(116, line_5, 'o', 1);
+        OLEDScreen.drawchar(116, line_6, 'n', 1);
         OLEDScreen.drawFrame(1);
         OLEDScreen.refresh();
 	}
