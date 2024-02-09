@@ -41,7 +41,7 @@ void fsm_init_state()
 		// Run once when enter this state.
         myUART.beginHD(8192);
         OLEDScreen.init();
-        OLEDScreen.drawImage(10, 2, vette_logo, 96, 64, 0);
+        OLEDScreen.drawImage(10, 1, vette_logo, 88, 64, 0);
         OLEDScreen.drawchar(6, 15, 'P', 1);
         OLEDScreen.drawchar(6, 25, 'r', 1);
         OLEDScreen.drawchar(6, 35, 'e', 1);
