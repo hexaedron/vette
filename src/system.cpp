@@ -8,6 +8,8 @@ static volatile uint64_t     _millis  = 0ULL;    // Millisecons counter
 static volatile bool         _btn     = false;   // Button pressed flag
 static volatile uint32_t     _pin_num = 0;       // Pins bitmask for EXTI
 
+#define BUTTON_DEBOUNCE_MS 50ULL
+
 extern "C" __attribute__((interrupt))
 void NMI_Handler(void)
 {
@@ -47,36 +49,6 @@ void system_initEXTI(int portno, int pin, bool risingEdge = true, bool fallingEd
   NVIC_EnableIRQ(EXTI7_0_IRQn);
 }
 
-bool btnPressed(void)
-{
-  volatile bool tmp;
-  
-  // critical section
-  NVIC_DisableIRQ(EXTI7_0_IRQn);
-  {
-    tmp = _btn;
-  }
-  NVIC_EnableIRQ(EXTI7_0_IRQn);
-
-
-  if(tmp)
-  {
-    // critical section
-    NVIC_DisableIRQ(EXTI7_0_IRQn);
-    {
-      _btn = false;
-    }
-    NVIC_EnableIRQ(EXTI7_0_IRQn);
-    
-    return true;
-
-  }
-  else
-  {
-    return false;
-  }
-}
-
 // Arduino-like millis()
 uint64_t millis(void)
 {
@@ -90,6 +62,46 @@ uint64_t millis(void)
   NVIC_EnableIRQ(SysTicK_IRQn);
 
   return tmp;
+}
+
+bool btnPressed(void)
+{
+  volatile bool tmp;
+  static volatile uint64_t lastPressed = 0ULL;
+  
+  // critical section
+  NVIC_DisableIRQ(EXTI7_0_IRQn);
+  {
+    tmp = _btn;
+  }
+  NVIC_EnableIRQ(EXTI7_0_IRQn);
+
+
+  if( tmp )
+  {
+    // critical section
+    NVIC_DisableIRQ(EXTI7_0_IRQn);
+    {
+      _btn = false;
+    }
+    NVIC_EnableIRQ(EXTI7_0_IRQn);
+
+    if ( (millis() - lastPressed) >= BUTTON_DEBOUNCE_MS )
+    {
+      lastPressed = millis();
+      return true; 
+    }
+    else
+    {
+      return false;
+    }
+    
+
+  }
+  else 
+  {
+    return false;
+  }
 }
 
 /**
