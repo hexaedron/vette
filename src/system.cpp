@@ -34,17 +34,17 @@ void system_initSystick(void)
   SysTick->CTLR |= STK_CTRL_STRE | STK_CTRL_STE | STK_CTRL_STIE | STK_CTRL_STCK;
 }
 
-void system_initEXTI(int portno, int pin, bool risingEdge = true, bool fallingEdge = false)
+void system_initEXTI(uint32_t pin, bool risingEdge = true, bool fallingEdge = false)
 { 
   // Setup pin-change-interrupt.  This will trigger when the voltage on the
   // pin rises above the  schmitt trigger threshold.
-  AFIO->EXTICR = portno << (pin * 2);
-  EXTI->INTENR = 1 << pin;     // Enable the interrupt request signal for external interrupt channel
+  AFIO->EXTICR = ( (pin & 0xFFFFFFF0) >> 4 ) << ((pin & 0xF) * 2);
+  EXTI->INTENR = 1 << (pin & 0xF);     // Enable the interrupt request signal for external interrupt channel
   
-  if(risingEdge)  EXTI->RTENR = 1 << pin;     // Rising edge trigger
-  if(fallingEdge) EXTI->FTENR = 1 << pin;     // Falling edge trigger
+  if(risingEdge)  EXTI->RTENR = 1 << (pin & 0xF);     // Rising edge trigger
+  if(fallingEdge) EXTI->FTENR = 1 << (pin & 0xF);     // Falling edge trigger
   
-  _pin_num |= 1 << pin; // Set the state of interrupt mask
+  _pin_num |= 1 << (pin & 0xF); // Set the state of interrupt mask
 
   NVIC_EnableIRQ(EXTI7_0_IRQn);
 }

@@ -16,15 +16,17 @@
 
 // from system.cpp
 void system_initSystick(void);
-void system_initEXTI(int portno, int pin, bool risingEdge = true, bool fallingEdge = false);
+void system_initEXTI(uint32_t pin, bool risingEdge = true, bool fallingEdge = false);
 
 int main()
 {
 	SystemInit();	
-	system_initSystick();	
+	system_initSystick();
+
+	// We use button on PC6, so we need to init it and turn on interrupt.	
 	funGpioInitAll();
 	funPinMode(PC6, GPIO_Speed_In | GPIO_CNF_IN_FLOATING);
-	system_initEXTI(GPIO_PortSourceGPIOC, 6); //PC6 
+	system_initEXTI(PC6);  
 
 	fsm_init();
 	
