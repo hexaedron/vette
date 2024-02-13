@@ -24,7 +24,7 @@ int main()
 	SystemInit();	
 	system_initSystick();	
 	funGpioInitAll();
-	funPinMode(PC6, GPIO_Speed_In | GPIO_CNF_IN_PUPD);
+	funPinMode(PC6, GPIO_Speed_In | GPIO_CNF_IN_FLOATING);
 	system_initEXTI(GPIO_PortSourceGPIOC, 6); //PC6 
 
 	fsm_init();
