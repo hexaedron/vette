@@ -17,7 +17,6 @@
 // from system.cpp
 void system_initSystick(void);
 void system_initEXTI(int portno, int pin, bool risingEdge = true, bool fallingEdge = false);
-bool btnPressed(void);
 
 int main()
 {

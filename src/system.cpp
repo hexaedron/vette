@@ -41,8 +41,8 @@ void system_initEXTI(int portno, int pin, bool risingEdge = true, bool fallingEd
   AFIO->EXTICR = portno << (pin * 2);
   EXTI->INTENR = 1 << pin;     // Enable the interrupt request signal for external interrupt channel
   
-  if(risingEdge)  EXTI->RTENR  = 1 << pin;     // Rising edge trigger
-  if(fallingEdge) EXTI->FTENR  = 1 << pin;     // Falling edge trigger
+  if(risingEdge)  EXTI->RTENR = 1 << pin;     // Rising edge trigger
+  if(fallingEdge) EXTI->FTENR = 1 << pin;     // Falling edge trigger
   
   _pin_num |= 1 << pin; // Set the state of interrupt mask
 
@@ -64,12 +64,13 @@ uint64_t millis(void)
   return tmp;
 }
 
-bool btnPressed(void)
+bool btnPressed(uint32_t pin)
 {
   static volatile uint64_t lastPressed = 0ULL;
   
-  // Disable IRQ. We will enable it back later for debouncing
-  NVIC_DisableIRQ(EXTI7_0_IRQn);
+  // Disable IRQ for the given pin. 
+  // We will enable it back later for debouncing
+  EXTI->INTENR &= ~(1 << (pin & 0xF ));
  
   if( _btn )
   {
@@ -78,7 +79,8 @@ bool btnPressed(void)
     if ( (millis() - lastPressed) >= BUTTON_DEBOUNCE_MS )
     {
       lastPressed = millis();
-      NVIC_EnableIRQ(EXTI7_0_IRQn);
+      // Enable IRQ for the given pin. 
+      EXTI->INTENR |= (1 << (pin & 0xF ));
       return true; 
     }
     else
@@ -88,7 +90,8 @@ bool btnPressed(void)
   }
   else 
   {
-    NVIC_EnableIRQ(EXTI7_0_IRQn);
+    // Enable IRQ for the given pin. 
+    EXTI->INTENR |= (1 << (pin & 0xF ));
     return false;
   }
 }

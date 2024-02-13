@@ -9,7 +9,7 @@
 #include "include/line_nums.h"
 
 // from system.cpp
-bool btnPressed(void);
+bool btnPressed(uint32_t);
 
 tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
 simpleTimer tmr(1000UL);
@@ -61,7 +61,7 @@ void fsm_init_state()
 	// Run repeatly for update.
 
 
-	if ( btnPressed() )
+	if ( btnPressed(PC6) )
 	{
 		fsm_state = &fsm_drawECUErrors_state;
 		fsm_enter_state_flag = true;
@@ -87,7 +87,7 @@ void fsm_drawECUErrors_state()
 	// Run repeatly for update.
 
 
-	if ( btnPressed() )
+	if ( btnPressed(PC6) )
 	{
 		fsm_state = &fsm_drawECUParameters1_state;
 		fsm_enter_state_flag = true;
@@ -112,7 +112,7 @@ void fsm_drawECUParameters1_state()
 	// Run repeatly for update.
 
 
-	if ( btnPressed()  )
+	if ( btnPressed(PC6)  )
 	{
 		fsm_state = &fsm_drawECUParameters2_state;
 		fsm_enter_state_flag = true;
@@ -136,7 +136,7 @@ void fsm_drawABSParameters_state()
 	// Run repeatly for update.
 
 
-	if ( btnPressed() )
+	if ( btnPressed(PC6) )
 	{
 		fsm_state = &fsm_drawECUErrors_state;
 		fsm_enter_state_flag = true;
@@ -156,7 +156,7 @@ void fsm_drawECUParameters2_state()
 	// Run repeatly for update.
 
 
-	if ( btnPressed() )
+	if ( btnPressed(PC6) )
 	{
 		fsm_state = &fsm_drawFanStatus_state;
 		fsm_enter_state_flag = true;
@@ -180,7 +180,7 @@ void fsm_drawABSErrors_state()
 	// Run repeatly for update.
 
 
-	if ( btnPressed() )
+	if ( btnPressed(PC6) )
 	{
 		fsm_state = &fsm_drawABSParameters_state;
 		fsm_enter_state_flag = true;
@@ -204,7 +204,7 @@ void fsm_drawFanStatus_state()
 	// Run repeatly for update.
 
 
-	if ( btnPressed() )
+	if ( btnPressed(PC6) )
 	{
 		fsm_state = &fsm_drawABSErrors_state;
 		fsm_enter_state_flag = true;
