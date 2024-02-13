@@ -66,40 +66,29 @@ uint64_t millis(void)
 
 bool btnPressed(void)
 {
-  volatile bool tmp;
   static volatile uint64_t lastPressed = 0ULL;
   
-  // critical section
+  // Disable IRQ. We will enable it back later for debouncing
   NVIC_DisableIRQ(EXTI7_0_IRQn);
+ 
+  if( _btn )
   {
-    tmp = _btn;
-  }
-  NVIC_EnableIRQ(EXTI7_0_IRQn);
-
-
-  if( tmp )
-  {
-    // critical section
-    NVIC_DisableIRQ(EXTI7_0_IRQn);
-    {
-      _btn = false;
-    }
-    NVIC_EnableIRQ(EXTI7_0_IRQn);
-
+    _btn = false;
+   
     if ( (millis() - lastPressed) >= BUTTON_DEBOUNCE_MS )
     {
       lastPressed = millis();
+      NVIC_EnableIRQ(EXTI7_0_IRQn);
       return true; 
     }
     else
     {
       return false;
     }
-    
-
   }
   else 
   {
+    NVIC_EnableIRQ(EXTI7_0_IRQn);
     return false;
   }
 }
