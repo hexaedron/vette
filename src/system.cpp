@@ -8,7 +8,7 @@ static volatile uint64_t     _millis  = 0ULL;    // Millisecons counter
 static volatile bool         _btn     = false;   // Button pressed flag
 static volatile uint32_t     _pin_num = 0;       // Pins bitmask for EXTI
 
-#define BUTTON_DEBOUNCE_MS 50ULL
+#define BUTTON_DEBOUNCE_MS 100ULL
 
 extern "C" __attribute__((interrupt))
 void NMI_Handler(void)

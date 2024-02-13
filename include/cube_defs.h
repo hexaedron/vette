@@ -7,7 +7,7 @@
 #define STK_CTRL_STCK 0b0000000000000000000000000000100
 
 #define HW_PORT_NUM(pin) ( (pin & 0xFFFFFFF0) >> 4 )
-#define HW_PIN_NUM(pin)  (  pin & 0x0000000F )
+#define HW_PIN_NUM(pin)  (  pin & 0xF )
 
 RV_STATIC_INLINE void EnableIRQ()
 {
