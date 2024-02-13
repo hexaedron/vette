@@ -44,7 +44,7 @@ void system_initEXTI(uint32_t pin, bool risingEdge = true, bool fallingEdge = fa
   if(risingEdge)  EXTI->RTENR = 1 << HW_PIN_NUM(pin);     // Rising edge trigger
   if(fallingEdge) EXTI->FTENR = 1 << HW_PIN_NUM(pin);     // Falling edge trigger
   
-  _pin_num |= 1 << (pin & 0xF); // Set the state of interrupt mask
+  _pin_num |= 1 << HW_PIN_NUM(pin); // Set the state of interrupt mask
 
   NVIC_EnableIRQ(EXTI7_0_IRQn);
 }
