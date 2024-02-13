@@ -6,6 +6,9 @@
 #define STK_CTRL_SWIE 0b1000000000000000000000000000000
 #define STK_CTRL_STCK 0b0000000000000000000000000000100
 
+#define HW_PORT_NUM(pin) ( (pin & 0xFFFFFFF0) >> 4 )
+#define HW_PIN_NUM(pin)  (  pin & 0x0000000F )
+
 RV_STATIC_INLINE void EnableIRQ()
 {
   uint32_t result;

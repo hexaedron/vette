@@ -38,11 +38,11 @@ void system_initEXTI(uint32_t pin, bool risingEdge = true, bool fallingEdge = fa
 { 
   // Setup pin-change-interrupt.  This will trigger when the voltage on the
   // pin rises above the  schmitt trigger threshold.
-  AFIO->EXTICR = ( (pin & 0xFFFFFFF0) >> 4 ) << ((pin & 0xF) * 2);
+  AFIO->EXTICR = HW_PORT_NUM(pin) << (HW_PIN_NUM(pin) * 2);
   EXTI->INTENR = 1 << (pin & 0xF);     // Enable the interrupt request signal for external interrupt channel
   
-  if(risingEdge)  EXTI->RTENR = 1 << (pin & 0xF);     // Rising edge trigger
-  if(fallingEdge) EXTI->FTENR = 1 << (pin & 0xF);     // Falling edge trigger
+  if(risingEdge)  EXTI->RTENR = 1 << HW_PIN_NUM(pin);     // Rising edge trigger
+  if(fallingEdge) EXTI->FTENR = 1 << HW_PIN_NUM(pin);     // Falling edge trigger
   
   _pin_num |= 1 << (pin & 0xF); // Set the state of interrupt mask
 
@@ -70,7 +70,7 @@ bool btnPressed(uint32_t pin)
   
   // Disable IRQ for the given pin. 
   // We will enable it back later for debouncing
-  EXTI->INTENR &= ~(1 << (pin & 0xF ));
+  EXTI->INTENR &= ~(1 << HW_PIN_NUM(pin));
  
   if( _btn )
   {
@@ -80,7 +80,7 @@ bool btnPressed(uint32_t pin)
     {
       lastPressed = millis();
       // Enable IRQ for the given pin. 
-      EXTI->INTENR |= (1 << (pin & 0xF ));
+      EXTI->INTENR |= (1 << HW_PIN_NUM(pin));
       return true; 
     }
     else
@@ -91,7 +91,7 @@ bool btnPressed(uint32_t pin)
   else 
   {
     // Enable IRQ for the given pin. 
-    EXTI->INTENR |= (1 << (pin & 0xF ));
+    EXTI->INTENR |= (1 << HW_PIN_NUM(pin));
     return false;
   }
 }
