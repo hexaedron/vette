@@ -129,6 +129,7 @@ void fsm_drawABSParameters_state()
 		OLEDScreen.setbuf(0);
 		OLEDScreen.drawFrame(1);
 		OLEDScreen.drawImage(94, 0, abs_bitmap, 16, 8, 0);
+		OLEDScreen.drawImage(24, 16, vette_top_bitmap, 64, 32, 0);
 		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
