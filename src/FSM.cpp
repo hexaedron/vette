@@ -80,8 +80,7 @@ void fsm_drawECUErrors_state()
 		// Run once when enter this state.
 		OLEDScreen.setbuf(0);
 		OLEDScreen.drawFrame(1);
-		OLEDScreen.drawImage(94, 0, errors_bitmap, 24, 8, 0);
-		OLEDScreen.drawPixel(100, 0, 0);
+		OLEDScreen.drawImage(87, 0, errors_bitmap, 32, 8, 0);
 		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
@@ -105,8 +104,7 @@ void fsm_drawECUParameters1_state()
 		// Run once when enter this state.
 		OLEDScreen.setbuf(0);
 		OLEDScreen.drawFrame(1);
-		OLEDScreen.drawImage(94, 0, params_bitmap, 24, 8, 0);
-		OLEDScreen.drawPixel(100, 0, 0);
+		OLEDScreen.drawImage(87, 0, params_bitmap, 32, 8, 0);
 		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
@@ -174,7 +172,7 @@ void fsm_drawABSErrors_state()
 		// Run once when enter this state.
 		OLEDScreen.setbuf(0);
 		OLEDScreen.drawFrame(1);
-		OLEDScreen.drawImage(86, 0, abs_err_bitmap, 32, 8, 0);
+		OLEDScreen.drawImage(84, 0, abs_err_bitmap, 32, 8, 0);
 		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
