@@ -94,7 +94,7 @@ typedef struct
     uint8_t ignitionCyclesSinceFaultCodeSet;
 // *24          Ignition Cycles since Fault Code 1 Set
 //               count = N
-} PACKED ABS_FAULT_CODE;
+} __attribute__ ((__packed__)) ABS_FAULT_CODE;
 
 typedef struct 
 {
@@ -169,7 +169,7 @@ typedef struct
     ABS_FAULT_CODE fc1;
     ABS_FAULT_CODE fc2;
     ABS_FAULT_CODE fc3;
-} PACKED ABSALDL;
+} __attribute__ ((__packed__)) ABSALDL;
 
 typedef struct
 {

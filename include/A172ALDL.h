@@ -335,7 +335,7 @@ typedef struct
          //7      1 = NOT USED
   uint8_t checksum;
 
-} PACKED A172ALDL;
+} __attribute__ ((__packed__)) A172ALDL;
 
 const char* MALFFLG_codes[40] =
 {

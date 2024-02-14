@@ -7,7 +7,6 @@
 #include <stdlib.h>    // itoa
 #include <stdio.h>	   // printf
 
-#define PACKED __attribute__ ((__packed__))
 #include "include/ALDL_cmd.h"
 #include "include/A172ALDL.h"
 #include "include/ABSALDL.h"
