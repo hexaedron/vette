@@ -1,7 +1,5 @@
 #include "ch32v003fun.h"
 
-#include "include/gpio_pins.h"
-
 #include <stdbool.h>
 #include <string.h>    // strlen
 #include <stdlib.h>    // itoa
