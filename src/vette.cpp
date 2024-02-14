@@ -1,13 +1,6 @@
 #include "ch32v003fun.h"
 
 #include <stdbool.h>
-#include <string.h>    // strlen
-#include <stdlib.h>    // itoa
-#include <stdio.h>	   // printf
-
-#include "include/ALDL_cmd.h"
-#include "include/A172ALDL.h"
-#include "include/ABSALDL.h"
 
 #include "include/FSM.h"
 

@@ -1,4 +1,5 @@
 #include "ch32v003fun.h"
+
 #include "include/FSM.h"
 #include "include/tim2Encoder.h"
 #include "include/simpleTimer.h"
@@ -8,13 +9,21 @@
 #include "include/bitmaps.h"
 #include "include/line_nums.h"
 
+#include "include/ALDL_cmd.h"
+#include "include/A172ALDL.h"
+#include "include/ABSALDL.h"
+
+#include <string.h>    // strlen
+#include <stdlib.h>    // itoa
+#include <stdio.h>	   // printf
+
 // from system.cpp
 bool btnPressed(uint32_t);
 
 tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
-simpleTimer tmr(1000UL);
 sh1106 OLEDScreen;
-UART myUART;
+UART ALDL_UART;
+A172ALDL ALDLData = {0};
 
 // https://menginventor.github.io/FSM_coder/#
 
@@ -40,7 +49,8 @@ void fsm_init_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
-        myUART.beginHD(8192);
+        ALDL_UART.beginHD(8192);
+
         OLEDScreen.init();
         OLEDScreen.drawImage(10, 1, vette_logo, 88, 64, 0);
         OLEDScreen.drawchar(6, 15, 'P', 1);
@@ -78,6 +88,39 @@ void fsm_drawECUErrors_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
+
+		// Init ECM connetion. ECM should respond with 4 bytes
+		// We have nothing to do if there is no response, so we try
+		// again and again
+		unsigned char pokeECMResponse[4] = {0};
+		while ((uint32_t)&pokeECMResponse != 0xF45600B6)
+		{
+			funDigitalWrite(PA1, FUN_LOW);
+				ALDL_UART.write(pokeECMCmd, sizeof(pokeECMCmd));
+			funDigitalWrite(PA1, FUN_HIGH);
+
+			// wait for 50ms
+			simpleTimer tmr50ms(50UL);
+			while (!tmr50ms.ready()) {}
+
+			ALDL_UART.fillBuff(pokeECMResponse);
+		}
+
+		// Here we get ALDL data
+		funDigitalWrite(PA1, FUN_LOW);
+			ALDL_UART.write(getECMDataCmd, sizeof(getECMDataCmd));
+		funDigitalWrite(PA1, FUN_HIGH);
+
+		// wait for 50ms
+		simpleTimer tmr50ms(50UL);
+		while (!tmr50ms.ready()) {}
+		ALDL_UART.fillBuff((uint8_t*)&ALDLData);
+
+		// Here we should parse errors
+		char buf[4] = {0};
+		itoa(ALDLData.TIME, buf, 10);
+		OLEDScreen.drawstr(15, lineNumbers[3], buf, 1);
+
 		OLEDScreen.setbuf(0);
 		OLEDScreen.drawFrame(1);
 		OLEDScreen.drawImage(87, 0, errors_bitmap, 32, 8, 0);

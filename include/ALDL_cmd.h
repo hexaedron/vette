@@ -2,10 +2,13 @@
 
 // http://easyonlineconverter.com/converters/checksum_converter.html
 
-// Command to get ALDL data
-const unsigned char getECUDataCmd[5] = {0xF4, 0x57, 0x01, 0x00, 0xB4};
+// Command to initiate ECM connection
+const unsigned char pokeECMCmd[4] = {0xF4, 0x56, 0x00, 0xB6};
 
-// Clear malfunction codes ECU
+// Command to get ALDL data
+const unsigned char getECMDataCmd[5] = {0xF4, 0x57, 0x01, 0x00, 0xB4};
+
+// Clear malfunction codes ECM
 const unsigned char clearCodesCmd[4] = {0xF4, 0x56, 0x0A, 0xAC};
 
 // Silent mode
