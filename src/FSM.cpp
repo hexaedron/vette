@@ -49,12 +49,12 @@ void fsm_init_state()
         OLEDScreen.drawchar(6, 45, 's', 1);
         OLEDScreen.drawchar(6, 55, 's', 1);
 
-        OLEDScreen.drawchar(116, line_1, 'B', 1);
-        OLEDScreen.drawchar(116, line_2, 'u', 1);
-        OLEDScreen.drawchar(116, line_3, 't', 1);
-        OLEDScreen.drawchar(116, line_4, 't', 1);
-        OLEDScreen.drawchar(116, line_5, 'o', 1);
-        OLEDScreen.drawchar(116, line_6, 'n', 1);
+        OLEDScreen.drawchar(116, lineNumbers[0], 'B', 1);
+        OLEDScreen.drawchar(116, lineNumbers[1], 'u', 1);
+        OLEDScreen.drawchar(116, lineNumbers[2], 't', 1);
+        OLEDScreen.drawchar(116, lineNumbers[3], 't', 1);
+        OLEDScreen.drawchar(116, lineNumbers[4], 'o', 1);
+        OLEDScreen.drawchar(116, lineNumbers[5], 'n', 1);
         OLEDScreen.drawFrame(1);
         OLEDScreen.refresh();
 	}
