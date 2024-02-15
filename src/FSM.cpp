@@ -42,6 +42,8 @@ void fsm_update()
 	( *fsm_state )(); // call FSM state
 }
 
+// ****************************************************************************************
+
 void fsm_init_state()
 {
 	// Declare local/static variable here.
@@ -81,6 +83,8 @@ void fsm_init_state()
 	fsm_enter_state_flag = false; // Reset flag
 }
 
+// ****************************************************************************************
+
 void fsm_drawECUErrors_state()
 {
 	// Declare local/static variable here.
@@ -88,34 +92,18 @@ void fsm_drawECUErrors_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
+		OLEDScreen.setbuf(0);
+		OLEDScreen.drawFrame(1);
+		OLEDScreen.drawstr(16, lineNumbers[2], (char*)"Initailizing PCM", 1);
+		OLEDScreen.drawstr(26, lineNumbers[3], (char*)"Connection...", 1);
+		OLEDScreen.refresh();
 
-		// Init ECM connetion. ECM should respond with 4 bytes
-		// We have nothing to do if there is no response, so we try
-		// again and again
-		unsigned char pokeECMResponse[4] = {0};
-		while ( *(uint32_t*)pokeECMResponse != POKE_ECM_RESPONSE_FAST)
-		{
-			funDigitalWrite(PA1, FUN_LOW);
-				ALDL_UART.write(pokeECMCmd, sizeof(pokeECMCmd));
-			funDigitalWrite(PA1, FUN_HIGH);
+		// We wait for ECM response. If there is no response, we have nothing to do here.
+		waitForECMSync();
 
-			// wait for 50ms
-			simpleTimer tmr50ms(50UL);
-			while (!tmr50ms.ready()) {}
-
-			ALDL_UART.fillBuff(pokeECMResponse);
-		}
-
-		// Here we get ALDL data
-		funDigitalWrite(PA1, FUN_LOW);
-			ALDL_UART.write(getECMDataCmd, sizeof(getECMDataCmd));
-		funDigitalWrite(PA1, FUN_HIGH);
-
-		// wait for 50ms
-		simpleTimer tmr50ms(50UL);
-		while (!tmr50ms.ready()) {}
-		ALDL_UART.fillBuff((uint8_t*)&ALDLData);
-
+		// Populate ALDLData
+		getADLDData();
+		
 		// Here we should parse errors
 		char buf[4] = {0};
 		itoa(ALDLData.TIME, buf, 10);
@@ -137,6 +125,8 @@ void fsm_drawECUErrors_state()
 	}
 	fsm_enter_state_flag = false; // Reset flag
 }
+
+// ****************************************************************************************
 
 void fsm_drawECUParameters1_state()
 {
@@ -162,6 +152,8 @@ void fsm_drawECUParameters1_state()
 	fsm_enter_state_flag = false; // Reset flag
 }
 
+// ****************************************************************************************
+
 void fsm_drawABSParameters_state()
 {
 	// Declare local/static variable here.
@@ -186,6 +178,8 @@ void fsm_drawABSParameters_state()
 	}
 	fsm_enter_state_flag = false; // Reset flag
 }
+
+// ****************************************************************************************
 
 void fsm_drawECUParameters2_state()
 {
@@ -231,6 +225,8 @@ void fsm_drawABSErrors_state()
 	fsm_enter_state_flag = false; // Reset flag
 }
 
+// ****************************************************************************************
+
 void fsm_drawFanStatus_state()
 {
 	// Declare local/static variable here.
@@ -253,4 +249,42 @@ void fsm_drawFanStatus_state()
 		return;
 	}
 	fsm_enter_state_flag = false; // Reset flag
+}
+
+// ****************************************************************************************
+
+void waitForECMSync(void)
+{
+	// Init ECM conneсtion. ECM should respond with 4 bytes
+	// We have nothing to do if there is no response, so we try
+	// again and again
+	unsigned char pokeECMResponse[4] = {0};
+	while ( *(uint32_t*)pokeECMResponse != POKE_ECM_RESPONSE_FAST )
+	{
+		funDigitalWrite(PA1, FUN_LOW);
+			ALDL_UART.write(pokeECMCmd, sizeof(pokeECMCmd));
+		funDigitalWrite(PA1, FUN_HIGH);
+
+		// wait for 50ms
+		simpleTimer tmr50ms(50UL);
+		while (!tmr50ms.ready()) {}
+
+		ALDL_UART.fillBuff(pokeECMResponse);
+	}
+}
+
+// ****************************************************************************************
+
+void getADLDData(void)
+{
+	// Here we get ALDL data
+	funDigitalWrite(PA1, FUN_LOW);
+		ALDL_UART.write(getECMDataCmd, sizeof(getECMDataCmd));
+	funDigitalWrite(PA1, FUN_HIGH);
+
+	// wait for 50ms
+	simpleTimer tmr50ms(50UL);
+	while (!tmr50ms.ready()) {}
+
+	ALDL_UART.fillBuff((uint8_t*)&ALDLData);
 }

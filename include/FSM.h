@@ -9,3 +9,6 @@ void fsm_drawABSParameters_state ();
 void fsm_drawECUParameters2_state ();
 void fsm_drawABSErrors_state ();
 void fsm_drawFanStatus_state ();
+
+void waitForECMSync(void);
+void getADLDData(void);
