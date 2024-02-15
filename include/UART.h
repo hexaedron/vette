@@ -3,7 +3,7 @@
 #define APB_CLOCK FUNCONF_SYSTEM_CORE_CLOCK
 #define OVER8DIV 4
 
-#define RX_BUFFER_SIZE 160
+#define RX_BUFFER_SIZE 80
 uint8_t rxBuffer[RX_BUFFER_SIZE] = {0};
 volatile uint8_t rxBufferHead = 0;
 volatile uint8_t rxBufferTail = 0;

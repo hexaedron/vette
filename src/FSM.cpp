@@ -94,7 +94,7 @@ void fsm_drawECUErrors_state()
 		// Run once when enter this state.
 		OLEDScreen.setbuf(0);
 		OLEDScreen.drawFrame(1);
-		OLEDScreen.drawstr(16, lineNumbers[2], (char*)"Initailizing PCM", 1);
+		OLEDScreen.drawstr(16, lineNumbers[2], (char*)"Initializing PCM", 1);
 		OLEDScreen.drawstr(26, lineNumbers[3], (char*)"Connection...", 1);
 		OLEDScreen.refresh();
 
