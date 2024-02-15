@@ -17,7 +17,7 @@
 #include <stdlib.h>    // itoa
 #include <stdio.h>	   // printf
 
-#define ECM_DEBUG
+//#define ECM_DEBUG
 
 // from system.cpp
 bool btnPressed(uint32_t);
@@ -64,7 +64,7 @@ void fsm_init_state()
 
 	if ( btnPressed(PC6) )
 	{
-		fsm_state = &fsm_connectECU_state;
+		fsm_state = &fsm_connectECM_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
@@ -72,7 +72,7 @@ void fsm_init_state()
 	fsm_enter_state_flag = false; // Reset flag
 }
 
-void fsm_connectECU_state()
+void fsm_connectECM_state()
 {
 	// Declare local/static variable here.
 
@@ -93,9 +93,9 @@ void fsm_connectECU_state()
 	// Run repeatly for update.
 
 
-	if ( btnPressed(PC6) )
+	if ( true )
 	{
-		fsm_state = &fsm_drawECUErrors_state;
+		fsm_state = &fsm_drawECMErrors_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
@@ -105,20 +105,20 @@ void fsm_connectECU_state()
 
 // ****************************************************************************************
 
-void fsm_drawECUErrors_state()
+void fsm_drawECMErrors_state()
 {
 	// Declare local/static variable here.
 
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
-		
+		makeScreen(87, 0, errors_bitmap, 32, 8);
+
 		// Here we should parse errors
 		char buf[4] = {0};
 		itoa(ALDLData.TIME, buf, 10);
 		OLEDScreen.drawstr(15, lineNumbers[3], buf, 1);
 
-		makeScreen(87, 0, errors_bitmap, 32, 8);
 		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
@@ -126,7 +126,7 @@ void fsm_drawECUErrors_state()
 
 	if ( btnPressed(PC6) )
 	{
-		fsm_state = &fsm_drawECUParameters1_state;
+		fsm_state = &fsm_drawECMParameters1_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
@@ -135,7 +135,7 @@ void fsm_drawECUErrors_state()
 
 // ****************************************************************************************
 
-void fsm_drawECUParameters1_state()
+void fsm_drawECMParameters1_state()
 {
 	// Declare local/static variable here.
 
@@ -150,7 +150,7 @@ void fsm_drawECUParameters1_state()
 
 	if ( btnPressed(PC6)  )
 	{
-		fsm_state = &fsm_drawECUParameters2_state;
+		fsm_state = &fsm_drawECMParameters2_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
@@ -175,7 +175,7 @@ void fsm_drawABSParameters_state()
 
 	if ( btnPressed(PC6) )
 	{
-		fsm_state = &fsm_drawECUErrors_state;
+		fsm_state = &fsm_drawECMErrors_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
@@ -184,7 +184,7 @@ void fsm_drawABSParameters_state()
 
 // ****************************************************************************************
 
-void fsm_drawECUParameters2_state()
+void fsm_drawECMParameters2_state()
 {
 	// Declare local/static variable here.
 
