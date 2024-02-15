@@ -93,7 +93,7 @@ void fsm_drawECUErrors_state()
 		// We have nothing to do if there is no response, so we try
 		// again and again
 		unsigned char pokeECMResponse[4] = {0};
-		while ((uint32_t)&pokeECMResponse != 0xF45600B6)
+		while ( *(uint32_t*)pokeECMResponse != POKE_ECM_RESPONSE_FAST)
 		{
 			funDigitalWrite(PA1, FUN_LOW);
 				ALDL_UART.write(pokeECMCmd, sizeof(pokeECMCmd));

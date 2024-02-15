@@ -5,6 +5,8 @@
 // Command to initiate ECM connection
 const unsigned char pokeECMCmd[4] = {0xF4, 0x56, 0x00, 0xB6};
 
+#define POKE_ECM_RESPONSE_FAST 0xB60056F4
+
 // Command to get ALDL data
 const unsigned char getECMDataCmd[5] = {0xF4, 0x57, 0x01, 0x00, 0xB4};
 
