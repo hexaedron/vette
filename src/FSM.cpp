@@ -17,6 +17,8 @@
 #include <stdlib.h>    // itoa
 #include <stdio.h>	   // printf
 
+#define ECM_DEBUG
+
 // from system.cpp
 bool btnPressed(uint32_t);
 
@@ -255,7 +257,12 @@ void waitForECMSync(void)
 	// Init ECM conneсtion. ECM should respond with 4 bytes
 	// We have nothing to do if there is no response, so we try
 	// again and again
-	unsigned char pokeECMResponse[4] = {0};
+	#ifdef ECM_DEBUG
+		unsigned char pokeECMResponse[4] = {0xF4, 0x56, 0x00, 0xB6};
+	#else
+		unsigned char pokeECMResponse[4] = {0};
+	#endif
+
 	while ( *(uint32_t*)pokeECMResponse != POKE_ECM_RESPONSE_FAST )
 	{
 		funDigitalWrite(PA1, FUN_LOW);
@@ -283,7 +290,9 @@ void getADLDData(void)
 	simpleTimer tmr50ms(50UL);
 	while (!tmr50ms.ready()) {}
 
-	ALDL_UART.fillBuff((uint8_t*)&ALDLData);
+	#ifndef ECM_DEBUG
+		ALDL_UART.fillBuff((uint8_t*)&ALDLData);
+	#endif
 }
 
 // ****************************************************************************************
