@@ -10,13 +10,13 @@ static volatile uint32_t     _pin_num = 0;       // Pins bitmask for EXTI
 
 #define BUTTON_DEBOUNCE_MS 100ULL
 
-extern "C" __attribute__((interrupt))
+extern "C" INTERRUPT_HANDLER
 void NMI_Handler(void)
 {
 }
 
 
-extern "C" __attribute__((interrupt))
+extern "C" INTERRUPT_HANDLER
 void HardFault_Handler(void)
 {
   while (true)
@@ -99,14 +99,15 @@ bool btnPressed(uint32_t pin)
 /**
 *   Systick interrupt handler. It only counts millis.
 */
-extern "C" __attribute__((interrupt)) __attribute__((section(".srodata")))
+extern "C" INTERRUPT_HANDLER 
+__attribute__((section(".srodata")))
 void SysTick_Handler(void)
 { 
   _millis++;
   SysTick->SR = 0;
 }
 
-extern "C" __attribute__((interrupt))
+extern "C" INTERRUPT_HANDLER
 void EXTI7_0_IRQHandler(void) 
 {
   _btn = true;

@@ -183,7 +183,7 @@ void UART::flush(void)
     }
 }
 
-extern "C" void USART1_IRQHandler( void ) __attribute__((interrupt));
+extern "C" void USART1_IRQHandler( void ) INTERRUPT_HANDLER;
 extern "C" void USART1_IRQHandler(void) 
 {
     if(USART1->STATR & USART_FLAG_RXNE) 

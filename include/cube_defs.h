@@ -41,3 +41,11 @@ RV_STATIC_INLINE void DisableIRQ()
   result &= ~0x8;
   __asm volatile ("csrw mstatus, %0" : : "r" (result) );
 }
+
+#define WCH_FAST_INTERRUPT_ENABLED
+
+#ifdef WCH_FAST_INTERRUPT_ENABLED
+  #define INTERRUPT_HANDLER __attribute__((interrupt("WCH-Interrupt-fast")))
+#else
+  #define INTERRUPT_HANDLER __attribute__((interrupt)) 
+#endif

@@ -1,4 +1,5 @@
 #include "ch32v003fun.h"
+#include "include/cube_defs.h"
 
 #include "include/FSM.h"
 #include "include/tim2Encoder.h"
@@ -17,7 +18,7 @@
 #include <stdlib.h>    // itoa
 #include <stdio.h>	   // printf
 
-//#define ECM_DEBUG
+#define ECM_DEBUG
 
 // from system.cpp
 bool btnPressed(uint32_t);

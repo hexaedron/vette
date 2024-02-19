@@ -1,4 +1,5 @@
 #include "ch32v003fun.h"
+#include "include/cube_defs.h"
 
 #include <stdbool.h>
 
@@ -10,7 +11,10 @@ void system_initEXTI(uint32_t pin, bool risingEdge = true, bool fallingEdge = fa
 
 int main()
 {
-	SystemInit();	
+	SystemInit();
+	#ifdef WCH_FAST_INTERRUPT_ENABLED
+		__set_INTSYSCR(0x3); // [Experimental] enable fast interrupt feature	
+	#endif
 	system_initSystick();
 
 	// We use button on PC6, so we need to init it and turn on interrupt.	
