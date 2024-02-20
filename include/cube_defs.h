@@ -49,3 +49,10 @@ RV_STATIC_INLINE void DisableIRQ()
 #else
   #define INTERRUPT_HANDLER __attribute__((interrupt)) 
 #endif
+
+// Arduino-like bit macros
+#define bit(n)              (1 << (n))
+#define bitSet(x, n)        ((x) |= bit(n))
+#define bitClear(x, n)      ((x) &= ~bit(n))
+#define bitRead(x, n)       (((x) & bit(n)) !=0 )
+#define bitWrite(x, n, b)   ((b) ? bitSet((x), (n)) : bitClear((x), (n)))
