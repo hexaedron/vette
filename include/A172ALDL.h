@@ -341,13 +341,13 @@ const char* MALFFLG_codes[40] =
 {
        //MALFFLG1:
        "MAT sensor low",
-       "Throttle sensor position low",
-       "Throttle sensor position high",
-       "Lo res. pulse failure",
-       "Coolant sensor low temp.",
-       "Coolant sensor high temp.",
-       "Left oxygen sensor failed",
-       "No reference pulses",
+       "Thr sens pos low",
+       "Thr sens pos high",
+       "Lo res pulse fail",
+       "Clnt sens low temp",
+       "Clnt sens hi temp",
+       "Left ox sens fail",
+       "No ref. pulses",
        
        //MALFFLG2:
        "MAP sensor low",
@@ -357,49 +357,49 @@ const char* MALFFLG_codes[40] =
        "QDM #3",
        "QDM #3",
        "MAT sensor high",
-       "Vehicle speed sensor",
+       "Speed sens fail",
 
        //MALFFLG3:
        "PROM error",
-       "Fuel enable failure",
-       "Left oxygen sensor rich",
-       "Left oxygen sensor lean",
+       "Fuel enable fail",
+       "Left ox sens rich",
+       "Left ox sens lean",
        "ESC failure",
        "EST grounded",
        "EST open",
-       "Hi res. pulse failure",
+       "Hi res pulse fail",
 
        //MALFFLG4:
-       "Right oxygen sensor failure",
-       "Oil temp. sensor high",
-       "C.V.  A/C compressor fault",
+       "Right ox sens fail",
+       "Oil temp sens high",
+       "A/C compr fault",
        "",
-       "Fuel lean malfunction",
+       "Fuel lean malf",
        "",
-       "System voltage problem",
-       "Oil temperature sensor low",
+       "Sys volt problem",
+       "Oil temp sens low",
 
        //MALFFLG5:
-       "Gear switch failure",
-       "A/C evaporator temp sensor failure",
-       "A/C clutch circuit open",
-       "A/C relay shorted",
-       "A/C pressure transducer degraded",
-       "A/C pressure transducer open or shorted",
-       "Right oxygen sensor rich",
-       "Right oxygen sensor lean"
+       "Gear switch fail",
+       "AC evap temp sens fail",
+       "AC clutch circuit open",
+       "AC relay shorted",
+       "AC transducer degraded",
+       "A/C trans opn/short",
+       "Right ox sens rich",
+       "Right ox sens lean"
 };
 
 const char* FANMW_codes[8] =
 {
        //FAN CONTROL MODE WORD
-       "Fan 1 enabled (all pid fan 1 steps added)",
-       "SPI failed (used for aldl)",
+       "Fan 1 enabled",
+       "SPI failed",
        "Fan 1 requested",
-       "Fan 2 enabled (all pid fan 2 steps added)",
+       "Fan 2 enabled",
        "Fan 2 requested",
-       "Fan 1 enabled by high oil temperature",
-       "High rpm fan enable",
+       "Fan 1 by oil temp",
+       "High rpm fan",
        ""
 };
 
