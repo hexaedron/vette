@@ -482,7 +482,7 @@ const int16_t AC_evap_temp_celsius_x10[256]
 class ALDLErrorParser
 {
        public:
-       ALDLErrorParser(A172ALDL* ALDLdata) { this->data = ALDLdata; };
+       void attach(A172ALDL* ALDLdata) { this->data = ALDLdata; };
        void parse();
        void resetCounter() { this->errCNT = 0; }
        uint8_t getErrCount() { return this->errCNT; }
@@ -503,7 +503,7 @@ void ALDLErrorParser::parse()
               switch (i)
               {
                      case 0 ... 7:
-                            if (bitSet(this->data->MALFFLG1, i))
+                            if (bitRead(this->data->MALFFLG1, i))
                             {
                                    this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
                                    this->errCNT++;
@@ -511,7 +511,7 @@ void ALDLErrorParser::parse()
                      break;
 
                      case 8 ... 15:
-                            if (bitSet(this->data->MALFFLG2, i - 8))
+                            if (bitRead(this->data->MALFFLG2, i - 8))
                             {
                                    this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
                                    this->errCNT++;
@@ -519,7 +519,7 @@ void ALDLErrorParser::parse()
                      break;
 
                      case 16 ... 23:
-                            if (bitSet(this->data->MALFFLG3, i - 16))
+                            if (bitRead(this->data->MALFFLG3, i - 16))
                             {
                                    this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
                                    this->errCNT++;
@@ -527,7 +527,7 @@ void ALDLErrorParser::parse()
                      break;
 
                      case 24 ... 31:
-                            if (bitSet(this->data->MALFFLG3, i - 24))
+                            if (bitRead(this->data->MALFFLG3, i - 24))
                             {
                                    this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
                                    this->errCNT++;
@@ -535,7 +535,7 @@ void ALDLErrorParser::parse()
                      break;
 
                      case 32 ... 39:
-                            if (bitSet(this->data->MALFFLG4, i - 32))
+                            if (bitRead(this->data->MALFFLG4, i - 32))
                             {
                                    this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
                                    this->errCNT++;
@@ -543,7 +543,7 @@ void ALDLErrorParser::parse()
                      break;
 
                      case 40 ... 47:
-                            if (bitSet(this->data->MALFFLG5, i - 40))
+                            if (bitRead(this->data->MALFFLG5, i - 40))
                             {
                                    this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
                                    this->errCNT++;

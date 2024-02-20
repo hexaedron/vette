@@ -27,6 +27,7 @@ tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
 sh1106 OLEDScreen;
 UART ALDL_UART;
 A172ALDL ALDLData = {0};
+ALDLErrorParser ALDLParser;
 
 // https://menginventor.github.io/FSM_coder/#
 
@@ -109,16 +110,19 @@ void fsm_connectECM_state()
 void fsm_drawECMErrors_state()
 {
 	// Declare local/static variable here.
+	
 
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
 		makeScreen(87, 0, errors_bitmap, 32, 8);
-
+		
 		// Here we should parse errors
-		char buf[4] = {0};
-		itoa(ALDLData.TIME, buf, 10);
-		OLEDScreen.drawstr(15, lineNumbers[3], buf, 1);
+		ALDLData.MALFFLG2 = 0b0100100;
+		ALDLParser.attach(&ALDLData);
+		ALDLParser.parse();
+		uint8_t errCount = ALDLParser.getErrCount();
+		char** errTexts  = ALDLParser.getErrTexts();
 
 		OLEDScreen.refresh();
 	}
