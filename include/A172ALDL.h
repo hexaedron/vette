@@ -478,3 +478,80 @@ const int16_t AC_evap_temp_celsius_x10[256]
  -292, -298, -300, -303, -309, -312, -314, -317, -323, -325, -328, -334, -337, -339, -345, -348, 
  -350, -353, -359, -362, -364, -370, -373, -375, -381, -384, -387, -389, -395, -398
 };
+
+class ALDLErrorParser
+{
+       public:
+       ALDLErrorParser(A172ALDL* ALDLdata) { this->data = ALDLdata; };
+       void parse();
+       void resetCounter() { this->errCNT = 0; }
+       uint8_t getErrCount() { return this->errCNT; }
+       char** getErrTexts() { return this->errors; }
+
+       private:
+       uint8_t errCNT = 0;
+       A172ALDL* data;
+       char* errors[40] = {0};
+};
+
+void ALDLErrorParser::parse()
+{       
+       this->resetCounter();
+       
+       for (uint8_t i = 0; i < 40; i++)
+       {
+              switch (i)
+              {
+                     case 0 ... 7:
+                            if (bitSet(this->data->MALFFLG1, i))
+                            {
+                                   this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
+                                   this->errCNT++;
+                            }                     
+                     break;
+
+                     case 8 ... 15:
+                            if (bitSet(this->data->MALFFLG2, i - 8))
+                            {
+                                   this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
+                                   this->errCNT++;
+                            }                     
+                     break;
+
+                     case 16 ... 23:
+                            if (bitSet(this->data->MALFFLG3, i - 16))
+                            {
+                                   this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
+                                   this->errCNT++;
+                            }                     
+                     break;
+
+                     case 24 ... 31:
+                            if (bitSet(this->data->MALFFLG3, i - 24))
+                            {
+                                   this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
+                                   this->errCNT++;
+                            }                     
+                     break;
+
+                     case 32 ... 39:
+                            if (bitSet(this->data->MALFFLG4, i - 32))
+                            {
+                                   this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
+                                   this->errCNT++;
+                            }                     
+                     break;
+
+                     case 40 ... 47:
+                            if (bitSet(this->data->MALFFLG5, i - 40))
+                            {
+                                   this->errors[this->errCNT] = (char*)MALFFLG_codes[i];
+                                   this->errCNT++;
+                            }                     
+                     break;
+              
+              default:
+                     break;
+              }
+       }
+}

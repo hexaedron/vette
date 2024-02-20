@@ -51,8 +51,8 @@ RV_STATIC_INLINE void DisableIRQ()
 #endif
 
 // Arduino-like bit macros
-#define bit(n)              (1 << (n))
-#define bitSet(x, n)        ((x) |= bit(n))
-#define bitClear(x, n)      ((x) &= ~bit(n))
-#define bitRead(x, n)       (((x) & bit(n)) !=0 )
-#define bitWrite(x, n, b)   ((b) ? bitSet((x), (n)) : bitClear((x), (n)))
+#define bit(n)                    (1 << (n))
+#define bitSet(value, n)          ((value) |= bit(n))
+#define bitClear(value, n)        ((value) &= ~bit(n))
+#define bitRead(value, n)         (((value) & bit(n)) !=0 )
+#define bitWrite(value, n, bit)   ((bit) ? bitSet((value), (n)) : bitClear((value), (n)))
