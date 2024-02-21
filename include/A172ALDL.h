@@ -352,7 +352,7 @@ const char* MALFFLG_codes[40] =
        //MALFFLG2:
        "MAP sensor low",
        "MAP sensor high",
-       "EGR giagnostic",
+       "EGR diagnostic",
        "QDM #3",
        "QDM #3",
        "QDM #3",

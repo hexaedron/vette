@@ -110,6 +110,9 @@ void fsm_connectECM_state()
 void fsm_drawECMErrors_state()
 {
 	// Declare local/static variable here.
+	static uint8_t errPointer = 0;
+	static uint8_t errCount   = 0;
+	static char** errTexts;
 	
 
 	if ( fsm_enter_state_flag )
@@ -118,15 +121,48 @@ void fsm_drawECMErrors_state()
 		makeScreen(87, 0, errors_bitmap, 32, 8);
 		
 		// Here we should parse errors
-		ALDLData.MALFFLG2 = 0b0100100;
+		ALDLData.MALFFLG4 = 0xFF;
 		ALDLParser.attach(&ALDLData);
 		ALDLParser.parse();
-		uint8_t errCount = ALDLParser.getErrCount();
-		char** errTexts  = ALDLParser.getErrTexts();
+		errCount  = ALDLParser.getErrCount();
+		errTexts  = ALDLParser.getErrTexts();
+
+		uint8_t currStr = 0;
+		for(uint8_t i = errPointer; i < (errPointer + LINES_MAX); i++)
+		{
+			OLEDScreen.drawstr(3, lineNumbers[currStr], errTexts[i], 1);
+			currStr++;
+			if (currStr >= errCount)
+			{
+				break;
+			}
+			
+		}
 
 		OLEDScreen.refresh();
 	}
+	
 	// Run repeatly for update.
+
+	int16_t delta = enc.getDelta();
+	if( (delta > 0) && (errCount > LINES_MAX) )
+	{
+		uint8_t currStr = 0;
+		for(uint8_t i = errPointer; i < (errPointer + LINES_MAX); i++)
+		{
+			OLEDScreen.drawstr(3, lineNumbers[currStr], errTexts[i], 1);
+			currStr++;
+			if (currStr >= errCount)
+			{
+				break;
+			}
+			
+		}
+	}
+	else if( (delta < 0) && (errCount > LINES_MAX) )
+	{
+
+	}
 
 
 	if ( btnPressed(PC6) )

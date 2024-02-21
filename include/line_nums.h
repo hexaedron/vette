@@ -1,11 +1,13 @@
 #pragma once
 
-const uint8_t lineNumbers[6]
+#define LINES_MAX 6
+
+const uint8_t lineNumbers[LINES_MAX]
 {
-    /* line_1 = */ 10,
-    /* line_2 = */ 20,
-    /* line_3 = */ 30,
-    /* line_4 = */ 40,
-    /* line_5 = */ 50,
-    /* line_6 = */ 60
+    /* line_1 = */ 12,
+    /* line_2 = */ 22,
+    /* line_3 = */ 32,
+    /* line_4 = */ 42,
+    /* line_5 = */ 52,
+    /* line_6 = */ 62
 };
