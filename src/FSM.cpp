@@ -122,7 +122,11 @@ void fsm_drawECMErrors_state()
 		
 		// Here we should parse errors
 		ALDLData.MALFFLG1 = 0xFF;
+		ALDLData.MALFFLG1 = 0xFF;
+		ALDLData.MALFFLG3 = 0xFF;
+		ALDLData.MALFFLG4 = 0b11010111;
 		ALDLData.MALFFLG5 = 0xFF;
+
 
 		ALDLParser.attach(&ALDLData);
 		ALDLParser.parse();

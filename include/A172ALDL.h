@@ -362,8 +362,8 @@ const char* MALFFLG_codes[40] =
        //MALFFLG3:
        "PROM error",
        "Fuel enable fail",
-       "Left ox sens rich",
-       "Left ox sens lean",
+       "Left ox sensor rich",
+       "Left ox sensor lean",
        "ESC failure",
        "EST grounded",
        "EST open",
@@ -381,13 +381,13 @@ const char* MALFFLG_codes[40] =
 
        //MALFFLG5:
        "Gear switch fail",
-       "AC evap temp sens fail",
-       "AC clutch circuit open",
+       "AC evap tmp sen fail",
+       "AC clutch circ open",
        "AC relay shorted",
-       "AC transducer degraded",
+       "AC transducer degr",
        "A/C trans opn/short",
-       "Right ox sens rich",
-       "Right ox sens lean"
+       "Right ox sensor rich",
+       "Right ox sensor lean"
 };
 
 const char* FANMW_codes[8] =
