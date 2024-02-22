@@ -27,7 +27,7 @@ tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
 sh1106 OLEDScreen;
 UART ALDL_UART;
 A172ALDL ALDLData = {0};
-ALDLErrorParser ALDLParser;
+ALDLParser ALDLParser;
 
 // https://menginventor.github.io/FSM_coder/#
 

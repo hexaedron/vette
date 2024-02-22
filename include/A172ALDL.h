@@ -479,7 +479,7 @@ const int16_t AC_evap_temp_celsius_x10[256]
  -350, -353, -359, -362, -364, -370, -373, -375, -381, -384, -387, -389, -395, -398
 };
 
-class ALDLErrorParser
+class ALDLParser
 {
        public:
        void attach(A172ALDL* ALDLdata) { this->data = ALDLdata; };
@@ -487,14 +487,57 @@ class ALDLErrorParser
        void resetCounter() { this->errCNT = 0; }
        uint8_t getErrCount() { return this->errCNT; }
        char** getErrTexts() { return this->errors; }
+       uint8_t getLBLMPct(); 
+       uint8_t getRBLMPct(); 
+       uint8_t getKnockrtdDeg();
+       uint32_t getCoolC();    
+       int16_t getMatTempC();  
+       int16_t getOilTempC();  
+       uint16_t getRPM();      
 
        private:
        uint8_t errCNT = 0;
        A172ALDL* data;
        char* errors[40] = {0};
+       
 };
 
-void ALDLErrorParser::parse()
+uint8_t ALDLParser::getLBLMPct()
+{        //LEFT BANK BLOCK LEARN MULTIPLIER
+                       //N = COUNTS
+}
+
+uint8_t ALDLParser::getRBLMPct()
+{        //RIGHT BANK BLOCK LEARN MULTIPLIER
+                       //N = COUNTS
+}
+
+uint8_t ALDLParser::getKnockrtdDeg()     
+{      //RETARD DUE TO KNOCK
+                       //DEGREES = N/2
+}
+
+uint32_t ALDLParser::getCoolC()
+{    //COOLANT TEMPERATURE LINEARIZED  (NON-DEFAULTED)
+                       //DEGREES C = (N*.75 - 40)
+}
+
+int16_t ALDLParser::getMatTempC()
+{       //A/D RESULT FOR MANIFOLD TEMPERATURE INPUT
+                       //SEE MAT LOOK-UP TABLE  (DEFAULTED)
+}
+
+int16_t ALDLParser::getOilTempC()
+{    //A/D RESULT FOR OIL TEMPERATURE SENSOR INPUT
+                       //SEE OIL TEMP. LOOK-UP TABLE (NON-DEFAULTED)
+}
+
+uint16_t ALDLParser::getRPM()
+{      //ENGINE SPEED
+                       //RPM = N * 25
+}
+
+void ALDLParser::parse()
 {       
        this->resetCounter();
        
