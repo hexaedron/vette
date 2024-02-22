@@ -3,8 +3,8 @@
 tim2Encoder::tim2Encoder(const uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
 {
     this->init(remapMode);
-    this->count      = TIM2->CNT;
-    this->last_count = TIM2->CNT;
+    this->count      = TIM2->CNT >> 2;
+    this->last_count = TIM2->CNT >> 2;
 }
 
 void tim2Encoder::init(const uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
@@ -114,17 +114,12 @@ void tim2Encoder::init(const uint32_t remapMode = AFIO_PCFR1_TIM2_REMAP_NOREMAP)
 
 	// Enable TIM2
 	TIM2->CTLR1 |= TIM_CEN;
-
-
-
-    this->count      = TIM2->CNT;
-    this->last_count = TIM2->CNT;
 }
 
 int32_t tim2Encoder::getDelta(void)
 {
-    this->count = TIM2->CNT;
+    this->count = TIM2->CNT >> 2;
     int32_t tmp = (int32_t)this->count - this->last_count;
     this->last_count = this->count;
-    return tmp >> 2;
+    return tmp;
 }

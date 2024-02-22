@@ -150,8 +150,8 @@ void fsm_drawECMErrors_state()
 	}
 	
 	// Run repeatly for update.
-	simpleTimer tmr(100UL);
-	while (!tmr.ready()) {};
+	//simpleTimer tmr(100UL);
+	//while (!tmr.ready()) {};
 	int8_t delta = enc.getDelta();
 	if( (delta != 0) && (errCount > LINES_MAX) )
 	{
