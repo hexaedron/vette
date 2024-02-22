@@ -137,6 +137,7 @@ void fsm_drawECMErrors_state()
 		errTexts  = ALDLParser.getErrTexts();
 		errPointer = 0;
 
+		// Draw scrolling circle
 		if(errCount > LINES_MAX)
 			OLEDScreen.drawCircle(124, 6, 1, 1);
 
@@ -157,6 +158,8 @@ void fsm_drawECMErrors_state()
 	
 	// Run repeatly for update.
 	
+	// We run this only when there is more than LINES_MAX errors and 
+	// there is any input from encoder.
 	int8_t delta = enc.getDelta();
 	if( (delta != 0) && (errCount > LINES_MAX) )
 	{
