@@ -120,12 +120,15 @@ void fsm_drawECMErrors_state()
 		// Run once when enter this state.
 		makeScreen(87, 0, errors_bitmap, 32, 8);
 		
-		// Here we should parse errors
-		ALDLData.MALFFLG1 = 0xFF;
-		ALDLData.MALFFLG1 = 0xFF;
-		ALDLData.MALFFLG3 = 0xFF;
-		ALDLData.MALFFLG4 = 0b11010111;
-		ALDLData.MALFFLG5 = 0xFF;
+		// Here we parse and show errors
+
+		#ifdef ECM_DEBUG
+			ALDLData.MALFFLG1 = 0xFF;
+			ALDLData.MALFFLG1 = 0xFF;
+			ALDLData.MALFFLG3 = 0xFF;
+			ALDLData.MALFFLG4 = 0b11010111;
+			ALDLData.MALFFLG5 = 0xFF;
+		#endif
 
 
 		ALDLParser.attach(&ALDLData);
@@ -133,6 +136,9 @@ void fsm_drawECMErrors_state()
 		errCount  = ALDLParser.getErrCount();
 		errTexts  = ALDLParser.getErrTexts();
 		errPointer = 0;
+
+		if(errCount > LINES_MAX)
+			OLEDScreen.drawCircle(124, 6, 1, 1);
 
 		uint8_t currStr = 0;
 		for(uint8_t i = errPointer; i < (errPointer + LINES_MAX); i++)
@@ -150,16 +156,18 @@ void fsm_drawECMErrors_state()
 	}
 	
 	// Run repeatly for update.
-	//simpleTimer tmr(100UL);
-	//while (!tmr.ready()) {};
+	
 	int8_t delta = enc.getDelta();
 	if( (delta != 0) && (errCount > LINES_MAX) )
 	{
 		if( ((-delta) > errPointer) || ((delta + errPointer) > (errCount - LINES_MAX)) )
 			delta = 0;
 
+		// Clear screen
 		OLEDScreen.fillRect(2, 4, 125, 58, 0);
-		
+		// Draw scrolling circle
+		OLEDScreen.drawCircle(124, map(errPointer, 0, (errCount - LINES_MAX), 6, 58), 1, 1);
+
 		errPointer += delta;
 		uint8_t currStr = 0;
 		for(uint8_t i = errPointer; i < (errPointer + LINES_MAX); i++)

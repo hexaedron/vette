@@ -56,3 +56,7 @@ RV_STATIC_INLINE void DisableIRQ()
 #define bitClear(value, n)        ((value) &= ~bit(n))
 #define bitRead(value, n)         (((value) & bit(n)) !=0 )
 #define bitWrite(value, n, bit)   ((bit) ? bitSet((value), (n)) : bitClear((value), (n)))
+
+#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+
+#define map(x, in_min, in_max, out_min, out_max)  ((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min)
