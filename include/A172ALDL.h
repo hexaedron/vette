@@ -500,13 +500,16 @@ class ALDLParser
        uint8_t errCNT = 0;
        A172ALDL* data;
        char* errors[40] = {0};
-       char ret_buf[7];
+       char ret_buf[8];
        void makeFloatStr(int32_t inValx10);
        
 };
 
 void ALDLParser::makeFloatStr(int32_t inValx10)
 {
+       // Clear buffer
+       *(uint64_t*)this->ret_buf = 0ULL;
+
        if(inValx10 == 0)
        {
               this->ret_buf[0] = '0';
@@ -567,8 +570,8 @@ char* ALDLParser::getKnockrtdDeg()
 //DEGREES C = (N*.75 - 40)
 char* ALDLParser::getCoolC()
 {
-       int32_t tempx10 = (int32_t)this->data->COOLDEGA * 3L;
-       tempx10 = ((tempx10 >> 2) - 40) * 10L;
+       int32_t tempx10 = (int32_t)this->data->COOLDEGA * 750L / 100L - 400L;
+       //tempx10 = ((tempx10 >> 2) - 40) * 10L;
        this->makeFloatStr(tempx10);
        return this->ret_buf;
 }

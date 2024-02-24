@@ -207,20 +207,34 @@ void fsm_drawECMParameters1_state()
 	{
 		// Run once when enter this state.
 		makeScreen(87, 0, params_bitmap, 32, 8);
-
-#ifdef ECM_DEBUG
-		ALDLData.NTRPMX = 0;
-		ALDLData.ADOILTMP = 242;		
-	#endif
-
-	OLEDScreen.drawstr_sz(4, lineNumbers[3], ALDLParser.getRPM(), 1, fontsize_10x16);
-	OLEDScreen.drawstr_sz(64, lineNumbers[3], ALDLParser.getOilTempC(), 1, fontsize_10x16);
-
-		OLEDScreen.refresh();
 	}
 	
 	// Run repeatly for update.
 	
+	#ifdef ECM_DEBUG
+		ALDLData.NTRPMX = 87;
+		ALDLData.ADOILTMP = 85;
+		ALDLData.COOLDEGA = 213;		
+		ALDLData.ADMAT = 36;
+	#endif
+
+	getADLDData();
+
+	uint8_t printPos;
+
+	OLEDScreen.drawstr(51, lineNumbers[0] - 1, (char*)"Temp:", 1);
+	printPos = (138 - (strlen(ALDLParser.getCoolC()) + 3) * 10) / 2;
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[2] - 1, ALDLParser.getCoolC(), 1, fontsize_10x16);
+
+	OLEDScreen.drawstr(4, lineNumbers[3], (char*)"Oil Temp:", 1);
+	printPos = (128 - (strlen(ALDLParser.getOilTempC()) + 3) * 10) / 2 - 22;
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getOilTempC(), 1, fontsize_10x16);
+
+	printPos = (128 - (strlen(ALDLParser.getOilTempC()) + 3) * 10) / 2 + 43;
+	OLEDScreen.drawstr(72, lineNumbers[3], (char*)"MAT Temp:", 1);
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getMatTempC(), 1, fontsize_10x16);
+
+	OLEDScreen.refresh();
 
 
 	if ( btnPressed(PC6)  )
