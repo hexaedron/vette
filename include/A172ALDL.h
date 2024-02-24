@@ -62,6 +62,7 @@
 //WORD #   DATA NAME            DESCRIPTION
 
 #include <stdint.h>
+#include <stdlib.h> // itoa
 
 typedef struct 
 {
@@ -487,54 +488,78 @@ class ALDLParser
        void resetCounter() { this->errCNT = 0; }
        uint8_t getErrCount() { return this->errCNT; }
        char** getErrTexts() { return this->errors; }
-       uint8_t getLBLMPct(); 
-       uint8_t getRBLMPct(); 
-       uint8_t getKnockrtdDeg();
-       uint32_t getCoolC();    
-       int16_t getMatTempC();  
-       int16_t getOilTempC();  
-       uint16_t getRPM();      
+       char*  getLBLMPct(); 
+       char*  getRBLMPct(); 
+       char*  getKnockrtdDeg();
+       char*  getCoolC();    
+       char*  getMatTempC();  
+       char*  getOilTempC();  
+       char*  getRPM();      
 
        private:
        uint8_t errCNT = 0;
        A172ALDL* data;
        char* errors[40] = {0};
+       char ret_buf[7];
        
 };
 
-uint8_t ALDLParser::getLBLMPct()
+char* ALDLParser::getLBLMPct()
 {        //LEFT BANK BLOCK LEARN MULTIPLIER
                        //N = COUNTS
 }
 
-uint8_t ALDLParser::getRBLMPct()
+char* ALDLParser::getRBLMPct()
 {        //RIGHT BANK BLOCK LEARN MULTIPLIER
                        //N = COUNTS
 }
 
-uint8_t ALDLParser::getKnockrtdDeg()     
+char* ALDLParser::getKnockrtdDeg()     
 {      //RETARD DUE TO KNOCK
                        //DEGREES = N/2
 }
 
-uint32_t ALDLParser::getCoolC()
+char* ALDLParser::getCoolC()
 {    //COOLANT TEMPERATURE LINEARIZED  (NON-DEFAULTED)
                        //DEGREES C = (N*.75 - 40)
 }
 
-int16_t ALDLParser::getMatTempC()
+char* ALDLParser::getMatTempC()
 {       //A/D RESULT FOR MANIFOLD TEMPERATURE INPUT
                        //SEE MAT LOOK-UP TABLE  (DEFAULTED)
 }
 
-int16_t ALDLParser::getOilTempC()
-{    //A/D RESULT FOR OIL TEMPERATURE SENSOR INPUT
-                       //SEE OIL TEMP. LOOK-UP TABLE (NON-DEFAULTED)
+//A/D RESULT FOR OIL TEMPERATURE SENSOR INPUT
+//SEE OIL TEMP. LOOK-UP TABLE (NON-DEFAULTED)
+char* ALDLParser::getOilTempC()
+{
+       int16_t temp = oil_temp_celsius_x10[this->data->ADOILTMP];
+       char buf[7];
+       itoa(temp, buf, 10);
+       uint8_t len = strlen(buf);
+       
+       // Copy everything except last digit
+       for(uint8_t i = 0; i < len - 1; i++)
+       {
+              this->ret_buf[i] = buf[i];
+       }
+
+       // Add decimal dot 1234
+       this->ret_buf[len - 1] = '.';
+
+       // Add last digit
+       this->ret_buf[len] = buf[len - 1];
+
+       return this->ret_buf;
 }
 
-uint16_t ALDLParser::getRPM()
-{      //ENGINE SPEED
-                       //RPM = N * 25
+//ENGINE SPEED
+//RPM = N * 25
+char* ALDLParser::getRPM()
+{      
+       uint16_t RPM = (uint16_t)this->data->NTRPMX * (uint16_t)25;
+       itoa(RPM, this->ret_buf, 10);
+       return this->ret_buf;
 }
 
 void ALDLParser::parse()

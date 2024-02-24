@@ -209,8 +209,14 @@ void fsm_drawECMParameters1_state()
 		makeScreen(87, 0, params_bitmap, 32, 8);
 		OLEDScreen.refresh();
 	}
+	
 	// Run repeatly for update.
+	
 
+	#ifdef ECM_DEBUG
+		ALDLData.NTRPMX = 140;
+		ALDLData.ADOILTMP = 58;		
+	#endif
 
 	if ( btnPressed(PC6)  )
 	{
