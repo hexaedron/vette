@@ -209,8 +209,8 @@ void fsm_drawECMParameters1_state()
 		makeScreen(87, 0, params_bitmap, 32, 8);
 
 #ifdef ECM_DEBUG
-		ALDLData.NTRPMX = 140;
-		ALDLData.ADOILTMP = 58;		
+		ALDLData.NTRPMX = 0;
+		ALDLData.ADOILTMP = 242;		
 	#endif
 
 	OLEDScreen.drawstr_sz(4, lineNumbers[3], ALDLParser.getRPM(), 1, fontsize_10x16);

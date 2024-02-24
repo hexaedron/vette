@@ -507,21 +507,31 @@ class ALDLParser
 
 void ALDLParser::makeFloatStr(int32_t inValx10)
 {
-       char buf[7];
-       itoa(inValx10, buf, 10);
-       uint8_t len = strlen(buf);
-       
-       // Copy everything except last digit
-       for(uint8_t i = 0; i < len - 1; i++)
+       if(inValx10 == 0)
        {
-              this->ret_buf[i] = buf[i];
+              this->ret_buf[0] = '0';
+              this->ret_buf[1] = '.';
+              this->ret_buf[2] = '0';
+              this->ret_buf[3] = '\0';
        }
+       else
+       {
+              char buf[7];
+              itoa(inValx10, buf, 10);
+              uint8_t len = strlen(buf);
 
-       // Add decimal dot 1234
-       this->ret_buf[len - 1] = '.';
+              // Copy everything except last digit
+              for(uint8_t i = 0; i < len - 1; i++)
+              {
+                     this->ret_buf[i] = buf[i];
+              }
 
-       // Add last digit
-       this->ret_buf[len] = buf[len - 1];
+              // Add decimal dot 1234
+              this->ret_buf[len - 1] = '.';
+
+              // Add last digit
+              this->ret_buf[len] = buf[len - 1];
+       }
 }
 
 //LEFT BANK BLOCK LEARN MULTIPLIER
