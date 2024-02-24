@@ -501,8 +501,28 @@ class ALDLParser
        A172ALDL* data;
        char* errors[40] = {0};
        char ret_buf[7];
+       void makeFloatStr(int32_t inValx10);
        
 };
+
+void ALDLParser::makeFloatStr(int32_t inValx10)
+{
+       char buf[7];
+       itoa(inValx10, buf, 10);
+       uint8_t len = strlen(buf);
+       
+       // Copy everything except last digit
+       for(uint8_t i = 0; i < len - 1; i++)
+       {
+              this->ret_buf[i] = buf[i];
+       }
+
+       // Add decimal dot 1234
+       this->ret_buf[len - 1] = '.';
+
+       // Add last digit
+       this->ret_buf[len] = buf[len - 1];
+}
 
 char* ALDLParser::getLBLMPct()
 {        //LEFT BANK BLOCK LEARN MULTIPLIER
@@ -533,23 +553,8 @@ char* ALDLParser::getMatTempC()
 //SEE OIL TEMP. LOOK-UP TABLE (NON-DEFAULTED)
 char* ALDLParser::getOilTempC()
 {
-       int16_t temp = oil_temp_celsius_x10[this->data->ADOILTMP];
-       char buf[7];
-       itoa(temp, buf, 10);
-       uint8_t len = strlen(buf);
-       
-       // Copy everything except last digit
-       for(uint8_t i = 0; i < len - 1; i++)
-       {
-              this->ret_buf[i] = buf[i];
-       }
-
-       // Add decimal dot 1234
-       this->ret_buf[len - 1] = '.';
-
-       // Add last digit
-       this->ret_buf[len] = buf[len - 1];
-
+       int32_t tempx10 = oil_temp_celsius_x10[this->data->ADOILTMP];
+       this->makeFloatStr(tempx10);
        return this->ret_buf;
 }
 

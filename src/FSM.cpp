@@ -207,16 +207,21 @@ void fsm_drawECMParameters1_state()
 	{
 		// Run once when enter this state.
 		makeScreen(87, 0, params_bitmap, 32, 8);
+
+#ifdef ECM_DEBUG
+		ALDLData.NTRPMX = 140;
+		ALDLData.ADOILTMP = 58;		
+	#endif
+
+	OLEDScreen.drawstr_sz(4, lineNumbers[3], ALDLParser.getRPM(), 1, fontsize_10x16);
+	OLEDScreen.drawstr_sz(64, lineNumbers[3], ALDLParser.getOilTempC(), 1, fontsize_10x16);
+
 		OLEDScreen.refresh();
 	}
 	
 	// Run repeatly for update.
 	
 
-	#ifdef ECM_DEBUG
-		ALDLData.NTRPMX = 140;
-		ALDLData.ADOILTMP = 58;		
-	#endif
 
 	if ( btnPressed(PC6)  )
 	{
