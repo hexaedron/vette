@@ -524,29 +524,52 @@ void ALDLParser::makeFloatStr(int32_t inValx10)
        this->ret_buf[len] = buf[len - 1];
 }
 
+//LEFT BANK BLOCK LEARN MULTIPLIER
+//N = COUNTS
 char* ALDLParser::getLBLMPct()
-{        //LEFT BANK BLOCK LEARN MULTIPLIER
-                       //N = COUNTS
+{
+       int32_t LBLMx10 = (uint32_t)this->data->LBLM * 10L;
+       LBLMx10 = (LBLMx10 * 100) >> 7; // (LBLMx10 * 100) / 128
+       this->makeFloatStr(LBLMx10);
+       return this->ret_buf;   
 }
 
+//RIGHT BANK BLOCK LEARN MULTIPLIER
+//N = COUNTS
 char* ALDLParser::getRBLMPct()
-{        //RIGHT BANK BLOCK LEARN MULTIPLIER
-                       //N = COUNTS
+{        
+       int32_t RBLMx10 = (uint32_t)this->data->RBLM * 10L;
+       RBLMx10 = (RBLMx10 * 100) >> 7; // (RBLMx10 * 100) / 128
+       this->makeFloatStr(RBLMx10);
+       return this->ret_buf;
 }
 
+//RETARD DUE TO KNOCK
+//DEGREES = N/2
 char* ALDLParser::getKnockrtdDeg()     
-{      //RETARD DUE TO KNOCK
-                       //DEGREES = N/2
+{
+       int32_t retx10 = (int32_t)this->data->NOCKRTD * 10L;
+       this->makeFloatStr(retx10);
+       return this->ret_buf;    
 }
 
+//COOLANT TEMPERATURE LINEARIZED  (NON-DEFAULTED)
+//DEGREES C = (N*.75 - 40)
 char* ALDLParser::getCoolC()
-{    //COOLANT TEMPERATURE LINEARIZED  (NON-DEFAULTED)
-                       //DEGREES C = (N*.75 - 40)
+{
+       int32_t tempx10 = (int32_t)this->data->COOLDEGA * 3L;
+       tempx10 = ((tempx10 >> 2) - 40) * 10L;
+       this->makeFloatStr(tempx10);
+       return this->ret_buf;
 }
 
+//A/D RESULT FOR MANIFOLD TEMPERATURE INPUT
+//SEE MAT LOOK-UP TABLE  (DEFAULTED)
 char* ALDLParser::getMatTempC()
-{       //A/D RESULT FOR MANIFOLD TEMPERATURE INPUT
-                       //SEE MAT LOOK-UP TABLE  (DEFAULTED)
+{      
+       int32_t tempx10 = MAT_temp_celsius_x10[this->data->ADMAT];
+       this->makeFloatStr(tempx10);
+       return this->ret_buf;
 }
 
 //A/D RESULT FOR OIL TEMPERATURE SENSOR INPUT
