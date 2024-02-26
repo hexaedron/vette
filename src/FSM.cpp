@@ -224,16 +224,16 @@ void fsm_drawECMParameters1_state()
 	// Here we print everything temperature related
 	uint8_t printPos;
 
-	OLEDScreen.drawstr(51, lineNumbers[0] - 1, (char*)"Temp:", 1);
+	OLEDScreen.drawstr(45, lineNumbers[0] - 1, (char*)"Temp C", 1);
 	printPos = (138 - (strlen(ALDLParser.getCoolC()) + 3) * 10) / 2;
 	OLEDScreen.drawstr_sz(printPos, lineNumbers[2] - 1, ALDLParser.getCoolC(), 1, fontsize_10x16);
 
-	OLEDScreen.drawstr(4, lineNumbers[3], (char*)"Oil Temp:", 1);
+	OLEDScreen.drawstr(4, lineNumbers[3], (char*)"Oil Temp", 1);
 	printPos = (128 - (strlen(ALDLParser.getOilTempC()) + 3) * 10) / 2 - 22;
 	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getOilTempC(), 1, fontsize_10x16);
 
 	printPos = (128 - (strlen(ALDLParser.getOilTempC()) + 3) * 10) / 2 + 43;
-	OLEDScreen.drawstr(72, lineNumbers[3], (char*)"MAT Temp:", 1);
+	OLEDScreen.drawstr(72, lineNumbers[3], (char*)"MAT Temp", 1);
 	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getMatTempC(), 1, fontsize_10x16);
 
 	OLEDScreen.refresh();
@@ -282,6 +282,7 @@ void fsm_drawECMParameters2_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
+		makeScreen(87, 0, params_bitmap, 32, 8);
 	}
 	
 	// Run repeatly for update.
@@ -299,17 +300,21 @@ void fsm_drawECMParameters2_state()
 	// Here we print everything temperature related
 	uint8_t printPos;
 
-	OLEDScreen.drawstr(51, lineNumbers[0] - 1, (char*)"Temp:", 1);
-	printPos = (138 - (strlen(ALDLParser.getCoolC()) + 3) * 10) / 2;
-	OLEDScreen.drawstr_sz(printPos, lineNumbers[2] - 1, ALDLParser.getCoolC(), 1, fontsize_10x16);
+	OLEDScreen.drawstr(21, lineNumbers[0] + 1, (char*)"RPM", 1);
+	printPos = (128 - (strlen(ALDLParser.getRPM()) + 3) * 10) / 2 - 22;
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[2] - 1, ALDLParser.getRPM(), 1, fontsize_10x16);
 
-	OLEDScreen.drawstr(4, lineNumbers[3], (char*)"Oil Temp:", 1);
-	printPos = (128 - (strlen(ALDLParser.getOilTempC()) + 3) * 10) / 2 - 22;
-	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getOilTempC(), 1, fontsize_10x16);
+	printPos = (128 - (strlen(ALDLParser.getKnockrtdDeg()) + 3) * 10) / 2 + 36;
+	OLEDScreen.drawstr(64, lineNumbers[0] + 1, (char*)"Knock Ret%", 1);
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[2] - 1, ALDLParser.getKnockrtdDeg(), 1, fontsize_10x16);
 
-	printPos = (128 - (strlen(ALDLParser.getOilTempC()) + 3) * 10) / 2 + 43;
-	OLEDScreen.drawstr(72, lineNumbers[3], (char*)"MAT Temp:", 1);
-	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getMatTempC(), 1, fontsize_10x16);
+	OLEDScreen.drawstr(8, lineNumbers[3] + 2, (char*)"L BLM%", 1);
+	printPos = (128 - (strlen(ALDLParser.getLBLMPct()) + 3) * 10) / 2 - 22;
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getLBLMPct(), 1, fontsize_10x16);
+
+	printPos = (128 - (strlen(ALDLParser.getRBLMPct()) + 3) * 10) / 2 + 43;
+	OLEDScreen.drawstr(72, lineNumbers[3] + 2, (char*)"R BLM%:", 1);
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getRBLMPct(), 1, fontsize_10x16);
 
 	OLEDScreen.refresh();
 
