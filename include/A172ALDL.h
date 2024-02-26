@@ -501,11 +501,11 @@ class ALDLParser
        A172ALDL* data;
        char* errors[40] = {0};
        char ret_buf[8];
-       void makeFloatStr(int32_t inValx10);
+       void makeFloatStr(int32_t inValx10, char symbol);
        
 };
 
-void ALDLParser::makeFloatStr(int32_t inValx10)
+void ALDLParser::makeFloatStr(int32_t inValx10, char symbol)
 {
        // Clear buffer
        *(uint64_t*)this->ret_buf = 0ULL;
@@ -515,7 +515,7 @@ void ALDLParser::makeFloatStr(int32_t inValx10)
               this->ret_buf[0] = '0';
               this->ret_buf[1] = '.';
               this->ret_buf[2] = '0';
-              this->ret_buf[3] = '\0';
+              this->ret_buf[3] = symbol;
        }
        else
        {
@@ -534,6 +534,9 @@ void ALDLParser::makeFloatStr(int32_t inValx10)
 
               // Add last digit
               this->ret_buf[len] = buf[len - 1];
+
+              // Add symbol
+              this->ret_buf[len+1] = symbol;
        }
 }
 
@@ -543,7 +546,7 @@ char* ALDLParser::getLBLMPct()
 {
        int32_t LBLMx10 = (uint32_t)this->data->LBLM * 10L;
        LBLMx10 = (LBLMx10 * 100) >> 7; // (LBLMx10 * 100) / 128
-       this->makeFloatStr(LBLMx10);
+       this->makeFloatStr(LBLMx10, '\0');
        return this->ret_buf;   
 }
 
@@ -553,7 +556,7 @@ char* ALDLParser::getRBLMPct()
 {        
        int32_t RBLMx10 = (uint32_t)this->data->RBLM * 10L;
        RBLMx10 = (RBLMx10 * 100) >> 7; // (RBLMx10 * 100) / 128
-       this->makeFloatStr(RBLMx10);
+       this->makeFloatStr(RBLMx10, '\0');
        return this->ret_buf;
 }
 
@@ -562,7 +565,7 @@ char* ALDLParser::getRBLMPct()
 char* ALDLParser::getKnockrtdDeg()     
 {
        int32_t retx10 = (int32_t)this->data->NOCKRTD * 10L;
-       this->makeFloatStr(retx10);
+       this->makeFloatStr(retx10, '\0');
        return this->ret_buf;    
 }
 
@@ -571,8 +574,7 @@ char* ALDLParser::getKnockrtdDeg()
 char* ALDLParser::getCoolC()
 {
        int32_t tempx10 = (int32_t)this->data->COOLDEGA * 750L / 100L - 400L;
-       //tempx10 = ((tempx10 >> 2) - 40) * 10L;
-       this->makeFloatStr(tempx10);
+       this->makeFloatStr(tempx10, '\0');
        return this->ret_buf;
 }
 
@@ -581,7 +583,7 @@ char* ALDLParser::getCoolC()
 char* ALDLParser::getMatTempC()
 {      
        int32_t tempx10 = MAT_temp_celsius_x10[this->data->ADMAT];
-       this->makeFloatStr(tempx10);
+       this->makeFloatStr(tempx10, '\0');
        return this->ret_buf;
 }
 
@@ -590,7 +592,7 @@ char* ALDLParser::getMatTempC()
 char* ALDLParser::getOilTempC()
 {
        int32_t tempx10 = oil_temp_celsius_x10[this->data->ADOILTMP];
-       this->makeFloatStr(tempx10);
+       this->makeFloatStr(tempx10, '\0');
        return this->ret_buf;
 }
 

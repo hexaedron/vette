@@ -220,6 +220,8 @@ void fsm_drawECMParameters1_state()
 
 	getADLDData();
 
+	
+	// Here we print everything temperature related
 	uint8_t printPos;
 
 	OLEDScreen.drawstr(51, lineNumbers[0] - 1, (char*)"Temp:", 1);
@@ -281,7 +283,35 @@ void fsm_drawECMParameters2_state()
 	{
 		// Run once when enter this state.
 	}
+	
 	// Run repeatly for update.
+	
+	#ifdef ECM_DEBUG
+		ALDLData.NTRPMX  = 87;
+		ALDLData.LBLM    = 131;
+		ALDLData.RBLM    = 124;
+		ALDLData.NOCKRTD = 6;
+	#endif
+
+	getADLDData();
+
+	
+	// Here we print everything temperature related
+	uint8_t printPos;
+
+	OLEDScreen.drawstr(51, lineNumbers[0] - 1, (char*)"Temp:", 1);
+	printPos = (138 - (strlen(ALDLParser.getCoolC()) + 3) * 10) / 2;
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[2] - 1, ALDLParser.getCoolC(), 1, fontsize_10x16);
+
+	OLEDScreen.drawstr(4, lineNumbers[3], (char*)"Oil Temp:", 1);
+	printPos = (128 - (strlen(ALDLParser.getOilTempC()) + 3) * 10) / 2 - 22;
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getOilTempC(), 1, fontsize_10x16);
+
+	printPos = (128 - (strlen(ALDLParser.getOilTempC()) + 3) * 10) / 2 + 43;
+	OLEDScreen.drawstr(72, lineNumbers[3], (char*)"MAT Temp:", 1);
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getMatTempC(), 1, fontsize_10x16);
+
+	OLEDScreen.refresh();
 
 
 	if ( btnPressed(PC6) )
