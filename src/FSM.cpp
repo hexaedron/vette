@@ -375,9 +375,9 @@ void getADLDData(void)
 		ALDL_UART.write(getECMDataCmd, sizeof(getECMDataCmd));
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	// wait for 50ms
-	simpleTimer tmr50ms(50UL);
-	while (!tmr50ms.ready()) {}
+	// wait for 500ms
+	simpleTimer tmr500ms(500UL);
+	while (!tmr500ms.ready()) {}
 
 	#ifndef ECM_DEBUG
 		ALDL_UART.fillBuff((uint8_t*)&ALDLData);
