@@ -404,31 +404,6 @@ void fsm_drawFanStatus_state()
 
 // ****************************************************************************************
 
-void fsm_drawABSParameters_state()
-{
-	// Declare local/static variable here.
-
-	if ( fsm_enter_state_flag )
-	{
-		// Run once when enter this state.
-		makeScreen(94, 0, abs_bitmap, 16, 8);
-		OLEDScreen.drawImage(24, 16, vette_top_bitmap, 64, 32, 0);
-		OLEDScreen.refresh();
-	}
-	// Run repeatly for update.
-
-
-	if ( btnPressed(PC6) )
-	{
-		fsm_state = &fsm_drawECMErrors_state;
-		fsm_enter_state_flag = true;
-		return;
-	}
-	fsm_enter_state_flag = false; // Reset flag
-}
-
-// ****************************************************************************************
-
 void fsm_drawABSErrors_state()
 {
 	// Declare local/static variable here.
@@ -456,7 +431,6 @@ void fsm_drawABSErrors_state()
 			OLEDScreen.drawstr(4, lineNumbers[5], (char*)getABSMessage(ABSData.fc3.faultCodeNum), 1);
 		}
 		
-
 		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
@@ -465,6 +439,46 @@ void fsm_drawABSErrors_state()
 	if ( btnPressed(PC6) )
 	{
 		fsm_state = &fsm_drawABSParameters_state;
+		fsm_enter_state_flag = true;
+		return;
+	}
+	fsm_enter_state_flag = false; // Reset flag
+}
+
+// ****************************************************************************************
+
+void fsm_drawABSParameters_state()
+{
+	// Declare local/static variable here.
+
+	if ( fsm_enter_state_flag )
+	{
+		// Run once when enter this state.
+		makeScreen(94, 0, abs_bitmap, 16, 8);
+		OLEDScreen.drawImage(24, 16, vette_top_bitmap, 64, 32, 0);
+	}
+	
+	// Run repeatly for update.
+
+	#ifdef ECM_DEBUG
+		ABSData.LFWheelSpeed = 47;
+		ABSData.LRWheelSpeed = 47;
+		ABSData.RFWheelSpeed = 47;
+		ABSData.RRWheelSpeed = 47;
+	#endif
+
+	getABSData();
+
+	OLEDScreen.drawstr(80, lineNumbers[0] + 3, getPaddedSpeed(ABSData.LFWheelSpeed), 1);
+	OLEDScreen.drawstr(30, lineNumbers[0] + 3, getPaddedSpeed(ABSData.LRWheelSpeed), 1);
+	OLEDScreen.drawstr(30, lineNumbers[5] - 3, getPaddedSpeed(ABSData.RRWheelSpeed), 1);
+	OLEDScreen.drawstr(80, lineNumbers[5] - 3, getPaddedSpeed(ABSData.RFWheelSpeed), 1);
+
+	OLEDScreen.refresh();	
+
+	if ( btnPressed(PC6) )
+	{
+		fsm_state = &fsm_drawECMErrors_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
@@ -577,7 +591,25 @@ void makeStartScreen(void)
 }
 
 // ****************************************************************************************
+
 inline void CLS(void)
 {
 	OLEDScreen.fillRect(2, 4, 125, 58, 0);
+}
+
+// ****************************************************************************************
+
+char* getPaddedSpeed(uint8_t spd)
+{
+	static char buf[4];
+
+	*(uint32_t*) buf = 0UL;
+
+	itoa(spd << 1, buf, 10);
+	for (uint8_t i = strlen(buf); i < 3; i++)
+	{
+		buf[i] = ' ';
+	}
+
+	return buf;
 }
