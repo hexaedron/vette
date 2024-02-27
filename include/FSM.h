@@ -15,3 +15,4 @@ void waitForECMSync(void);
 void getADLDData(void);
 void makeScreen(uint8_t x, uint8_t y, const unsigned char *input, uint8_t width, uint8_t height);
 void makeStartScreen(void);
+void CLS(void);

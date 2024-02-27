@@ -167,7 +167,8 @@ void fsm_drawECMErrors_state()
 			delta = 0;
 
 		// Clear screen
-		OLEDScreen.fillRect(2, 4, 125, 58, 0);
+		CLS();
+
 		// Draw scrolling circle
 		OLEDScreen.drawCircle(124, map(errPointer, 0, (errCount - LINES_MAX), 6, 58), 1, 1);
 
@@ -219,6 +220,7 @@ void fsm_drawECMParameters1_state()
 	#endif
 
 	getADLDData();
+	CLS();
 
 	
 	// Here we print everything temperature related
@@ -270,6 +272,7 @@ void fsm_drawECMParameters2_state()
 	#endif
 
 	getADLDData();
+	CLS();
 
 	
 	// Here we print everything temperature related
@@ -373,7 +376,7 @@ void fsm_drawFanStatus_state()
 	}
 	else
 	{
-		OLEDScreen.drawstr_sz(55, lineNumbers[1], (char*)"  ", 1, fontsize_10x16);
+		OLEDScreen.drawstr_sz(55, lineNumbers[1], (char*)"Lo", 1, fontsize_10x16);
 	}
 
 	if(bitRead(ALDLData.FANMW, 1))
@@ -520,4 +523,10 @@ void makeStartScreen(void)
     OLEDScreen.drawchar(116, lineNumbers[4], 'o', 1);
     OLEDScreen.drawchar(116, lineNumbers[5], 'n', 1);
     OLEDScreen.drawFrame(1);
+}
+
+// ****************************************************************************************
+inline void CLS(void)
+{
+	OLEDScreen.fillRect(2, 4, 125, 58, 0);
 }
