@@ -313,10 +313,81 @@ void fsm_drawFanStatus_state()
 	{
 		// Run once when enter this state.
 		makeScreen(94, 0, fan_bitmap, 16, 8);
-		OLEDScreen.refresh();
+		OLEDScreen.drawImage(12, lineNumbers[0] - 6, fan_propeller_bitmap, 24, 24, 0);
+		OLEDScreen.drawImage(76, lineNumbers[0] - 6, fan_propeller_bitmap, 24, 24, 0);
+		OLEDScreen.drawchar(42,  lineNumbers[1] - 2, '1', 1);
+		OLEDScreen.drawchar(108, lineNumbers[1] - 2, '2', 1);
 	}
+	
 	// Run repeatly for update.
+	#ifdef ECM_DEBUG
+		ALDLData.FANMW  = 0b01111111;
+	#endif
 
+	getADLDData();
+
+	if(bitRead(ALDLData.FANMW, 2))
+	{
+		OLEDScreen.drawstr(4, lineNumbers[3], (char*)"Request", 1);
+	}
+	else
+	{
+		OLEDScreen.drawstr(4, lineNumbers[3], (char*)"       ", 1);
+	}
+
+	if(bitRead(ALDLData.FANMW, 0))
+	{
+		OLEDScreen.drawstr(4, lineNumbers[4], (char*)"Enabl    ", 1);
+	}
+	else
+	{
+		OLEDScreen.drawstr(4, lineNumbers[4], (char*)"         ", 1);
+	}
+
+	if(bitRead(ALDLData.FANMW, 5))
+	{
+		OLEDScreen.drawstr(4, lineNumbers[4], (char*)"Enable (oil)", 1);
+	}
+
+	if(bitRead(ALDLData.FANMW, 4))
+	{
+		OLEDScreen.drawstr(81, lineNumbers[3], (char*)"Request", 1);
+	}
+	else
+	{
+		OLEDScreen.drawstr(81, lineNumbers[3], (char*)"       ", 1);
+	}
+
+	if(bitRead(ALDLData.FANMW, 3))
+	{
+		OLEDScreen.drawstr(81, lineNumbers[4], (char*)"Enable", 1);
+	}
+	else
+	{
+		OLEDScreen.drawstr(81, lineNumbers[4], (char*)"      ", 1);
+	}
+
+	if (bitRead(ALDLData.FANMW, 6))
+	{
+		OLEDScreen.drawstr_sz(55, lineNumbers[1], (char*)"Hi", 1, fontsize_10x16);
+	}
+	else
+	{
+		OLEDScreen.drawstr_sz(55, lineNumbers[1], (char*)"  ", 1, fontsize_10x16);
+	}
+
+	if(bitRead(ALDLData.FANMW, 1))
+	{
+		OLEDScreen.fillRect(25, lineNumbers[5] - 8, 66, 8, 1);
+		OLEDScreen.drawstr(26, lineNumbers[5], (char*)"SPI failed!", 0);
+	}
+	else
+	{
+		OLEDScreen.fillRect(25, lineNumbers[5] - 8, 66, 8, 0);
+	}
+	
+	
+	OLEDScreen.refresh();
 
 	if ( btnPressed(PC6) )
 	{
