@@ -305,6 +305,30 @@ void fsm_drawECMParameters2_state()
 
 // ****************************************************************************************
 
+void fsm_drawFanStatus_state()
+{
+	// Declare local/static variable here.
+
+	if ( fsm_enter_state_flag )
+	{
+		// Run once when enter this state.
+		makeScreen(94, 0, fan_bitmap, 16, 8);
+		OLEDScreen.refresh();
+	}
+	// Run repeatly for update.
+
+
+	if ( btnPressed(PC6) )
+	{
+		fsm_state = &fsm_drawABSErrors_state;
+		fsm_enter_state_flag = true;
+		return;
+	}
+	fsm_enter_state_flag = false; // Reset flag
+}
+
+// ****************************************************************************************
+
 void fsm_drawABSParameters_state()
 {
 	// Declare local/static variable here.
@@ -346,30 +370,6 @@ void fsm_drawABSErrors_state()
 	if ( btnPressed(PC6) )
 	{
 		fsm_state = &fsm_drawABSParameters_state;
-		fsm_enter_state_flag = true;
-		return;
-	}
-	fsm_enter_state_flag = false; // Reset flag
-}
-
-// ****************************************************************************************
-
-void fsm_drawFanStatus_state()
-{
-	// Declare local/static variable here.
-
-	if ( fsm_enter_state_flag )
-	{
-		// Run once when enter this state.
-		makeScreen(94, 0, fan_bitmap, 16, 8);
-		OLEDScreen.refresh();
-	}
-	// Run repeatly for update.
-
-
-	if ( btnPressed(PC6) )
-	{
-		fsm_state = &fsm_drawABSErrors_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
