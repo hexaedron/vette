@@ -27,6 +27,7 @@ tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
 sh1106 OLEDScreen;
 UART ALDL_UART;
 A172ALDL ALDLData = {0};
+ABSALDL ABSData   = {0};
 ALDLParser ALDLParser;
 
 // https://menginventor.github.io/FSM_coder/#
@@ -435,7 +436,27 @@ void fsm_drawABSErrors_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
+		getABSData();
 		makeScreen(84, 0, abs_err_bitmap, 32, 8);
+
+		#ifdef ECM_DEBUG
+			ABSData.fc1.faultCodeNum = 66;
+			ABSData.fc2.faultCodeNum = 41;
+			ABSData.fc3.faultCodeNum = 74;
+		#endif
+
+		if( (ABSData.fc1.faultCodeNum == 0xFF) && (ABSData.fc2.faultCodeNum == 0xFF) && (ABSData.fc3.faultCodeNum == 0xFF))
+		{
+			OLEDScreen.drawstr_sz(8, lineNumbers[3], (char*)"No errors!", 1, fontsize_10x16);
+		}
+		else
+		{
+			OLEDScreen.drawstr(4, lineNumbers[1], (char*)getABSMessage(ABSData.fc1.faultCodeNum), 1);
+			OLEDScreen.drawstr(4, lineNumbers[3], (char*)getABSMessage(ABSData.fc2.faultCodeNum), 1);
+			OLEDScreen.drawstr(4, lineNumbers[5], (char*)getABSMessage(ABSData.fc3.faultCodeNum), 1);
+		}
+		
+
 		OLEDScreen.refresh();
 	}
 	// Run repeatly for update.
@@ -487,12 +508,42 @@ void getADLDData(void)
 	funDigitalWrite(PA1, FUN_HIGH);
 
 	// wait for 500ms
-	simpleTimer tmr500ms(500UL);
-	while (!tmr500ms.ready()) {}
+	simpleTimer tmr(500UL);
+	while (!tmr.ready()) {}
 
 	#ifndef ECM_DEBUG
 		ALDL_UART.fillBuff((uint8_t*)&ALDLData);
 	#endif
+
+}
+
+// ****************************************************************************************
+
+void getABSData(void)
+{
+	// Here we get ALDL data
+	funDigitalWrite(PA1, FUN_LOW);
+		ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd));
+		simpleTimer tmr100(100UL); while (!tmr100.ready()) {}
+		ALDL_UART.write(getABSDataCmd, sizeof(getABSDataCmd));
+	funDigitalWrite(PA1, FUN_HIGH);
+
+	// wait for 400ms
+	simpleTimer tmr(400UL);
+	while (!tmr.ready()) {}
+
+	ABSData.fc1.faultCodeNum = 0xFF;
+	ABSData.fc2.faultCodeNum = 0xFF;
+	ABSData.fc3.faultCodeNum = 0xFF;
+
+	#ifndef ECM_DEBUG
+		ALDL_UART.fillBuff((uint8_t*)&ABSData);
+	#endif
+
+	// Return to normal mode
+	funDigitalWrite(PA1, FUN_LOW);
+		ALDL_UART.write(returnFromABSCmd, sizeof(returnFromABSCmd));
+	funDigitalWrite(PA1, FUN_HIGH);
 }
 
 // ****************************************************************************************

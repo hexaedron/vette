@@ -184,7 +184,7 @@ const ABSCODE ABS_codes[30] =
   {23,        "RF Sens CNT Fault"},
   {25,        "LF Sens Fault"},
   {27,        "LF Sens CNT Fault"},
-  {28,        "Speed Sens Freq Err"},
+  {28,        "Spd Sens Freq Err"},
   {31,        "RR Sens Fault"},
   {33,        "RR Sens CNT Fault"},
   {35,        "LR Sens Fault"},
@@ -219,6 +219,11 @@ const char* getABSMessage(uint8_t msg)
         if(ABS_codes[i].code == msg)
         {
             return ABS_codes[i].desc;
+        }
+
+        if(msg == 255)
+        {
+            return "";
         }
     }
 
