@@ -64,6 +64,15 @@ uint64_t millis(void)
   return tmp;
 }
 
+void delay_ms(uint32_t delay)
+{
+  uint64_t tmp = millis();
+  while (millis() < tmp + delay)
+  {
+  }
+  
+}
+
 bool btnPressed(uint32_t pin)
 {
   static volatile uint64_t lastPressed = 0ULL;

@@ -3,7 +3,6 @@
 
 #include "include/FSM.h"
 #include "include/tim2Encoder.h"
-#include "include/simpleTimer.h"
 #include "sh1106.h"
 #include "include/UART.h"
 
@@ -22,6 +21,7 @@
 
 // from system.cpp
 bool btnPressed(uint32_t);
+void delay_ms(uint32_t);
 
 tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
 sh1106 OLEDScreen;
@@ -505,8 +505,7 @@ void waitForECMSync(void)
 		funDigitalWrite(PA1, FUN_HIGH);
 
 		// wait for 50ms
-		simpleTimer tmr50ms(50UL);
-		while (!tmr50ms.ready()) {}
+		delay_ms(50);
 
 		ALDL_UART.fillBuff(pokeECMResponse);
 	}
@@ -522,8 +521,7 @@ void getADLDData(void)
 	funDigitalWrite(PA1, FUN_HIGH);
 
 	// wait for 500ms
-	simpleTimer tmr(500UL);
-	while (!tmr.ready()) {}
+	delay_ms(500);
 
 	#ifndef ECM_DEBUG
 		ALDL_UART.fillBuff((uint8_t*)&ALDLData);
@@ -538,13 +536,12 @@ void getABSData(void)
 	// Here we get ALDL data
 	funDigitalWrite(PA1, FUN_LOW);
 		ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd));
-		simpleTimer tmr100(100UL); while (!tmr100.ready()) {}
+		delay_ms(100);
 		ALDL_UART.write(getABSDataCmd, sizeof(getABSDataCmd));
 	funDigitalWrite(PA1, FUN_HIGH);
 
 	// wait for 400ms
-	simpleTimer tmr(400UL);
-	while (!tmr.ready()) {}
+	delay_ms(400);
 
 	ABSData.fc1.faultCodeNum = 0xFF;
 	ABSData.fc2.faultCodeNum = 0xFF;
