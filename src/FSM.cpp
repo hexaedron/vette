@@ -292,7 +292,7 @@ void fsm_drawECMParameters2_state()
 	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getLBLMPct(), 1, fontsize_10x16);
 
 	printPos = (128 - (strlen(ALDLParser.getRBLMPct()) + 3) * 10) / 2 + 43;
-	OLEDScreen.drawstr(72, lineNumbers[3] + 2, (char*)"R BLM%:", 1);
+	OLEDScreen.drawstr(72, lineNumbers[3] + 2, (char*)"R BLM%", 1);
 	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], ALDLParser.getRBLMPct(), 1, fontsize_10x16);
 
 	OLEDScreen.refresh();
