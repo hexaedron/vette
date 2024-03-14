@@ -494,7 +494,11 @@ class ALDLParser
        char*  getCoolC();    
        char*  getMatTempC();  
        char*  getOilTempC();  
-       char*  getRPM();      
+       char*  getRPM();
+       char*  getTPSPct();
+       char*  getEGRDutyPct();
+       char*  getMAPkpa();
+       char*  getBarometerkpa();      
 
        private:
        uint8_t errCNT = 0;
@@ -547,6 +551,46 @@ char* ALDLParser::getLBLMPct()
        int32_t LBLMx10 = (int32_t)this->data->LBLM * 10L;
        LBLMx10 = ((LBLMx10 * 100) >> 7) - 1000L; // (LBLMx10 * 100) / 128
        this->makeFloatStr(LBLMx10, '\0');
+       return this->ret_buf;   
+}
+
+//THROTTLE LOAD AXIS VARIABLE
+//% THROTTLE = N/2.56
+char* ALDLParser::getTPSPct()
+{
+       int32_t TPSx10 = (int32_t)this->data->NTPSLD * 10L;
+       TPSx10 = ((TPSx10 * 100) >> 8); // (TPSx10 * 100) / 256
+       this->makeFloatStr(TPSx10, '\0');
+       return this->ret_buf;   
+}
+
+//A/D RESULT FOR MANIFOLD PRESSURE SENSOR INPUT
+//(kpa = (N + 28.06)/2.71)
+char* ALDLParser::getMAPkpa()
+{
+       uint32_t MAPx100 = (uint32_t)this->data->ADMAP * 100L;
+       MAPx100 = (MAPx100 + 2806) * 10 / 271;
+       this->makeFloatStr(MAPx100, '\0');
+       return this->ret_buf;   
+}
+
+//NON - VOLITILE COMPUTED A/D BAROMETER
+//KPA = (N + 28.06)/2.71)
+char* ALDLParser::getBarometerkpa()
+{
+       uint32_t barometerx100 = (uint32_t)this->data->NVADBARO * 100L;
+       barometerx100 = (barometerx100 + 2806) * 10 / 271;
+       this->makeFloatStr(barometerx100, '\0');
+       return this->ret_buf;   
+}
+
+//EGR DUTY CYCLE
+//DC = uint8_t 2.56
+char* ALDLParser::getEGRDutyPct()
+{
+       int32_t EGRx10 = (int32_t)this->data->EGRDC * 10L;
+       EGRx10 = ((EGRx10 * 100) >> 8); // (EGRx10 * 100) / 256
+       this->makeFloatStr(EGRx10, '\0');
        return this->ret_buf;   
 }
 
