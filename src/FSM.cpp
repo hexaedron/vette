@@ -417,7 +417,7 @@ void fsm_drawECMParameters4_state()
 	CLS();
 
 	
-	// Here we print everything temperature related
+	// Here we print voltage
 	uint8_t printPos;
 
 	OLEDScreen.drawstr(35, lineNumbers[1], (char*)"Voltage:", 1);
