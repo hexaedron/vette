@@ -544,8 +544,8 @@ void ALDLParser::makeFloatStr(int32_t inValx10, char symbol)
 //N = COUNTS
 char* ALDLParser::getLBLMPct()
 {
-       int32_t LBLMx10 = (uint32_t)this->data->LBLM * 10L;
-       LBLMx10 = (LBLMx10 * 100) >> 7; // (LBLMx10 * 100) / 128
+       int32_t LBLMx10 = (int32_t)this->data->LBLM * 10L;
+       LBLMx10 = ((LBLMx10 * 100) >> 7) - 1000L; // (LBLMx10 * 100) / 128
        this->makeFloatStr(LBLMx10, '\0');
        return this->ret_buf;   
 }
@@ -554,8 +554,8 @@ char* ALDLParser::getLBLMPct()
 //N = COUNTS
 char* ALDLParser::getRBLMPct()
 {        
-       int32_t RBLMx10 = (uint32_t)this->data->RBLM * 10L;
-       RBLMx10 = (RBLMx10 * 100) >> 7; // (RBLMx10 * 100) / 128
+       int32_t RBLMx10 = (int32_t)this->data->RBLM * 10L;
+       RBLMx10 = ((RBLMx10 * 100) >> 7) - 1000L; // (RBLMx10 * 100) / 128
        this->makeFloatStr(RBLMx10, '\0');
        return this->ret_buf;
 }

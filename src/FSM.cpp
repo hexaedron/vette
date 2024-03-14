@@ -537,9 +537,9 @@ void getABSData(void)
 {
 	// Here we get ALDL data
 	funDigitalWrite(PA1, FUN_LOW);
-		ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd));
-		delay_ms(100);
-		ALDL_UART.write(getABSDataCmd, sizeof(getABSDataCmd));
+		ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd)); // Set silent mode
+		delay_ms(100);	
+		ALDL_UART.write(getABSDataCmd, sizeof(getABSDataCmd)); // Get data
 	funDigitalWrite(PA1, FUN_HIGH);
 
 	// wait for 400ms
