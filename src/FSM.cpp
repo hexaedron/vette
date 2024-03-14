@@ -19,6 +19,8 @@
 
 #define ECM_DEBUG
 
+extern const char vette_version[];
+
 // from system.cpp
 bool btnPressed(uint32_t);
 void delay_ms(uint32_t);
@@ -579,6 +581,8 @@ void makeStartScreen(void)
     OLEDScreen.drawchar(6, 35, 'e', 1);
     OLEDScreen.drawchar(6, 45, 's', 1);
     OLEDScreen.drawchar(6, 55, 's', 1);
+
+	OLEDScreen.drawstr(50, lineNumbers[4], (char*)vette_version, 1);
 
     OLEDScreen.drawchar(116, lineNumbers[0], 'B', 1);
     OLEDScreen.drawchar(116, lineNumbers[1], 'u', 1);

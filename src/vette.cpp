@@ -5,8 +5,11 @@
 
 #include "include/FSM.h"
 
+//extern const char* vette_version;
+extern const char vette_version[] = "0.9.0";
+
 // from system.cpp
-void system_initSystick(void);
+void system_initSystick();
 void system_initEXTI(uint32_t pin, bool risingEdge = true, bool fallingEdge = false);
 
 int main()
