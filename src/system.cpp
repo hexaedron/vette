@@ -70,7 +70,6 @@ void delay_ms(uint32_t delay)
   while (millis() < tmp + delay)
   {
   }
-  
 }
 
 bool btnPressed(uint32_t pin)
