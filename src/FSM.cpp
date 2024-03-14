@@ -75,6 +75,8 @@ void fsm_init_state()
 	fsm_enter_state_flag = false; // Reset flag
 }
 
+// ****************************************************************************************
+
 void fsm_connectECM_state()
 {
 	// Declare local/static variable here.
@@ -433,8 +435,8 @@ void fsm_drawABSErrors_state()
 		
 		OLEDScreen.refresh();
 	}
-	// Run repeatly for update.
 
+	// Run repeatly for update.
 
 	if ( btnPressed(PC6) )
 	{
