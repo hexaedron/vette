@@ -64,7 +64,24 @@ void fsm_init_state()
         makeStartScreen();
         OLEDScreen.refresh();
 	}
+	
 	// Run repeatly for update.
+
+	// Version info etc.
+	int8_t delta = enc.getDelta();
+	if( delta != 0 )
+	{
+		// Clear screen
+		OLEDScreen.setbuf(0);
+		OLEDScreen.drawFrame(1);
+
+		OLEDScreen.drawstr(8,  lineNumbers[1], (char*)"Version: ",   1);
+		OLEDScreen.drawstr(64, lineNumbers[1], (char*)vette_version, 1);
+		OLEDScreen.drawstr(8,  lineNumbers[3], (char*)"Date: ",      1);
+		OLEDScreen.drawstr(46, lineNumbers[3], (char*)__DATE__,      1);
+	
+		OLEDScreen.refresh();
+	}
 
 
 	if ( btnPressed(PC6) )
@@ -333,7 +350,6 @@ void fsm_drawECMParameters3_state()
 
 	getADLDData();
 	CLS();
-
 	
 	// Here we print everything engine related
 	uint8_t printPos;
