@@ -8,6 +8,7 @@ void fsm_drawECMParameters1_state ();
 void fsm_drawABSParameters_state ();
 void fsm_drawECMParameters2_state ();
 void fsm_drawECMParameters3_state ();
+void fsm_drawECMParameters4_state ();
 void fsm_drawABSErrors_state ();
 void fsm_drawFanStatus_state ();
 void fsm_connectECM_state();

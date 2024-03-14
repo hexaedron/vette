@@ -90,7 +90,7 @@ void fsm_init_state()
 		strcat(gcc_ver, ".");
 		itoa(__GNUC_PATCHLEVEL__, buf, 10);
 		strcat(gcc_ver, buf);
-		
+
 		OLEDScreen.drawstr(30, lineNumbers[5], gcc_ver,      1);
 	
 		OLEDScreen.refresh();
@@ -355,7 +355,7 @@ void fsm_drawECMParameters3_state()
 	// Run repeatly for update.
 	
 	#ifdef ECM_DEBUG
-		ALDLData.NTPSLD   = 87;
+		ALDLData.ADBAT    = 131;
 		ALDLData.ADMAP    = 131;
 		ALDLData.EGRDC    = 120;
 		ALDLData.NVADBARO = 170;
@@ -387,6 +387,47 @@ void fsm_drawECMParameters3_state()
 
 
 	if ( btnPressed(PC6) )
+	{
+		fsm_state = &fsm_drawECMParameters4_state;
+		fsm_enter_state_flag = true;
+		return;
+	}
+	fsm_enter_state_flag = false; // Reset flag
+}
+
+// ****************************************************************************************
+
+void fsm_drawECMParameters4_state()
+{
+	// Declare local/static variable here.
+
+	if ( fsm_enter_state_flag )
+	{
+		// Run once when enter this state.
+		makeScreen(87, 0, params_bitmap, 32, 8);
+	}
+	
+	// Run repeatly for update.
+	
+	#ifdef ECM_DEBUG
+		ALDLData.ADBAT = 131;
+	#endif
+
+	getADLDData();
+	CLS();
+
+	
+	// Here we print everything temperature related
+	uint8_t printPos;
+
+	OLEDScreen.drawstr(35, lineNumbers[1], (char*)"Voltage:", 1);
+	printPos = (138 - (strlen(myALDLParser.getVoltage()) + 1) * 15) / 2;
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[4], myALDLParser.getVoltage(), 1, fontsize_15x24);
+
+	OLEDScreen.refresh();
+
+
+	if ( btnPressed(PC6)  )
 	{
 		fsm_state = &fsm_drawFanStatus_state;
 		fsm_enter_state_flag = true;

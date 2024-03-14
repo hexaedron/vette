@@ -498,7 +498,8 @@ class ALDLParser
        char*  getTPSPct();
        char*  getEGRDutyPct();
        char*  getMAPkpa();
-       char*  getBarometerkpa();      
+       char*  getBarometerkpa();   
+       char*  getVoltage();   
 
        private:
        uint8_t errCNT = 0;
@@ -543,6 +544,15 @@ void ALDLParser::makeFloatStr(int32_t inValx10, char symbol)
               this->ret_buf[len+1] = symbol;
        }
 }
+
+//A/D RESULT FOR IGNITION VOLTAGE INPUT
+//VOLTS = N/10
+char* ALDLParser::getVoltage()
+{
+       int32_t Voltx10 = (int32_t)this->data->ADBAT;
+       this->makeFloatStr(Voltx10, 'V');
+       return this->ret_buf;   
+}                       
 
 //LEFT BANK BLOCK LEARN MULTIPLIER
 //N = COUNTS
