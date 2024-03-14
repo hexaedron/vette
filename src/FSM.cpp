@@ -289,12 +289,12 @@ void fsm_drawECMParameters2_state()
 	OLEDScreen.drawstr(64, lineNumbers[0] + 1, (char*)"Knock Ret%", 1);
 	OLEDScreen.drawstr_sz(printPos, lineNumbers[2] - 1, myALDLParser.getKnockrtdDeg(), 1, fontsize_10x16);
 
-	OLEDScreen.drawstr(8, lineNumbers[3] + 2, (char*)"L BLM%", 1);
+	OLEDScreen.drawstr(8, lineNumbers[3] + 2, (char*)"L LTFT%", 1);
 	printPos = (128 - (strlen(myALDLParser.getLBLMPct()) + 3) * 10) / 2 - 22;
 	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], myALDLParser.getLBLMPct(), 1, fontsize_10x16);
 
 	printPos = (128 - (strlen(myALDLParser.getRBLMPct()) + 3) * 10) / 2 + 43;
-	OLEDScreen.drawstr(72, lineNumbers[3] + 2, (char*)"R BLM%", 1);
+	OLEDScreen.drawstr(72, lineNumbers[3] + 2, (char*)"R LTFT%", 1);
 	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], myALDLParser.getRBLMPct(), 1, fontsize_10x16);
 
 	OLEDScreen.refresh();
