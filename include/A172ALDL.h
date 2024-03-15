@@ -489,7 +489,10 @@ class ALDLParser
        uint8_t getErrCount() { return this->errCNT; }
        char** getErrTexts() { return this->errors; }
        char*  getLBLMPct(); 
-       char*  getRBLMPct(); 
+       char*  getRBLMPct();
+       char*  getLINTPct();
+       char*  getRINTPct();
+       char*  getBLMCell(); 
        char*  getKnockrtdDeg();
        char*  getCoolC();    
        char*  getMatTempC();  
@@ -552,7 +555,15 @@ char* ALDLParser::getVoltage()
        int32_t Voltx10 = (int32_t)this->data->ADBAT;
        this->makeFloatStr(Voltx10, 'V');
        return this->ret_buf;   
-}                       
+}
+
+//BLOCK LEARN MULTIPLIER CELL NUMBER
+//N = NUMBER
+char* ALDLParser::getBLMCell()
+{
+       itoa(this->data->BLMCELL, this->ret_buf, 10);
+       return this->ret_buf;   
+}
 
 //LEFT BANK BLOCK LEARN MULTIPLIER
 //N = COUNTS
@@ -561,6 +572,36 @@ char* ALDLParser::getLBLMPct()
        int32_t LBLMx10 = (int32_t)this->data->LBLM * 10L;
        LBLMx10 = ((LBLMx10 * 100) >> 7) - 1000L; // (LBLMx10 * 100) / 128
        this->makeFloatStr(LBLMx10, '\0');
+       return this->ret_buf;   
+}
+
+//RIGHT BANK BLOCK LEARN MULTIPLIER
+//N = COUNTS
+char* ALDLParser::getRBLMPct()
+{        
+       int32_t RBLMx10 = (int32_t)this->data->RBLM * 10L;
+       RBLMx10 = ((RBLMx10 * 100) >> 7) - 1000L; // (RBLMx10 * 100) / 128
+       this->makeFloatStr(RBLMx10, '\0');
+       return this->ret_buf;
+}
+
+//INTEGRATOR VALUE FOR LEFT O2 SENSOR
+//N = COUNTS
+char* ALDLParser::getLINTPct()
+{
+       int32_t LINTx10 = (int32_t)this->data->LINT * 10L;
+       LINTx10 = ((LINTx10 * 100) >> 7) - 1000L; // (LINTx10 * 100) / 128
+       this->makeFloatStr(LINTx10, '\0');
+       return this->ret_buf;   
+}
+
+//INTEGRATOR VALUE FOR RIGHT O2 SENSOR
+//N = COUNTS
+char* ALDLParser::getRINTPct()
+{
+       int32_t RINTx10 = (int32_t)this->data->RINT * 10L;
+       RINTx10 = ((RINTx10 * 100) >> 7) - 1000L; // (RINTx10 * 100) / 128
+       this->makeFloatStr(RINTx10, '\0');
        return this->ret_buf;   
 }
 
@@ -602,16 +643,6 @@ char* ALDLParser::getEGRDutyPct()
        EGRx10 = ((EGRx10 * 100) >> 8); // (EGRx10 * 100) / 256
        this->makeFloatStr(EGRx10, '\0');
        return this->ret_buf;   
-}
-
-//RIGHT BANK BLOCK LEARN MULTIPLIER
-//N = COUNTS
-char* ALDLParser::getRBLMPct()
-{        
-       int32_t RBLMx10 = (int32_t)this->data->RBLM * 10L;
-       RBLMx10 = ((RBLMx10 * 100) >> 7) - 1000L; // (RBLMx10 * 100) / 128
-       this->makeFloatStr(RBLMx10, '\0');
-       return this->ret_buf;
 }
 
 //RETARD DUE TO KNOCK
