@@ -71,29 +71,7 @@ void fsm_init_state()
 	int8_t delta = enc.getDelta();
 	if( delta != 0 )
 	{
-		// Clear screen
-		OLEDScreen.setbuf(0);
-		OLEDScreen.drawFrame(1);
-
-		OLEDScreen.drawstr(8,  lineNumbers[1], (char*)"Version: ",   1);
-		OLEDScreen.drawstr(64, lineNumbers[1], (char*)vette_version, 1);
-		OLEDScreen.drawstr(8,  lineNumbers[3], (char*)"Date: ",      1);
-		OLEDScreen.drawstr(46, lineNumbers[3], (char*)__DATE__,      1);
-		OLEDScreen.drawstr(8, lineNumbers[5], (char*)"GCC ",      1);
-
-		char gcc_ver[10];
-		char buf[4];
-		itoa(__GNUC__, gcc_ver, 10);
-		strcat(gcc_ver, ".");
-		itoa(__GNUC_MINOR__, buf, 10);
-		strcat(gcc_ver, buf);
-		strcat(gcc_ver, ".");
-		itoa(__GNUC_PATCHLEVEL__, buf, 10);
-		strcat(gcc_ver, buf);
-
-		OLEDScreen.drawstr(30, lineNumbers[5], gcc_ver,      1);
-	
-		OLEDScreen.refresh();
+		makeVersionScreen();
 	}
 
 
@@ -707,8 +685,6 @@ void makeStartScreen(void)
     OLEDScreen.drawchar(6, 45, 's', 1);
     OLEDScreen.drawchar(6, 55, 's', 1);
 
-	OLEDScreen.drawstr(50, lineNumbers[4], (char*)vette_version, 1);
-
     OLEDScreen.drawchar(116, lineNumbers[0], 'B', 1);
     OLEDScreen.drawchar(116, lineNumbers[1], 'u', 1);
     OLEDScreen.drawchar(116, lineNumbers[2], 't', 1);
@@ -716,6 +692,35 @@ void makeStartScreen(void)
     OLEDScreen.drawchar(116, lineNumbers[4], 'o', 1);
     OLEDScreen.drawchar(116, lineNumbers[5], 'n', 1);
     OLEDScreen.drawFrame(1);
+}
+
+// ****************************************************************************************
+
+void makeVersionScreen(void)
+{
+	// Clear screen
+	OLEDScreen.setbuf(0);
+	OLEDScreen.drawFrame(1);
+
+	OLEDScreen.drawstr(4,  lineNumbers[1], (char*)"Version:",    1);
+	OLEDScreen.drawstr(56, lineNumbers[1], (char*)vette_version, 1);
+	OLEDScreen.drawstr(4,  lineNumbers[3], (char*)"Date:",       1);
+	OLEDScreen.drawstr(46, lineNumbers[3], (char*)__DATE__,      1);
+	OLEDScreen.drawstr(4,  lineNumbers[5], (char*)"GCC",         1);
+
+	char gcc_ver[10];
+	char buf[4];
+	itoa(__GNUC__, gcc_ver, 10);
+	strcat(gcc_ver, ".");
+	itoa(__GNUC_MINOR__, buf, 10);
+	strcat(gcc_ver, buf);
+	strcat(gcc_ver, ".");
+	itoa(__GNUC_PATCHLEVEL__, buf, 10);
+	strcat(gcc_ver, buf);
+
+	OLEDScreen.drawstr(30, lineNumbers[5], gcc_ver,      1);
+
+	OLEDScreen.refresh();
 }
 
 // ****************************************************************************************

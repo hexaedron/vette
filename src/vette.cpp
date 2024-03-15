@@ -6,7 +6,7 @@
 #include "include/FSM.h"
 
 //extern const char* vette_version;
-extern const char vette_version[] = "0.9.2";
+extern const char vette_version[] = "0.9.2 alpha";
 
 // from system.cpp
 void system_initSystick();
