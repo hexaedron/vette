@@ -6,7 +6,7 @@ void fsm_init_state ();
 void fsm_drawECMErrors_state ();
 void fsm_drawECMParametersTemp_state ();
 void fsm_drawABSParameters_state ();
-void fsm_drawECMParameters2_state ();
+void fsm_drawECMParametersRPM_state ();
 void fsm_drawECMParametersBLM_state();
 void fsm_drawECMParametersPressure_state ();
 void fsm_drawECMParametersVoltage_state ();

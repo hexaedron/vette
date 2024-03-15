@@ -498,6 +498,7 @@ class ALDLParser
        char*  getMatTempC();  
        char*  getOilTempC();  
        char*  getRPM();
+       char*  getDesiredIdleRPM();
        char*  getTPSPct();
        char*  getEGRDutyPct();
        char*  getMAPkpa();
@@ -609,7 +610,7 @@ char* ALDLParser::getRINTPct()
 //% THROTTLE = N/2.56
 char* ALDLParser::getTPSPct()
 {
-       int32_t TPSx10 = (int32_t)this->data->NTPSLD * 10L;
+       int32_t TPSx10 = (int32_t)this->data->NTPSLD * 10L + 10L;
        TPSx10 = ((TPSx10 * 100) >> 8); // (TPSx10 * 100) / 256
        this->makeFloatStr(TPSx10, '\0');
        return this->ret_buf;   
@@ -689,6 +690,15 @@ char* ALDLParser::getRPM()
        itoa(RPM, this->ret_buf, 10);
        return this->ret_buf;
 }
+
+//DESIRED IDLE SPEED
+//RPM = N * 12.5
+char* ALDLParser::getDesiredIdleRPM()
+{
+       uint32_t RPM = (uint32_t)this->data->ISESDD * 12UL + ((uint32_t)this->data->ISESDD >> 1);
+       itoa(RPM, this->ret_buf, 10);
+       return this->ret_buf;
+}                       
 
 void ALDLParser::parse()
 {       

@@ -256,7 +256,7 @@ void fsm_drawECMParametersTemp_state()
 
 	if ( btnPressed(PC6)  )
 	{
-		fsm_state = &fsm_drawECMParameters2_state;
+		fsm_state = &fsm_drawECMParametersRPM_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
@@ -265,7 +265,7 @@ void fsm_drawECMParametersTemp_state()
 
 // ****************************************************************************************
 
-void fsm_drawECMParameters2_state()
+void fsm_drawECMParametersRPM_state()
 {
 	// Declare local/static variable here.
 
@@ -279,9 +279,9 @@ void fsm_drawECMParameters2_state()
 	
 	#ifdef ECM_DEBUG
 		ALDLData.NTRPMX  = 87;
-		ALDLData.LBLM    = 131;
-		ALDLData.RBLM    = 124;
+		ALDLData.ISESDD  = 95;
 		ALDLData.NOCKRTD = 6;
+		ALDLData.NTPSLD  = 25;
 	#endif
 
 	getADLDData();
@@ -298,6 +298,15 @@ void fsm_drawECMParameters2_state()
 	printPos = (128 - (strlen(myALDLParser.getKnockrtdDeg()) + 3) * 10) / 2 + 36;
 	OLEDScreen.drawstr(64, lineNumbers[0] + 1, (char*)"Knock Ret%", 1);
 	OLEDScreen.drawstr_sz(printPos, lineNumbers[2] - 1, myALDLParser.getKnockrtdDeg(), 1, fontsize_10x16);
+
+	OLEDScreen.drawstr(4, lineNumbers[3] + 2, (char*)"Idle RPM", 1);
+	printPos = (128 - (strlen(myALDLParser.getDesiredIdleRPM()) + 3) * 10) / 2 - 22;
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], myALDLParser.getDesiredIdleRPM(), 1, fontsize_10x16);
+
+	printPos = (128 - (strlen(myALDLParser.getTPSPct()) + 3) * 10) / 2 + 36;
+	OLEDScreen.drawstr(72, lineNumbers[3] + 2, (char*)"TPS%", 1);
+	OLEDScreen.drawstr_sz(printPos, lineNumbers[5], myALDLParser.getTPSPct(), 1, fontsize_10x16);
+
 	OLEDScreen.refresh();
 
 
@@ -595,9 +604,9 @@ void fsm_drawABSErrors_state()
 		}
 		else
 		{
-			OLEDScreen.drawstr(4, lineNumbers[1], (char*)getABSMessage(ABSData.fc1.faultCodeNum), 1);
-			OLEDScreen.drawstr(4, lineNumbers[3], (char*)getABSMessage(ABSData.fc2.faultCodeNum), 1);
-			OLEDScreen.drawstr(4, lineNumbers[5], (char*)getABSMessage(ABSData.fc3.faultCodeNum), 1);
+			OLEDScreen.drawstr(4, lineNumbers[1] - 4, (char*)getABSMessage(ABSData.fc1.faultCodeNum), 1);
+			OLEDScreen.drawstr(4, lineNumbers[3] - 4, (char*)getABSMessage(ABSData.fc2.faultCodeNum), 1);
+			OLEDScreen.drawstr(4, lineNumbers[5] - 4, (char*)getABSMessage(ABSData.fc3.faultCodeNum), 1);
 		}
 		
 		OLEDScreen.refresh();
@@ -764,11 +773,11 @@ void makeVersionScreen(void)
 	OLEDScreen.setbuf(0);
 	OLEDScreen.drawFrame(1);
 
-	OLEDScreen.drawstr(4,  lineNumbers[1], (char*)"Version:",    1);
-	OLEDScreen.drawstr(56, lineNumbers[1], (char*)vette_version, 1);
-	OLEDScreen.drawstr(4,  lineNumbers[3], (char*)"Date:",       1);
-	OLEDScreen.drawstr(46, lineNumbers[3], (char*)__DATE__,      1);
-	OLEDScreen.drawstr(4,  lineNumbers[5], (char*)"GCC",         1);
+	OLEDScreen.drawstr(4,  lineNumbers[1] - 4, (char*)"Version:",    1);
+	OLEDScreen.drawstr(56, lineNumbers[1] - 4, (char*)vette_version, 1);
+	OLEDScreen.drawstr(4,  lineNumbers[3] - 4, (char*)"Date:",       1);
+	OLEDScreen.drawstr(46, lineNumbers[3] - 4, (char*)__DATE__,      1);
+	OLEDScreen.drawstr(4,  lineNumbers[5] - 4, (char*)"GCC",         1);
 
 	char gcc_ver[10];
 	char buf[4];
@@ -780,7 +789,7 @@ void makeVersionScreen(void)
 	itoa(__GNUC_PATCHLEVEL__, buf, 10);
 	strcat(gcc_ver, buf);
 
-	OLEDScreen.drawstr(30, lineNumbers[5], gcc_ver,      1);
+	OLEDScreen.drawstr(30, lineNumbers[5] - 4, gcc_ver,      1);
 
 	OLEDScreen.refresh();
 }
