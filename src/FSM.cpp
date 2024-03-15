@@ -346,6 +346,9 @@ void fsm_drawECMParametersBLM_state()
 
 	
 	// Here we print everything BLM related
+	// https://turbobuick.com/threads/better-understand-your-blm-and-int.278346/
+	//https://www.motortrend.com/how-to/1605-diagnosing-a-failed-or-clogged-fuel-injector-on-1982-95-corvettes-with-obd-i/
+
 	uint8_t printPos;
 
 	OLEDScreen.drawstr(8, lineNumbers[0] + 1, (char*)"L Int%", 1);
