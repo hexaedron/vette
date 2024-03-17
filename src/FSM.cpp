@@ -19,10 +19,13 @@
 
 #define ECM_DEBUG
 
+#define BUTTON_HOLD_TIMEOUT_MS 1000UL
+
 extern const char vette_version[];
 
 // from system.cpp
 bool btnClick(uint32_t);
+bool btnHeld(uint32_t, uint32_t);
 void delay_ms(uint32_t);
 
 tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
@@ -104,6 +107,14 @@ void fsm_connectECM_state()
 
 		// Populate ALDLData
 		getADLDData();
+
+		#ifdef ECM_DEBUG
+			ALDLData.MALFFLG1 = 0xFF;
+			ALDLData.MALFFLG1 = 0xFF;
+			ALDLData.MALFFLG3 = 0xFF;
+			ALDLData.MALFFLG4 = 0b11010111;
+			ALDLData.MALFFLG5 = 0xFF;
+		#endif
 	}
 	// Run repeatly for update.
 
@@ -135,15 +146,6 @@ void fsm_drawECMErrors_state()
 		
 		// Here we parse and show errors
 
-		#ifdef ECM_DEBUG
-			ALDLData.MALFFLG1 = 0xFF;
-			ALDLData.MALFFLG1 = 0xFF;
-			ALDLData.MALFFLG3 = 0xFF;
-			ALDLData.MALFFLG4 = 0b11010111;
-			ALDLData.MALFFLG5 = 0xFF;
-		#endif
-
-
 		myALDLParser.attach(&ALDLData);
 		myALDLParser.parse();
 		errCount  = myALDLParser.getErrCount();
@@ -154,16 +156,23 @@ void fsm_drawECMErrors_state()
 		if(errCount > LINES_MAX)
 			OLEDScreen.drawCircle(124, 6, 1, 1);
 
-		uint8_t currStr = 0;
-		for(uint8_t i = errPointer; i < (errPointer + LINES_MAX); i++)
+		if(errCount == 0)
 		{
-			OLEDScreen.drawstr(3, lineNumbers[currStr], errTexts[i], 1);
-			currStr++;
-			if (currStr >= errCount)
+			OLEDScreen.drawstr_sz(8, lineNumbers[3], (char*)"No errors!", 1, fontsize_10x16);
+		}
+		else
+		{
+			uint8_t currStr = 0;
+			for(uint8_t i = errPointer; i < (errPointer + LINES_MAX); i++)
 			{
-				break;
+				OLEDScreen.drawstr(3, lineNumbers[currStr], errTexts[i], 1);
+				currStr++;
+				if (currStr >= errCount)
+				{
+					break;
+				}
+
 			}
-			
 		}
 
 		OLEDScreen.refresh();
@@ -202,9 +211,78 @@ void fsm_drawECMErrors_state()
 	}
 
 
+	if ( btnHeld(PC6, BUTTON_HOLD_TIMEOUT_MS) )
+	{
+		fsm_state = &fsm_resetECMErrors_state;
+		fsm_enter_state_flag = true;
+		return;
+	}
+
 	if ( btnClick(PC6) )
 	{
 		fsm_state = &fsm_drawECMParametersTemp_state;
+		fsm_enter_state_flag = true;
+		return;
+	}
+	fsm_enter_state_flag = false; // Reset flag
+}
+
+// ****************************************************************************************
+
+void fsm_resetECMErrors_state()
+{
+	// Declare local/static variable here.
+	static bool clearFlag = false;
+	static bool refreshFlag = false;
+
+	if ( fsm_enter_state_flag )
+	{
+		// Run once when enter this state.
+		OLEDScreen.setbuf(0);
+		OLEDScreen.drawFrame(1);
+		OLEDScreen.drawstr(32, lineNumbers[1], (char*)"Clear errors?", 1);
+		OLEDScreen.drawstr_sz(16, lineNumbers[4], (char*)"Yes", 1, fontsize_15x24);
+		OLEDScreen.drawstr_sz(80, lineNumbers[4], (char*)"No", 1, fontsize_15x24);
+		OLEDScreen.xorrect(79, lineNumbers[2] - 4, 35, 23);
+	}
+	
+	// Run repeatly for update.
+
+	if(enc.getDelta() != 0)
+	{
+		clearFlag = !clearFlag;
+		refreshFlag = true;
+	}
+
+	if(refreshFlag)
+	{
+		OLEDScreen.xorrect(15, lineNumbers[2] - 4, 53, 23);
+		OLEDScreen.xorrect(79, lineNumbers[2] - 4, 35, 23);
+		refreshFlag = false;
+	}
+
+	OLEDScreen.refresh();
+
+
+	if ( btnClick(PC6)  )
+	{
+		if(clearFlag)
+		{
+			flushADLDErrors();
+			getADLDData();
+
+			#ifdef ECM_DEBUG
+				ALDLData.MALFFLG1 = 0;
+				ALDLData.MALFFLG1 = 0;
+				ALDLData.MALFFLG3 = 0;
+				ALDLData.MALFFLG4 = 0;
+				ALDLData.MALFFLG5 = 0;
+			#endif
+		}
+		clearFlag = false;
+		refreshFlag = false;
+
+		fsm_state = &fsm_drawECMErrors_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
@@ -708,6 +786,19 @@ void getADLDData(void)
 		ALDL_UART.fillBuff((uint8_t*)&ALDLData);
 	#endif
 
+}
+
+// ****************************************************************************************
+
+void flushADLDErrors()
+{
+	// Here we clear ALDL errors
+	funDigitalWrite(PA1, FUN_LOW);
+		ALDL_UART.write(clearCodesCmd, sizeof(clearCodesCmd));
+	funDigitalWrite(PA1, FUN_HIGH);
+
+	// wait for 500ms
+	delay_ms(500);
 }
 
 // ****************************************************************************************

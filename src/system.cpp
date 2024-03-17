@@ -73,7 +73,7 @@ void delay_ms(uint32_t delay)
   }
 }
 
-uint32_t btnPressed(uint32_t pin)
+uint64_t btnPressed(uint32_t pin)
 {
   static volatile uint64_t lastPressed = 0ULL;
   
@@ -91,7 +91,7 @@ uint32_t btnPressed(uint32_t pin)
       lastPressed = millis();
       // Enable IRQ for the given pin. 
       EXTI->INTENR |= (1 << HW_PIN_NUM(pin));
-      return pressedMS; 
+      return millis(); 
     }
     else
     {
@@ -106,7 +106,7 @@ uint32_t btnPressed(uint32_t pin)
   }
 }
 
-uint32_t btnReleased(uint32_t pin)
+uint64_t btnReleased(uint32_t pin)
 {
   static volatile uint64_t lastReleased = 0ULL;
   
@@ -124,7 +124,7 @@ uint32_t btnReleased(uint32_t pin)
       lastReleased = millis();
       // Enable IRQ for the given pin. 
       EXTI->INTENR |= (1 << HW_PIN_NUM(pin));
-      return releasedMS; 
+      return millis(); 
     }
     else
     {
@@ -146,13 +146,7 @@ bool btnClick(uint32_t pin)
 
 bool btnHeld(uint32_t pin, uint32_t holdTimeout)
 {
-  if ( (btnPressed(pin) == 0) || (btnReleased(pin) == 0) )
-  {
-    return false;
-  }
-
-  return (btnReleased(pin) - btnPressed(pin)) >= holdTimeout;
-  
+  return (millis() - btnPressed(pin)) <= holdTimeout; 
 }
 
 /**
