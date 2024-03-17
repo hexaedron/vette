@@ -4,11 +4,12 @@
 #include "include/cube_defs.h"
 
 //Globals
-static volatile uint64_t     _millis  = 0ULL;    // Millisecons counter
-static volatile bool         _btn     = false;   // Button pressed flag
-static volatile uint32_t     _pin_num = 0;       // Pins bitmask for EXTI
+static volatile uint64_t     _millis       = 0ULL;    // Millisecons counter
+static volatile bool         _btn_pressed  = false;   // Button pressed flag
+static volatile bool         _btn_released = false;   // Button released flag
+static volatile uint32_t     _pin_num      = 0;       // Pins bitmask for EXTI
 
-#define BUTTON_DEBOUNCE_MS 100ULL
+#define BUTTON_DEBOUNCE_MS 100UL
 
 extern "C" INTERRUPT_HANDLER
 void NMI_Handler(void)
@@ -72,7 +73,7 @@ void delay_ms(uint32_t delay)
   }
 }
 
-bool btnPressed(uint32_t pin)
+uint32_t btnPressed(uint32_t pin)
 {
   static volatile uint64_t lastPressed = 0ULL;
   
@@ -80,28 +81,78 @@ bool btnPressed(uint32_t pin)
   // We will enable it back later for debouncing
   EXTI->INTENR &= ~(1 << HW_PIN_NUM(pin));
  
-  if( _btn )
+  if( _btn_pressed )
   {
-    _btn = false;
+    _btn_pressed = false;
+    uint32_t pressedMS = (uint32_t)(millis() - lastPressed);
    
-    if ( (millis() - lastPressed) >= BUTTON_DEBOUNCE_MS )
+    if ( pressedMS >= BUTTON_DEBOUNCE_MS )
     {
       lastPressed = millis();
       // Enable IRQ for the given pin. 
       EXTI->INTENR |= (1 << HW_PIN_NUM(pin));
-      return true; 
+      return pressedMS; 
     }
     else
     {
-      return false;
+      return 0;
     }
   }
   else 
   {
     // Enable IRQ for the given pin. 
     EXTI->INTENR |= (1 << HW_PIN_NUM(pin));
+    return 0;
+  }
+}
+
+uint32_t btnReleased(uint32_t pin)
+{
+  static volatile uint64_t lastReleased = 0ULL;
+  
+  // Disable IRQ for the given pin. 
+  // We will enable it back later for debouncing
+  EXTI->INTENR &= ~(1 << HW_PIN_NUM(pin));
+ 
+  if( _btn_released )
+  {
+    _btn_released = false;
+    uint32_t releasedMS = (uint32_t)(millis() - lastReleased);
+   
+    if ( releasedMS >= BUTTON_DEBOUNCE_MS )
+    {
+      lastReleased = millis();
+      // Enable IRQ for the given pin. 
+      EXTI->INTENR |= (1 << HW_PIN_NUM(pin));
+      return releasedMS; 
+    }
+    else
+    {
+      return 0;
+    }
+  }
+  else 
+  {
+    // Enable IRQ for the given pin. 
+    EXTI->INTENR |= (1 << HW_PIN_NUM(pin));
+    return 0;
+  }
+}
+
+bool btnClick(uint32_t pin)
+{
+  return ( btnPressed(pin) && btnReleased(pin) );
+}
+
+bool btnHeld(uint32_t pin, uint32_t holdTimeout)
+{
+  if ( (btnPressed(pin) == 0) || (btnReleased(pin) == 0) )
+  {
     return false;
   }
+
+  return (btnReleased(pin) - btnPressed(pin)) >= holdTimeout;
+  
 }
 
 /**
@@ -115,9 +166,19 @@ void SysTick_Handler(void)
   SysTick->SR = 0;
 }
 
-extern "C" INTERRUPT_HANDLER
+extern "C" INTERRUPT_HANDLER 
 void EXTI7_0_IRQHandler(void) 
 {
-  _btn = true;
+  uint32_t pinState = funDigitalRead(PC6);
+
+  if(pinState == 1)
+  {
+    _btn_pressed = true;
+  }
+  else
+  {
+    _btn_released = true;
+  }
+
   EXTI->INTFR = _pin_num; // Acknowledge the only interrupt we use in our init functions
 }

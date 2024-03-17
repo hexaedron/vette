@@ -6,7 +6,7 @@
 #include "include/FSM.h"
 
 //extern const char* vette_version;
-extern const char vette_version[] = "0.9.3 alpha";
+extern const char vette_version[] = "0.9.4 alpha";
 
 // from system.cpp
 void system_initSystick();
@@ -23,7 +23,7 @@ int main()
 	// We use button on PC6, so we need to init it and turn on interrupt.	
 	funGpioInitAll();
 	funPinMode(PC6, GPIO_Speed_In | GPIO_CNF_IN_FLOATING);
-	system_initEXTI(PC6);  
+	system_initEXTI(PC6, true, true);  // We need both rising and falling edges
 
 	// We use PA1 as DIR pin for SN74LVC1T45DBVR
 	// When it is low, we transmit,

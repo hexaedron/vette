@@ -22,7 +22,7 @@
 extern const char vette_version[];
 
 // from system.cpp
-bool btnPressed(uint32_t);
+bool btnClick(uint32_t);
 void delay_ms(uint32_t);
 
 tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
@@ -75,7 +75,7 @@ void fsm_init_state()
 	}
 
 
-	if ( btnPressed(PC6) )
+	if ( btnClick(PC6) )
 	{
 		fsm_state = &fsm_connectECM_state;
 		fsm_enter_state_flag = true;
@@ -202,7 +202,7 @@ void fsm_drawECMErrors_state()
 	}
 
 
-	if ( btnPressed(PC6) )
+	if ( btnClick(PC6) )
 	{
 		fsm_state = &fsm_drawECMParametersTemp_state;
 		fsm_enter_state_flag = true;
@@ -254,7 +254,7 @@ void fsm_drawECMParametersTemp_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnPressed(PC6)  )
+	if ( btnClick(PC6)  )
 	{
 		fsm_state = &fsm_drawECMParametersRPM_state;
 		fsm_enter_state_flag = true;
@@ -310,7 +310,7 @@ void fsm_drawECMParametersRPM_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnPressed(PC6) )
+	if ( btnClick(PC6) )
 	{
 		fsm_state = &fsm_drawECMParametersBLM_state;
 		fsm_enter_state_flag = true;
@@ -383,7 +383,7 @@ void fsm_drawECMParametersBLM_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnPressed(PC6) )
+	if ( btnClick(PC6) )
 	{
 		fsm_state = &fsm_drawECMParametersPressure_state;
 		fsm_enter_state_flag = true;
@@ -438,7 +438,7 @@ void fsm_drawECMParametersPressure_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnPressed(PC6) )
+	if ( btnClick(PC6) )
 	{
 		fsm_state = &fsm_drawECMParametersVoltage_state;
 		fsm_enter_state_flag = true;
@@ -479,7 +479,7 @@ void fsm_drawECMParametersVoltage_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnPressed(PC6)  )
+	if ( btnClick(PC6)  )
 	{
 		fsm_state = &fsm_drawFanStatus_state;
 		fsm_enter_state_flag = true;
@@ -574,7 +574,7 @@ void fsm_drawFanStatus_state()
 	
 	OLEDScreen.refresh();
 
-	if ( btnPressed(PC6) )
+	if ( btnClick(PC6) )
 	{
 		fsm_state = &fsm_drawABSErrors_state;
 		fsm_enter_state_flag = true;
@@ -617,7 +617,7 @@ void fsm_drawABSErrors_state()
 
 	// Run repeatly for update.
 
-	if ( btnPressed(PC6) )
+	if ( btnClick(PC6) )
 	{
 		fsm_state = &fsm_drawABSParameters_state;
 		fsm_enter_state_flag = true;
@@ -657,7 +657,7 @@ void fsm_drawABSParameters_state()
 
 	OLEDScreen.refresh();	
 
-	if ( btnPressed(PC6) )
+	if ( btnClick(PC6) )
 	{
 		fsm_state = &fsm_drawECMErrors_state;
 		fsm_enter_state_flag = true;
