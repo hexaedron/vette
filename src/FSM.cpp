@@ -17,7 +17,7 @@
 #include <stdlib.h>    // itoa
 #include <stdio.h>	   // printf
 
-#define ECM_DEBUG
+//#define ECM_DEBUG
 
 #define BUTTON_HOLD_TIMEOUT_MS 1000UL
 

@@ -164,10 +164,9 @@ size_t UART::write(uint8_t c)
 size_t UART::write(const uint8_t *buffer, size_t size)
 {
     size_t n = 0;
-    while (size--) 
+    while (n <= size) 
     {
-        if (UART::write(*buffer++)) n++;
-        else break;
+        this->write(buffer[n++]);
     }
     return n;
 }
