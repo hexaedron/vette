@@ -767,7 +767,7 @@ void waitForECMSync(void)
 		// wait for 50ms
 		delay_ms(50);
 
-		ALDL_UART.fillBuff(pokeECMResponse);
+		ALDL_UART.fillBuff(pokeECMResponse, sizeof(pokeECMResponse));
 	}
 }
 
@@ -787,7 +787,7 @@ void getADLDData(void)
 	delay_ms(50);
 
 	#ifndef ECM_DEBUG
-		ALDL_UART.fillBuff((uint8_t*)&ALDLData);
+		ALDL_UART.fillBuff((uint8_t*)&ALDLData, sizeof(ALDLData));
 	#endif
 
 	delay_ms(450);
@@ -827,7 +827,7 @@ void getABSData(void)
 	ABSData.fc3.faultCodeNum = 0xFF;
 
 	#ifndef ECM_DEBUG
-		ALDL_UART.fillBuff((uint8_t*)&ABSData);
+		ALDL_UART.fillBuff((uint8_t*)&ABSData, sizeof(ABSData));
 	#endif
 
 	// Return to normal mode

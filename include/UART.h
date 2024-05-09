@@ -17,7 +17,7 @@ class UART
     int available(void);
     int peek(void);
     int read(void);
-    void fillBuff(uint8_t*);
+    void fillBuff(uint8_t*, size_t);
     void flush(void);
     int availableForWrite();
     size_t write(uint8_t);
@@ -130,11 +130,11 @@ int UART::read()
     return c;
 }
 
-void UART::fillBuff(uint8_t* buf)
+void UART::fillBuff(uint8_t* buf, size_t length)
 {
     uint8_t offset = 0;
 
-    while (this->available())
+    while (this->available() && (offset < length))
     {
         buf[offset] = (uint8_t)this->read();
         offset++;
