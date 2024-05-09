@@ -146,14 +146,15 @@ bool btnClick(uint32_t pin)
 
 bool btnHeld(uint32_t pin, uint32_t holdTimeout)
 {
-  return (millis() - btnPressed(pin)) <= holdTimeout; 
+  //return (millis() - btnPressed(pin)) <= holdTimeout; 
+  return btnPressed(pin) && ((millis() - btnPressed(pin)) <= holdTimeout);
 }
 
 /**
 *   Systick interrupt handler. It only counts millis.
 */
-extern "C" INTERRUPT_HANDLER 
-__attribute__((section(".srodata")))
+extern "C" INTERRUPT_HANDLER
+__attribute__((section(".srodata"))) 
 void SysTick_Handler(void)
 { 
   _millis++;

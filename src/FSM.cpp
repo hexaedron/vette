@@ -211,12 +211,12 @@ void fsm_drawECMErrors_state()
 	}
 
 
-	if ( btnHeld(PC6, BUTTON_HOLD_TIMEOUT_MS) )
-	{
-		fsm_state = &fsm_resetECMErrors_state;
-		fsm_enter_state_flag = true;
-		return;
-	}
+	//if ( btnHeld(PC6, BUTTON_HOLD_TIMEOUT_MS) )
+	//{
+	//	fsm_state = &fsm_resetECMErrors_state;
+	//	fsm_enter_state_flag = true;
+	//	return;
+	//}
 
 	if ( btnClick(PC6) )
 	{
@@ -761,6 +761,7 @@ void waitForECMSync(void)
 	{
 		funDigitalWrite(PA1, FUN_LOW);
 			ALDL_UART.write(pokeECMCmd, sizeof(pokeECMCmd));
+			ALDL_UART.flush();
 		funDigitalWrite(PA1, FUN_HIGH);
 
 		// wait for 50ms
@@ -774,17 +775,22 @@ void waitForECMSync(void)
 
 void getADLDData(void)
 {
+	
 	// Here we get ALDL data
 	funDigitalWrite(PA1, FUN_LOW);
 		ALDL_UART.write(getECMDataCmd, sizeof(getECMDataCmd));
+		// Flush first to ensure there is nothing left in buffer
+		ALDL_UART.flush();
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	// wait for 500ms
-	delay_ms(500);
+	// wait for 50ms to ensure we collect all the info
+	delay_ms(50);
 
 	#ifndef ECM_DEBUG
 		ALDL_UART.fillBuff((uint8_t*)&ALDLData);
 	#endif
+
+	delay_ms(450);
 
 }
 
@@ -808,12 +814,13 @@ void getABSData(void)
 	// Here we get ALDL data
 	funDigitalWrite(PA1, FUN_LOW);
 		ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd)); // Set silent mode
-		delay_ms(100);	
+		delay_ms(50);
+		ALDL_UART.flush();	
 		ALDL_UART.write(getABSDataCmd, sizeof(getABSDataCmd)); // Get data
 	funDigitalWrite(PA1, FUN_HIGH);
 
 	// wait for 400ms
-	delay_ms(400);
+	delay_ms(50);
 
 	ABSData.fc1.faultCodeNum = 0xFF;
 	ABSData.fc2.faultCodeNum = 0xFF;
@@ -827,6 +834,8 @@ void getABSData(void)
 	funDigitalWrite(PA1, FUN_LOW);
 		ALDL_UART.write(returnFromABSCmd, sizeof(returnFromABSCmd));
 	funDigitalWrite(PA1, FUN_HIGH);
+
+	delay_ms(400);
 }
 
 // ****************************************************************************************
