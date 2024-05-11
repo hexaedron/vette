@@ -66,6 +66,9 @@ void fsm_init_state()
         OLEDScreen.init();
         makeStartScreen();
         OLEDScreen.refresh();
+
+		// Prepare parser. We should attach only once.
+		myALDLParser.attach(&ALDLData);
 	}
 	
 	// Run repeatly for update.
@@ -145,8 +148,6 @@ void fsm_drawECMErrors_state()
 		makeScreen(87, 0, errors_bitmap, 32, 8);
 		
 		// Here we parse and show errors
-
-		myALDLParser.attach(&ALDLData);
 		myALDLParser.parse();
 		errCount  = myALDLParser.getErrCount();
 		errTexts  = myALDLParser.getErrTexts();
@@ -425,7 +426,7 @@ void fsm_drawECMParametersBLM_state()
 	
 	// Here we print everything BLM related
 	// https://turbobuick.com/threads/better-understand-your-blm-and-int.278346/
-	//https://www.motortrend.com/how-to/1605-diagnosing-a-failed-or-clogged-fuel-injector-on-1982-95-corvettes-with-obd-i/
+	// https://www.motortrend.com/how-to/1605-diagnosing-a-failed-or-clogged-fuel-injector-on-1982-95-corvettes-with-obd-i/
 
 	uint8_t printPos;
 
@@ -437,7 +438,7 @@ void fsm_drawECMParametersBLM_state()
 	OLEDScreen.drawstr(64, lineNumbers[0] + 1, (char*)"R Int%", 1);
 	OLEDScreen.drawstr_sz(printPos, lineNumbers[2] - 1, myALDLParser.getRINTPct(), 1, fontsize_10x16);
 
-	if(myALDLParser.getBLMCell()[1] == '\0') // 1 digit (instaead of strlen())
+	if(myALDLParser.getBLMCell()[1] == '\0') // 1 digit (instead of strlen())
 	{
 		printPos = 55;
 	}
@@ -783,14 +784,14 @@ void getADLDData(void)
 		ALDL_UART.flush();
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	// wait for 50ms to ensure we collect all the info
-	delay_ms(50);
+	// wait for 50ms to ensure we get all the data
+	delay_ms(90);
 
 	#ifndef ECM_DEBUG
 		ALDL_UART.fillBuff((uint8_t*)&ALDLData, sizeof(ALDLData));
 	#endif
 
-	delay_ms(450);
+	delay_ms(410);
 
 }
 
@@ -819,8 +820,8 @@ void getABSData(void)
 		ALDL_UART.write(getABSDataCmd, sizeof(getABSDataCmd)); // Get data
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	// wait for 400ms
-	delay_ms(50);
+	// wait for 90ms to ensure we get all the data
+	delay_ms(90);
 
 	ABSData.fc1.faultCodeNum = 0xFF;
 	ABSData.fc2.faultCodeNum = 0xFF;
@@ -835,7 +836,7 @@ void getABSData(void)
 		ALDL_UART.write(returnFromABSCmd, sizeof(returnFromABSCmd));
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	delay_ms(400);
+	delay_ms(360);
 }
 
 // ****************************************************************************************
