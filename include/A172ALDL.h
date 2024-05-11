@@ -511,7 +511,15 @@ class ALDLParser
        char* errors[40] = {0};
        char ret_buf[8];
        void makeFloatStr(int32_t inValx10, char symbol);
-       
+       int generateChecksum(char *buf, size_t len);
+};
+
+int ALDLParser::generateChecksum(char *buf, size_t len) 
+{
+  unsigned int x;
+  unsigned int sum = 0;
+  for(x = 0; x < len; x ++) sum += buf[x];
+  return ( 256 - ( sum % 256 ) );
 };
 
 void ALDLParser::makeFloatStr(int32_t inValx10, char symbol)
