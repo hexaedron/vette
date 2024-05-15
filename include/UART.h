@@ -176,10 +176,7 @@ void UART::flush(void)
     rxBufferHead = 0;
     rxBufferTail = 0;
 
-    for(uint8_t i = 0; i < RX_BUFFER_SIZE; i++)
-    {
-        rxBuffer[i] = 0;
-    }
+    memset(rxBuffer, 0, sizeof(rxBuffer));
 }
 
 extern "C" void USART1_IRQHandler( void ) INTERRUPT_HANDLER;
