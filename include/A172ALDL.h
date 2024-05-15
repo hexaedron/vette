@@ -526,7 +526,7 @@ uint8_t ALDLParser::generateChecksum(uint8_t *buf, size_t len)
 bool   ALDLParser::validateChecksum()
 {
        return this->data->checksum == this->generateChecksum((uint8_t*)this->data, sizeof(A172ALDL) - 1);
-}
+};
 
 void ALDLParser::makeFloatStr(int32_t inValx10, char symbol)
 {

@@ -110,6 +110,15 @@ void fsm_connectECM_state()
 
 		// Populate ALDLData
 		getADLDData();
+		//*********************************************
+		//************** EXPERIMENTAL!!! **************
+		//*********************************************
+		while (!myALDLParser.validateChecksum())
+		{
+			getADLDData();
+		}
+
+		
 
 		#ifdef ECM_DEBUG
 			ALDLData.MALFFLG1 = 0xFF;
@@ -312,6 +321,15 @@ void fsm_drawECMParametersTemp_state()
 	#endif
 
 	getADLDData();
+	//*********************************************
+	//************** EXPERIMENTAL!!! **************
+	//*********************************************
+	if(!myALDLParser.validateChecksum())
+	{
+		fsm_enter_state_flag = false;
+		return;
+	}
+	
 	CLS();
 
 	
