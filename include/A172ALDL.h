@@ -503,7 +503,8 @@ class ALDLParser
        char*  getEGRDutyPct();
        char*  getMAPkpa();
        char*  getBarometerkpa();   
-       char*  getVoltage();   
+       char*  getVoltage();
+       bool   validateChecksum();   
 
        private:
        uint8_t errCNT = 0;
@@ -511,16 +512,21 @@ class ALDLParser
        char* errors[40] = {0};
        char ret_buf[8];
        void makeFloatStr(int32_t inValx10, char symbol);
-       uint8_t generateChecksum(char *buf, size_t len);
+       uint8_t generateChecksum(uint8_t *buf, size_t len);
 };
 
-uint8_t ALDLParser::generateChecksum(char *buf, size_t len) 
+uint8_t ALDLParser::generateChecksum(uint8_t *buf, size_t len) 
 {
        uint8_t x = 0;
        uint8_t sum = 0;
        for(x = 0; x < len; x++) sum += buf[x];
        return ( UINT8_MAX - sum + 1);
 };
+
+bool   ALDLParser::validateChecksum()
+{
+       return this->data->checksum == this->generateChecksum((uint8_t*)this->data, sizeof(A172ALDL) - 1);
+}
 
 void ALDLParser::makeFloatStr(int32_t inValx10, char symbol)
 {

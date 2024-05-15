@@ -776,7 +776,8 @@ void waitForECMSync(void)
 
 void getADLDData(void)
 {
-	
+	memset(&ALDLData, 0, sizeof(ALDLData));
+
 	// Here we get ALDL data
 	funDigitalWrite(PA1, FUN_LOW);
 		ALDL_UART.write(getECMDataCmd, sizeof(getECMDataCmd));
@@ -784,14 +785,14 @@ void getADLDData(void)
 		ALDL_UART.flush();
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	// wait for 50ms to ensure we get all the data
-	delay_ms(90);
+	// wait for 90ms to ensure we get all the data
+	delay_ms(85);
 
 	#ifndef ECM_DEBUG
 		ALDL_UART.fillBuff((uint8_t*)&ALDLData, sizeof(ALDLData));
 	#endif
 
-	delay_ms(410);
+	delay_ms(415);
 
 }
 
@@ -812,16 +813,18 @@ void flushADLDErrors()
 
 void getABSData(void)
 {
+	memset(&ABSData, 0, sizeof(ABSData));
+
 	// Here we get ALDL data
 	funDigitalWrite(PA1, FUN_LOW);
 		ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd)); // Set silent mode
-		delay_ms(50);
+		delay_ms(20);
 		ALDL_UART.flush();	
 		ALDL_UART.write(getABSDataCmd, sizeof(getABSDataCmd)); // Get data
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	// wait for 90ms to ensure we get all the data
-	delay_ms(90);
+	// wait for 50ms to ensure we get all the data
+	delay_ms(50);
 
 	ABSData.fc1.faultCodeNum = 0xFF;
 	ABSData.fc2.faultCodeNum = 0xFF;
@@ -836,7 +839,7 @@ void getABSData(void)
 		ALDL_UART.write(returnFromABSCmd, sizeof(returnFromABSCmd));
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	delay_ms(360);
+	delay_ms(450);
 }
 
 // ****************************************************************************************
