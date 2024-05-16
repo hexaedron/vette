@@ -795,7 +795,9 @@ void waitForECMSync(void)
 void getADLDData(void)
 {
 	memset(&ALDLData, 0, sizeof(ALDLData));
-
+	ALDLData.checksum = 0xFF;
+	
+ALDL_UART.beginHD(8192);
 	// Here we get ALDL data
 	funDigitalWrite(PA1, FUN_LOW);
 		ALDL_UART.write(getECMDataCmd, sizeof(getECMDataCmd));
