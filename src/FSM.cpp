@@ -17,8 +17,6 @@
 #include <stdlib.h>    // itoa
 #include <stdio.h>	   // printf
 
-//#define ECM_DEBUG
-
 #define BUTTON_HOLD_TIMEOUT_MS 1000UL
 
 extern const char vette_version[];
@@ -822,19 +820,25 @@ void getADLDData(void)
 	
 	// Here we get ALDL data
 	funDigitalWrite(PA1, FUN_LOW);
+
+		#ifdef NEED_SILENT_MODE
+			ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd));
+			delay_ms(SILENT_MESSAGE_MS);
+		#endif
+
 		ALDL_UART.write(getECMDataCmd, sizeof(getECMDataCmd));
 		// Flush first to ensure there is nothing left in buffer
 		ALDL_UART.flush();
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	// wait for 85ms to ensure we get all the data
-	delay_ms(85);
+	// wait to ensure we get all the data
+	delay_ms(ALDL_MESSAGE_MS);
 
 	#ifndef ECM_DEBUG
 		ALDL_UART.fillBuff((uint8_t*)&ALDLData, sizeof(ALDLData));
 	#endif
 
-	delay_ms(415);
+	delay_ms(ALDL_POLL_MS - SILENT_MESSAGE_MS - ALDL_MESSAGE_MS);
 
 }
 
@@ -848,7 +852,7 @@ void flushADLDErrors()
 	funDigitalWrite(PA1, FUN_HIGH);
 
 	// wait for 500ms
-	delay_ms(500);
+	delay_ms(ALDL_POLL_MS);
 }
 
 // ****************************************************************************************
@@ -860,13 +864,13 @@ void getABSData(void)
 	// Here we get ALDL data
 	funDigitalWrite(PA1, FUN_LOW);
 		ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd)); // Set silent mode
-		delay_ms(20);
-		ALDL_UART.flush();	
+		delay_ms(ABS_SILENT_MESSAGE_MS);	
 		ALDL_UART.write(getABSDataCmd, sizeof(getABSDataCmd)); // Get data
+		ALDL_UART.flush();
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	// wait for 50ms to ensure we get all the data
-	delay_ms(50);
+	// wait to ensure we get all the data
+	delay_ms(ABS_MESSAGE_MS);
 
 	ABSData.fc1.faultCodeNum = 0xFF;
 	ABSData.fc2.faultCodeNum = 0xFF;
@@ -881,7 +885,7 @@ void getABSData(void)
 		ALDL_UART.write(returnFromABSCmd, sizeof(returnFromABSCmd));
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	delay_ms(450);
+	delay_ms(ALDL_POLL_MS - ABS_MESSAGE_MS - ABS_SILENT_MESSAGE_MS);
 }
 
 // ****************************************************************************************

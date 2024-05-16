@@ -24,3 +24,17 @@ void makeStartScreen(void);
 void makeVersionScreen(void);
 void CLS(void);
 char* getPaddedSpeed(uint8_t);
+
+//#define ECM_DEBUG
+#define NEED_SILENT_MODE
+
+#define ALDL_MESSAGE_MS 85
+#define ABS_MESSAGE_MS 50
+#define ALDL_POLL_MS 500
+#define ABS_SILENT_MESSAGE_MS 20
+
+#ifdef NEED_SILENT_MODE
+    #define SILENT_MESSAGE_MS 20
+#else 
+    #define SILENT_MESSAGE_MS 0
+#endif
