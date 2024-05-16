@@ -177,6 +177,7 @@ void UART::flush(void)
     rxBufferTail = 0;
 
     memset(rxBuffer, 0, sizeof(rxBuffer));
+    USART1->CTLR1 |= USART_FLAG_RXNE;
 }
 
 extern "C" void USART1_IRQHandler( void ) INTERRUPT_HANDLER;

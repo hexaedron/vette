@@ -67,7 +67,7 @@ void fsm_init_state()
         makeStartScreen();
         OLEDScreen.refresh();
 
-		// Prepare parser. We should attach only once.
+		// Prepare parser. We ned to attach only once.
 		myALDLParser.attach(&ALDLData);
 	}
 	
@@ -110,9 +110,6 @@ void fsm_connectECM_state()
 
 		// Populate ALDLData
 		getADLDData();
-		//*********************************************
-		//************** EXPERIMENTAL!!! **************
-		//*********************************************
 		while (!myALDLParser.validateChecksum())
 		{
 			getADLDData();
@@ -321,9 +318,6 @@ void fsm_drawECMParametersTemp_state()
 	#endif
 
 	getADLDData();
-	//*********************************************
-	//************** EXPERIMENTAL!!! **************
-	//*********************************************
 	if(!myALDLParser.validateChecksum())
 	{
 		fsm_enter_state_flag = false;
@@ -382,6 +376,12 @@ void fsm_drawECMParametersRPM_state()
 	#endif
 
 	getADLDData();
+	if(!myALDLParser.validateChecksum())
+	{
+		fsm_enter_state_flag = false;
+		return;
+	}
+
 	CLS();
 
 	
@@ -439,6 +439,12 @@ void fsm_drawECMParametersBLM_state()
 	#endif
 
 	getADLDData();
+	if(!myALDLParser.validateChecksum())
+	{
+		fsm_enter_state_flag = false;
+		return;
+	}
+
 	CLS();
 
 	
@@ -511,6 +517,12 @@ void fsm_drawECMParametersPressure_state()
 	#endif
 
 	getADLDData();
+	if(!myALDLParser.validateChecksum())
+	{
+		fsm_enter_state_flag = false;
+		return;
+	}
+
 	CLS();
 	
 	// Here we print everything engine related
@@ -563,6 +575,12 @@ void fsm_drawECMParametersVoltage_state()
 	#endif
 
 	getADLDData();
+	if(!myALDLParser.validateChecksum())
+	{
+		fsm_enter_state_flag = false;
+		return;
+	}
+
 	CLS();
 
 	
@@ -607,6 +625,11 @@ void fsm_drawFanStatus_state()
 	#endif
 
 	getADLDData();
+	if(!myALDLParser.validateChecksum())
+	{
+		fsm_enter_state_flag = false;
+		return;
+	}
 
 	if(bitRead(ALDLData.FANMW, 2))
 	{
@@ -795,9 +818,8 @@ void waitForECMSync(void)
 void getADLDData(void)
 {
 	memset(&ALDLData, 0, sizeof(ALDLData));
-	ALDLData.checksum = 0xFF;
+	ALDLData.checksum = 0xFF; // To make the all-zeroes ALDLData invalid
 	
-ALDL_UART.beginHD(8192);
 	// Here we get ALDL data
 	funDigitalWrite(PA1, FUN_LOW);
 		ALDL_UART.write(getECMDataCmd, sizeof(getECMDataCmd));
@@ -805,7 +827,7 @@ ALDL_UART.beginHD(8192);
 		ALDL_UART.flush();
 	funDigitalWrite(PA1, FUN_HIGH);
 
-	// wait for 90ms to ensure we get all the data
+	// wait for 85ms to ensure we get all the data
 	delay_ms(85);
 
 	#ifndef ECM_DEBUG
