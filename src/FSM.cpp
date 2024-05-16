@@ -112,7 +112,6 @@ void fsm_connectECM_state()
 		{
 			getADLDData();
 		}
-
 		
 
 		#ifdef ECM_DEBUG

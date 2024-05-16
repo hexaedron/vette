@@ -11,19 +11,19 @@ static volatile uint32_t     _pin_num      = 0;       // Pins bitmask for EXTI
 
 #define BUTTON_DEBOUNCE_MS 100UL
 
-extern "C" INTERRUPT_HANDLER
-void NMI_Handler(void)
-{
-}
-
-
-extern "C" INTERRUPT_HANDLER
-void HardFault_Handler(void)
-{
-  while (true)
-  {
-  }
-}
+//extern "C" INTERRUPT_HANDLER
+//void NMI_Handler(void)
+//{
+//}
+//
+//
+//extern "C" __attribute__((interrupt)) 
+//void HardFault_Handler(void)
+//{
+//  while (true)
+//  {
+//  }
+//}
 
 void system_initSystick(void)
 {
