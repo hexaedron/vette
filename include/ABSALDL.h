@@ -100,6 +100,9 @@ typedef struct
 {
 // WORD#       DESCRIPTION
 
+    uint8_t msgID;
+    uint8_t msgLen;
+    uint8_t msgMode;
 
 //  1           System Identification
 //                 (00 = B/D, K-Special, E/K/V, and Y-Car)
@@ -169,6 +172,7 @@ typedef struct
     ABS_FAULT_CODE fc1;
     ABS_FAULT_CODE fc2;
     ABS_FAULT_CODE fc3;
+    uint8_t checksum;
 } __attribute__ ((__packed__)) ABSALDL;
 
 typedef struct
@@ -228,4 +232,76 @@ const char* getABSMessage(uint8_t msg)
     }
 
     return "UNDEFINED";
+}
+
+uint8_t generateChecksum(uint8_t *buf, size_t len) 
+{
+       uint8_t x = 0;
+       uint8_t sum = 0;
+       for(x = 0; x < len; x++) sum += buf[x];
+       return ( UINT8_MAX - sum + 1);
+};
+
+bool fixAndCheckABSData(ABSALDL* data)
+{
+    uint8_t N = data->msgLen - 0x52 - 1;
+    uint8_t * ddd = (uint8_t *)data;
+
+    #define FC_LENGTH       5
+    #define MSG_LENGTH_RAW (19 + 3 /*header*/ )
+    #define MSG_LENGTH_1   (MSG_LENGTH_RAW + FC_LENGTH)
+    #define MSG_LENGTH_2   (MSG_LENGTH_RAW + FC_LENGTH * 2)
+    #define MSG_LENGTH_3   (MSG_LENGTH_RAW + FC_LENGTH * 3)
+
+    switch (N)
+    {
+        case MSG_LENGTH_RAW: // No errors stored
+            if(generateChecksum((uint8_t*)data, MSG_LENGTH_RAW) != ddd[MSG_LENGTH_RAW + 1])
+            {
+                    return false;
+            }
+            else
+            {
+                data->fc1.faultCodeNum = 0xFF;
+                data->fc2.faultCodeNum = 0xFF;
+                data->fc3.faultCodeNum = 0xFF;
+            }
+        break;
+
+        case MSG_LENGTH_1: // 1 error stored
+            if(generateChecksum((uint8_t*)data, MSG_LENGTH_1) != ddd[MSG_LENGTH_1 + 1])
+            {
+                    return false;
+            }
+            else
+            {
+                data->fc2.faultCodeNum = 0xFF;
+                data->fc3.faultCodeNum = 0xFF;
+            }
+        break;
+
+        case MSG_LENGTH_2: // 2 errors stored
+            if(generateChecksum((uint8_t*)data, MSG_LENGTH_2) != ddd[MSG_LENGTH_2 + 1])
+            {
+                    return false;
+            }
+            else
+            {
+                data->fc3.faultCodeNum = 0xFF;
+            }
+        break;
+
+        case MSG_LENGTH_3: // 3 errors stored
+            if(generateChecksum((uint8_t*)data, MSG_LENGTH_3) != ddd[MSG_LENGTH_3 + 1])
+            {
+                    return false;
+            }
+        break;
+    
+        default: // that means message is corrupted, there is even no reason to verify checksum
+            return false;
+        break;
+    }
+
+    return true;
 }
