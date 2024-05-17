@@ -709,28 +709,36 @@ void fsm_drawABSErrors_state()
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
-		getABSData();
 		makeScreen(84, 0, abs_err_bitmap, 32, 8);
-
-		#ifdef ECM_DEBUG
-			ABSData.fc1.faultCodeNum = 66;
-			ABSData.fc2.faultCodeNum = 41;
-			ABSData.fc3.faultCodeNum = 74;
-		#endif
-
-		if( (ABSData.fc1.faultCodeNum == 0xFF) && (ABSData.fc2.faultCodeNum == 0xFF) && (ABSData.fc3.faultCodeNum == 0xFF))
-		{
-			OLEDScreen.drawstr_sz(8, lineNumbers[3], (char*)"No errors!", 1, fontsize_10x16);
-		}
-		else
-		{
-			OLEDScreen.drawstr(4, lineNumbers[1] - 4, (char*)getABSMessage(ABSData.fc1.faultCodeNum), 1);
-			OLEDScreen.drawstr(4, lineNumbers[3] - 4, (char*)getABSMessage(ABSData.fc2.faultCodeNum), 1);
-			OLEDScreen.drawstr(4, lineNumbers[5] - 4, (char*)getABSMessage(ABSData.fc3.faultCodeNum), 1);
-		}
-		
-		OLEDScreen.refresh();
 	}
+
+
+	getABSData();
+	//if(!fixAndCheckABSData(&ABSData))
+	//{
+	//	fsm_enter_state_flag = false;
+	//	return;
+	//}
+
+
+	#ifdef ECM_DEBUG
+		ABSData.fc1.faultCodeNum = 66;
+		ABSData.fc2.faultCodeNum = 41;
+		ABSData.fc3.faultCodeNum = 74;
+	#endif
+
+	if( (ABSData.fc1.faultCodeNum == 0xFF) && (ABSData.fc2.faultCodeNum == 0xFF) && (ABSData.fc3.faultCodeNum == 0xFF))
+	{
+		OLEDScreen.drawstr_sz(8, lineNumbers[3], (char*)"No errors!", 1, fontsize_10x16);
+	}
+	else
+	{
+		OLEDScreen.drawstr(4, lineNumbers[1] - 4, (char*)getABSMessage(ABSData.fc1.faultCodeNum), 1);
+		OLEDScreen.drawstr(4, lineNumbers[3] - 4, (char*)getABSMessage(ABSData.fc2.faultCodeNum), 1);
+		OLEDScreen.drawstr(4, lineNumbers[5] - 4, (char*)getABSMessage(ABSData.fc3.faultCodeNum), 1);
+	}
+	
+	OLEDScreen.refresh();
 
 	// Run repeatly for update.
 
@@ -766,6 +774,11 @@ void fsm_drawABSParameters_state()
 	#endif
 
 	getABSData();
+	//if(!fixAndCheckABSData(&ABSData))
+	//{
+	//	fsm_enter_state_flag = false;
+	//	return;
+	//}
 
 	OLEDScreen.drawstr(80, lineNumbers[0] + 3, getPaddedSpeed(ABSData.LFWheelSpeed), 1);
 	OLEDScreen.drawstr(30, lineNumbers[0] + 3, getPaddedSpeed(ABSData.LRWheelSpeed), 1);
@@ -870,10 +883,6 @@ void getABSData(void)
 
 	// wait to ensure we get all the data
 	delay_ms(ABS_MESSAGE_MS);
-
-	ABSData.fc1.faultCodeNum = 0xFF;
-	ABSData.fc2.faultCodeNum = 0xFF;
-	ABSData.fc3.faultCodeNum = 0xFF;
 
 	#ifndef ECM_DEBUG
 		ALDL_UART.fillBuff((uint8_t*)&ABSData, sizeof(ABSData));

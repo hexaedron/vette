@@ -245,7 +245,6 @@ uint8_t generateChecksum(uint8_t *buf, size_t len)
 bool fixAndCheckABSData(ABSALDL* data)
 {
     uint8_t N = data->msgLen - 0x52 - 1;
-    uint8_t * ddd = (uint8_t *)data;
 
     #define FC_LENGTH       5
     #define MSG_LENGTH_RAW (19 + 3 /*header*/ )
@@ -256,7 +255,7 @@ bool fixAndCheckABSData(ABSALDL* data)
     switch (N)
     {
         case MSG_LENGTH_RAW: // No errors stored
-            if(generateChecksum((uint8_t*)data, MSG_LENGTH_RAW) != ddd[MSG_LENGTH_RAW + 1])
+            if(generateChecksum((uint8_t*)data, MSG_LENGTH_RAW) != ((uint8_t*)data)[MSG_LENGTH_RAW])
             {
                     return false;
             }
@@ -269,7 +268,7 @@ bool fixAndCheckABSData(ABSALDL* data)
         break;
 
         case MSG_LENGTH_1: // 1 error stored
-            if(generateChecksum((uint8_t*)data, MSG_LENGTH_1) != ddd[MSG_LENGTH_1 + 1])
+            if(generateChecksum((uint8_t*)data, MSG_LENGTH_1) != ((uint8_t*)data)[MSG_LENGTH_1])
             {
                     return false;
             }
@@ -281,7 +280,7 @@ bool fixAndCheckABSData(ABSALDL* data)
         break;
 
         case MSG_LENGTH_2: // 2 errors stored
-            if(generateChecksum((uint8_t*)data, MSG_LENGTH_2) != ddd[MSG_LENGTH_2 + 1])
+            if(generateChecksum((uint8_t*)data, MSG_LENGTH_2) != ((uint8_t*)data)[MSG_LENGTH_2])
             {
                     return false;
             }
@@ -292,7 +291,7 @@ bool fixAndCheckABSData(ABSALDL* data)
         break;
 
         case MSG_LENGTH_3: // 3 errors stored
-            if(generateChecksum((uint8_t*)data, MSG_LENGTH_3) != ddd[MSG_LENGTH_3 + 1])
+            if(generateChecksum((uint8_t*)data, MSG_LENGTH_3) != ((uint8_t*)data)[MSG_LENGTH_3])
             {
                     return false;
             }
