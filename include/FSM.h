@@ -30,7 +30,7 @@ char* getPaddedSpeed(uint8_t);
 
 #define ALDL_MESSAGE_MS 85
 #define ABS_MESSAGE_MS 50
-#define ALDL_POLL_MS 500
+#define ALDL_POLL_MS 200
 #define ABS_SILENT_MESSAGE_MS 20
 
 #ifdef NEED_SILENT_MODE

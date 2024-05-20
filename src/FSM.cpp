@@ -714,11 +714,11 @@ void fsm_drawABSErrors_state()
 
 
 	getABSData();
-	//if(!fixAndCheckABSData(&ABSData))
-	//{
-	//	fsm_enter_state_flag = false;
-	//	return;
-	//}
+	if(!fixAndCheckABSData(&ABSData))
+	{
+		fsm_enter_state_flag = false;
+		return;
+	}
 
 
 	#ifdef ECM_DEBUG
@@ -774,11 +774,11 @@ void fsm_drawABSParameters_state()
 	#endif
 
 	getABSData();
-	//if(!fixAndCheckABSData(&ABSData))
-	//{
-	//	fsm_enter_state_flag = false;
-	//	return;
-	//}
+	if(!fixAndCheckABSData(&ABSData))
+	{
+		fsm_enter_state_flag = false;
+		return;
+	}
 
 	OLEDScreen.drawstr(80, lineNumbers[0] + 3, getPaddedSpeed(ABSData.LFWheelSpeed), 1);
 	OLEDScreen.drawstr(30, lineNumbers[0] + 3, getPaddedSpeed(ABSData.LRWheelSpeed), 1);
