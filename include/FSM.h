@@ -38,3 +38,6 @@ char* getPaddedSpeed(uint8_t);
 #else 
     #define SILENT_MESSAGE_MS 0
 #endif
+
+#define ENABLE_UART_WRITE()   funDigitalWrite(PA1, FUN_LOW)
+#define DISABLE_UART_WRITE() funDigitalWrite(PA1, FUN_HIGH)

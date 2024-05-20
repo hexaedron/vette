@@ -811,10 +811,10 @@ void waitForECMSync(void)
 
 	while ( *(uint32_t*)pokeECMResponse != POKE_ECM_RESPONSE_FAST )
 	{
-		funDigitalWrite(PA1, FUN_LOW);
+		ENABLE_UART_WRITE();
 			ALDL_UART.write(pokeECMCmd, sizeof(pokeECMCmd));
 			ALDL_UART.flush();
-		funDigitalWrite(PA1, FUN_HIGH);
+		DISABLE_UART_WRITE();
 
 		// wait for 50ms
 		delay_ms(50);
@@ -831,17 +831,19 @@ void getADLDData(void)
 	ALDLData.checksum = 0xFF; // To make the all-zeroes ALDLData invalid
 	
 	// Here we get ALDL data
-	funDigitalWrite(PA1, FUN_LOW);
+	ENABLE_UART_WRITE();
 
 		#ifdef NEED_SILENT_MODE
 			ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd));
+			DISABLE_UART_WRITE();
 			delay_ms(SILENT_MESSAGE_MS);
+			ENABLE_UART_WRITE();
 		#endif
 
 		ALDL_UART.write(getECMDataCmd, sizeof(getECMDataCmd));
 		// Flush first to ensure there is nothing left in buffer
 		ALDL_UART.flush();
-	funDigitalWrite(PA1, FUN_HIGH);
+	DISABLE_UART_WRITE();
 
 	// wait to ensure we get all the data
 	delay_ms(ALDL_MESSAGE_MS);
@@ -859,9 +861,9 @@ void getADLDData(void)
 void flushADLDErrors()
 {
 	// Here we clear ALDL errors
-	funDigitalWrite(PA1, FUN_LOW);
+	ENABLE_UART_WRITE();
 		ALDL_UART.write(clearCodesCmd, sizeof(clearCodesCmd));
-	funDigitalWrite(PA1, FUN_HIGH);
+	DISABLE_UART_WRITE();
 
 	// wait for 500ms
 	delay_ms(ALDL_POLL_MS);
@@ -874,12 +876,16 @@ void getABSData(void)
 	memset(&ABSData, 0, sizeof(ABSData));
 
 	// Here we get ALDL data
-	funDigitalWrite(PA1, FUN_LOW);
+	ENABLE_UART_WRITE();
 		ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd)); // Set silent mode
-		delay_ms(ABS_SILENT_MESSAGE_MS);	
+	DISABLE_UART_WRITE();
+
+	delay_ms(ABS_SILENT_MESSAGE_MS);	
+
+	ENABLE_UART_WRITE();
 		ALDL_UART.write(getABSDataCmd, sizeof(getABSDataCmd)); // Get data
 		ALDL_UART.flush();
-	funDigitalWrite(PA1, FUN_HIGH);
+	DISABLE_UART_WRITE();
 
 	// wait to ensure we get all the data
 	delay_ms(ABS_MESSAGE_MS);
@@ -889,9 +895,9 @@ void getABSData(void)
 	#endif
 
 	// Return to normal mode
-	funDigitalWrite(PA1, FUN_LOW);
+	ENABLE_UART_WRITE();
 		ALDL_UART.write(returnFromABSCmd, sizeof(returnFromABSCmd));
-	funDigitalWrite(PA1, FUN_HIGH);
+	DISABLE_UART_WRITE();
 
 	delay_ms(ALDL_POLL_MS - ABS_MESSAGE_MS - ABS_SILENT_MESSAGE_MS);
 }
