@@ -17,13 +17,12 @@
 #include <stdlib.h>    // itoa
 #include <stdio.h>	   // printf
 
-#define BUTTON_HOLD_TIMEOUT_MS 1000UL
-
 extern const char vette_version[];
 
 // from system.cpp
-bool btnClick(uint32_t);
-bool btnHeld(uint32_t, uint32_t);
+bool btnClick(void);
+bool btnHeld(void);
+void keyTick(uint32_t);
 void delay_ms(uint32_t);
 
 tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
@@ -47,6 +46,7 @@ void fsm_init()
 
 void fsm_update()
 {
+	keyTick(PC6);
 	( *fsm_state )(); // call FSM state
 }
 
@@ -79,7 +79,7 @@ void fsm_init_state()
 	}
 
 
-	if ( btnClick(PC6) )
+	if ( btnClick() )
 	{
 		fsm_state = &fsm_connectECM_state;
 		fsm_enter_state_flag = true;
@@ -215,16 +215,17 @@ void fsm_drawECMErrors_state()
 	}
 
 
-	//if ( btnHeld(PC6, BUTTON_HOLD_TIMEOUT_MS) )
-	//{
-	//	fsm_state = &fsm_resetECMErrors_state;
-	//	fsm_enter_state_flag = true;
-	//	return;
-	//}
 
-	if ( btnClick(PC6) )
+	if ( btnClick() )
 	{
 		fsm_state = &fsm_drawECMParametersTemp_state;
+		fsm_enter_state_flag = true;
+		return;
+	}
+
+	if ( btnHeld() )
+	{
+		fsm_state = &fsm_resetECMErrors_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
@@ -268,7 +269,7 @@ void fsm_resetECMErrors_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnClick(PC6)  )
+	if ( btnClick()  )
 	{
 		if(clearFlag)
 		{
@@ -342,7 +343,7 @@ void fsm_drawECMParametersTemp_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnClick(PC6)  )
+	if ( btnClick()  )
 	{
 		fsm_state = &fsm_drawECMParametersRPM_state;
 		fsm_enter_state_flag = true;
@@ -404,7 +405,7 @@ void fsm_drawECMParametersRPM_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnClick(PC6) )
+	if ( btnClick() )
 	{
 		fsm_state = &fsm_drawECMParametersBLM_state;
 		fsm_enter_state_flag = true;
@@ -483,7 +484,7 @@ void fsm_drawECMParametersBLM_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnClick(PC6) )
+	if ( btnClick() )
 	{
 		fsm_state = &fsm_drawECMParametersPressure_state;
 		fsm_enter_state_flag = true;
@@ -544,7 +545,7 @@ void fsm_drawECMParametersPressure_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnClick(PC6) )
+	if ( btnClick() )
 	{
 		fsm_state = &fsm_drawECMParametersVoltage_state;
 		fsm_enter_state_flag = true;
@@ -591,7 +592,7 @@ void fsm_drawECMParametersVoltage_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnClick(PC6)  )
+	if ( btnClick() )
 	{
 		fsm_state = &fsm_drawFanStatus_state;
 		fsm_enter_state_flag = true;
@@ -691,7 +692,7 @@ void fsm_drawFanStatus_state()
 	
 	OLEDScreen.refresh();
 
-	if ( btnClick(PC6) )
+	if ( btnClick() )
 	{
 		fsm_state = &fsm_drawABSErrors_state;
 		fsm_enter_state_flag = true;
@@ -742,7 +743,7 @@ void fsm_drawABSErrors_state()
 
 	// Run repeatly for update.
 
-	if ( btnClick(PC6) )
+	if ( btnClick() )
 	{
 		fsm_state = &fsm_drawABSParameters_state;
 		fsm_enter_state_flag = true;
@@ -787,7 +788,7 @@ void fsm_drawABSParameters_state()
 
 	OLEDScreen.refresh();	
 
-	if ( btnClick(PC6) )
+	if ( btnClick() )
 	{
 		fsm_state = &fsm_drawECMErrors_state;
 		fsm_enter_state_flag = true;
