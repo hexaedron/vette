@@ -22,7 +22,7 @@ extern const char vette_version[];
 // from system.cpp
 bool btnClick(void);
 bool btnHeld(void);
-void keyTick(uint32_t);
+void keyTick(void);
 void delay_ms(uint32_t);
 
 tim2Encoder enc(AFIO_PCFR1_TIM2_REMAP_NOREMAP);
@@ -46,7 +46,7 @@ void fsm_init()
 
 void fsm_update()
 {
-	keyTick(PC6);
+	keyTick();
 	( *fsm_state )(); // call FSM state
 }
 
@@ -108,10 +108,12 @@ void fsm_connectECM_state()
 
 		// Populate ALDLData
 		getADLDData();
-		while (!myALDLParser.validateChecksum())
-		{
-			getADLDData();
-		}
+		#ifndef ECM_DEBUG
+			while (!myALDLParser.validateChecksum())
+			{
+				getADLDData();
+			}
+		#endif
 		
 
 		#ifdef ECM_DEBUG

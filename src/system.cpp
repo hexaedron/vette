@@ -9,6 +9,7 @@ static volatile uint32_t     _btn_millis   = 0;       // Button millisecons coun
 static volatile uint32_t     _pin_num      = 0;       // Pins bitmask for EXTI
 static volatile bool         _keyPressed   = false;   // Button pressed flag  
 static volatile bool         _keyHeld      = false;   // Button held flag
+static volatile bool         _keyRaw       = false;   // Raw key read status
 
 #define BUTTON_DEBOUNCE_MS       30
 #define BUTTON_TICK_MS           10
@@ -76,14 +77,14 @@ void delay_ms(uint32_t delay)
   }
 }
 
-void keyTick(uint32_t pin)
+void keyTick()
 {
     static uint32_t keyTemp = 0;
 
     if(_btn_millis < BUTTON_TICK_MS) return;
     _btn_millis = 0;
     
-    if (!funDigitalRead(pin))           // Button pressed
+    if (!_keyRaw)           // Button pressed
     {
         ++keyTemp;    
     }
@@ -130,6 +131,7 @@ void SysTick_Handler(void)
 { 
   _millis++;
   _btn_millis++;
+  _keyRaw = funDigitalRead(PC6);
   SysTick->SR = 0;
 }
 
