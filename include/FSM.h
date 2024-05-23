@@ -3,6 +3,8 @@
 void fsm_init();
 void fsm_update();
 void fsm_init_state ();
+void fsm_selectMode_state();
+void fsm_instructionsForABS_state();
 void fsm_drawECMErrors_state ();
 void fsm_resetECMErrors_state();
 void fsm_drawECMParametersTemp_state ();

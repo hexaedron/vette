@@ -81,7 +81,93 @@ void fsm_init_state()
 
 	if ( btnClick() )
 	{
-		fsm_state = &fsm_connectECM_state;
+		fsm_state = &fsm_selectMode_state;
+		fsm_enter_state_flag = true;
+		return;
+	}
+
+	fsm_enter_state_flag = false; // Reset flag
+}
+
+// ****************************************************************************************
+
+void fsm_selectMode_state()
+{
+	// Declare local/static variable here.
+	static bool modeFlag = false;
+	static bool refreshFlag = false;
+
+	if ( fsm_enter_state_flag )
+	{
+		// Run once when enter this state.
+		OLEDScreen.setbuf(0);
+		OLEDScreen.drawFrame(1);
+		OLEDScreen.drawstr(35, lineNumbers[1], (char*)"Select mode:", 1);
+		OLEDScreen.drawstr_sz(8, lineNumbers[4], (char*)"ABS", 1, fontsize_15x24);
+		OLEDScreen.drawstr_sz(72, lineNumbers[4], (char*)"ECM", 1, fontsize_15x24);
+		OLEDScreen.xorrect(71, lineNumbers[2] - 4, 53, 23);
+	}
+	
+	// Run repeatly for update.
+
+	if(enc.getDelta() != 0)
+	{
+		modeFlag = !modeFlag;
+		refreshFlag = true;
+	}
+
+	if(refreshFlag)
+	{
+		OLEDScreen.xorrect(7, lineNumbers[2] - 4, 53, 23);
+		OLEDScreen.xorrect(71, lineNumbers[2] - 4, 53, 23);
+		refreshFlag = false;
+	}
+
+	OLEDScreen.refresh();
+
+
+	if ( btnClick()  )
+	{
+		if(!modeFlag)
+		{
+			fsm_state = &fsm_connectECM_state;
+			fsm_enter_state_flag = true;
+			return;
+		}
+		else
+		{
+			fsm_state = &fsm_instructionsForABS_state;
+			fsm_enter_state_flag = true;
+			return;
+		}
+	}
+	fsm_enter_state_flag = false; // Reset flag
+}
+
+// ****************************************************************************************
+
+void fsm_instructionsForABS_state()
+{
+	// Declare local/static variable here.
+
+	if ( fsm_enter_state_flag )
+	{
+		// Run once when enter this state.
+		makeScreen(87, 0, 0, 32, 8);
+		OLEDScreen.drawstr(8, lineNumbers[1], (char*)"Engine must be off now.", 1);
+		OLEDScreen.drawstr(8, lineNumbers[3], (char*)"Press button and", 1);
+		OLEDScreen.drawstr(8, lineNumbers[4], (char*)"start the engine...", 1);
+		OLEDScreen.refresh();
+	}
+
+	if ( btnClick() )
+	{
+		makeScreen(87, 0, 0, 32, 8);
+		OLEDScreen.drawstr(16, lineNumbers[2], (char*)"Initializing ABS", 1);
+		OLEDScreen.drawstr(26, lineNumbers[3], (char*)"Connection...", 1);
+		OLEDScreen.refresh();
+
+		fsm_state = &fsm_drawABSErrors_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
@@ -633,7 +719,7 @@ void fsm_drawFanStatus_state()
 
 	if ( btnClick() )
 	{
-		fsm_state = &fsm_drawABSErrors_state;
+		fsm_state = &fsm_drawECMErrors_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
@@ -789,7 +875,7 @@ void fsm_drawABSParameters_state()
 
 	if ( btnClick() )
 	{
-		fsm_state = &fsm_drawECMErrors_state;
+		fsm_state = &fsm_drawABSErrors_state;
 		fsm_enter_state_flag = true;
 		return;
 	}
