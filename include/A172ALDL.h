@@ -636,7 +636,7 @@ char* ALDLParser::getMAPkpa()
 {
        uint32_t MAPx100 = (uint32_t)this->data->ADMAP * 100L;
        MAPx100 = (MAPx100 + 2806) * 10 / 271;
-       this->makeFloatStr(MAPx100, '\0');
+       this->makeFloatStr(MAPx100 / 10, '\0');
        return this->ret_buf;   
 }
 
@@ -646,7 +646,7 @@ char* ALDLParser::getBarometerkpa()
 {
        uint32_t barometerx100 = (uint32_t)this->data->NVADBARO * 100L;
        barometerx100 = (barometerx100 + 2806) * 10 / 271;
-       this->makeFloatStr(barometerx100, '\0');
+       this->makeFloatStr(barometerx100 / 10, '\0');
        return this->ret_buf;   
 }
 
