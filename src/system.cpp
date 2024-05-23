@@ -55,7 +55,7 @@ uint64_t millis(void)
   return tmp;
 }
 
-// Arduino-like millis(). Does not require intreerup masking
+// Arduino-like millis(). Does not require interrupt masking
 uint32_t millis32(void)
 {
   return _millis;
