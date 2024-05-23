@@ -103,10 +103,8 @@ void fsm_connectECM_state()
 		OLEDScreen.drawstr(26, lineNumbers[3], (char*)"Connection...", 1);
 		OLEDScreen.refresh();
 
-		// We wait for ECM response. If there is no response, we have nothing to do here.
-		waitForECMSync();
-
 		// Populate ALDLData
+		// We wait for ECM response. If there is no response, we have nothing to do here.
 		getADLDData();
 		#ifndef ECM_DEBUG
 			while (!myALDLParser.validateChecksum())
@@ -124,8 +122,6 @@ void fsm_connectECM_state()
 			ALDLData.MALFFLG5 = 0xFF;
 		#endif
 	}
-	// Run repeatly for update.
-
 
 	if ( true )
 	{
@@ -215,7 +211,6 @@ void fsm_drawECMErrors_state()
 	
 		OLEDScreen.refresh();
 	}
-
 
 
 	if ( btnClick() )
@@ -317,12 +312,22 @@ void fsm_drawECMParametersTemp_state()
 		ALDLData.ADMAT = 36;
 	#endif
 
-	getADLDData();
-	if(!myALDLParser.validateChecksum())
+	if ( btnClick()  )
 	{
-		fsm_enter_state_flag = false;
+		fsm_state = &fsm_drawECMParametersRPM_state;
+		fsm_enter_state_flag = true;
 		return;
 	}
+	fsm_enter_state_flag = false; // Reset flag
+
+	getADLDData();
+	#ifndef ECM_DEBUG
+		if(!myALDLParser.validateChecksum())
+		{
+			fsm_enter_state_flag = false;
+			return;
+		}
+	#endif
 	
 	CLS();
 
@@ -345,13 +350,7 @@ void fsm_drawECMParametersTemp_state()
 	OLEDScreen.refresh();
 
 
-	if ( btnClick()  )
-	{
-		fsm_state = &fsm_drawECMParametersRPM_state;
-		fsm_enter_state_flag = true;
-		return;
-	}
-	fsm_enter_state_flag = false; // Reset flag
+
 }
 
 // ****************************************************************************************
@@ -375,12 +374,22 @@ void fsm_drawECMParametersRPM_state()
 		ALDLData.NTPSLD  = 25;
 	#endif
 
-	getADLDData();
-	if(!myALDLParser.validateChecksum())
+	if ( btnClick() )
 	{
-		fsm_enter_state_flag = false;
+		fsm_state = &fsm_drawECMParametersBLM_state;
+		fsm_enter_state_flag = true;
 		return;
 	}
+	fsm_enter_state_flag = false; // Reset flag
+
+	getADLDData();
+	#ifndef ECM_DEBUG
+		if(!myALDLParser.validateChecksum())
+		{
+			fsm_enter_state_flag = false;
+			return;
+		}
+	#endif
 
 	CLS();
 
@@ -406,14 +415,6 @@ void fsm_drawECMParametersRPM_state()
 
 	OLEDScreen.refresh();
 
-
-	if ( btnClick() )
-	{
-		fsm_state = &fsm_drawECMParametersBLM_state;
-		fsm_enter_state_flag = true;
-		return;
-	}
-	fsm_enter_state_flag = false; // Reset flag
 }
 // ****************************************************************************************
 
@@ -438,12 +439,22 @@ void fsm_drawECMParametersBLM_state()
 		ALDLData.BLMCELL = 7;
 	#endif
 
-	getADLDData();
-	if(!myALDLParser.validateChecksum())
+	if ( btnClick() )
 	{
-		fsm_enter_state_flag = false;
+		fsm_state = &fsm_drawECMParametersPressure_state;
+		fsm_enter_state_flag = true;
 		return;
 	}
+	fsm_enter_state_flag = false; // Reset flag
+
+	getADLDData();
+	#ifndef ECM_DEBUG
+		if(!myALDLParser.validateChecksum())
+		{
+			fsm_enter_state_flag = false;
+			return;
+		}
+	#endif
 
 	CLS();
 
@@ -485,14 +496,6 @@ void fsm_drawECMParametersBLM_state()
 
 	OLEDScreen.refresh();
 
-
-	if ( btnClick() )
-	{
-		fsm_state = &fsm_drawECMParametersPressure_state;
-		fsm_enter_state_flag = true;
-		return;
-	}
-	fsm_enter_state_flag = false; // Reset flag
 }
 
 // ****************************************************************************************
@@ -516,12 +519,22 @@ void fsm_drawECMParametersPressure_state()
 		ALDLData.NVADBARO = 170;
 	#endif
 
-	getADLDData();
-	if(!myALDLParser.validateChecksum())
+	if ( btnClick() )
 	{
-		fsm_enter_state_flag = false;
+		fsm_state = &fsm_drawECMParametersVoltage_state;
+		fsm_enter_state_flag = true;
 		return;
 	}
+	fsm_enter_state_flag = false; // Reset flag
+
+	getADLDData();
+	#ifndef ECM_DEBUG
+		if(!myALDLParser.validateChecksum())
+		{
+			fsm_enter_state_flag = false;
+			return;
+		}
+	#endif
 
 	CLS();
 	
@@ -546,14 +559,6 @@ void fsm_drawECMParametersPressure_state()
 
 	OLEDScreen.refresh();
 
-
-	if ( btnClick() )
-	{
-		fsm_state = &fsm_drawECMParametersVoltage_state;
-		fsm_enter_state_flag = true;
-		return;
-	}
-	fsm_enter_state_flag = false; // Reset flag
 }
 
 // ****************************************************************************************
@@ -574,12 +579,22 @@ void fsm_drawECMParametersVoltage_state()
 		ALDLData.ADBAT = 131;
 	#endif
 
-	getADLDData();
-	if(!myALDLParser.validateChecksum())
+	if ( btnClick() )
 	{
-		fsm_enter_state_flag = false;
+		fsm_state = &fsm_drawFanStatus_state;
+		fsm_enter_state_flag = true;
 		return;
 	}
+	fsm_enter_state_flag = false; // Reset flag
+
+	getADLDData();
+	#ifndef ECM_DEBUG
+		if(!myALDLParser.validateChecksum())
+		{
+			fsm_enter_state_flag = false;
+			return;
+		}
+	#endif
 
 	CLS();
 
@@ -593,14 +608,6 @@ void fsm_drawECMParametersVoltage_state()
 
 	OLEDScreen.refresh();
 
-
-	if ( btnClick() )
-	{
-		fsm_state = &fsm_drawFanStatus_state;
-		fsm_enter_state_flag = true;
-		return;
-	}
-	fsm_enter_state_flag = false; // Reset flag
 }
 
 // ****************************************************************************************
@@ -624,12 +631,22 @@ void fsm_drawFanStatus_state()
 		ALDLData.FANMW  = 0b01111111;
 	#endif
 
-	getADLDData();
-	if(!myALDLParser.validateChecksum())
+	if ( btnClick() )
 	{
-		fsm_enter_state_flag = false;
+		fsm_state = &fsm_drawABSErrors_state;
+		fsm_enter_state_flag = true;
 		return;
 	}
+	fsm_enter_state_flag = false; // Reset flag
+
+	getADLDData();
+	#ifndef ECM_DEBUG
+		if(!myALDLParser.validateChecksum())
+		{
+			fsm_enter_state_flag = false;
+			return;
+		}
+	#endif
 
 	if(bitRead(ALDLData.FANMW, 2))
 	{
@@ -694,13 +711,6 @@ void fsm_drawFanStatus_state()
 	
 	OLEDScreen.refresh();
 
-	if ( btnClick() )
-	{
-		fsm_state = &fsm_drawABSErrors_state;
-		fsm_enter_state_flag = true;
-		return;
-	}
-	fsm_enter_state_flag = false; // Reset flag
 }
 
 // ****************************************************************************************
@@ -715,13 +725,22 @@ void fsm_drawABSErrors_state()
 		makeScreen(84, 0, abs_err_bitmap, 32, 8);
 	}
 
-
-	getABSData();
-	if(!fixAndCheckABSData(&ABSData))
+	if ( btnClick() )
 	{
-		fsm_enter_state_flag = false;
+		fsm_state = &fsm_drawABSParameters_state;
+		fsm_enter_state_flag = true;
 		return;
 	}
+	fsm_enter_state_flag = false; // Reset flag
+
+	getABSData();
+	#ifndef ECM_DEBUG
+		if(!fixAndCheckABSData(&ABSData))
+		{
+			fsm_enter_state_flag = false;
+			return;
+		}
+	#endif
 
 
 	#ifdef ECM_DEBUG
@@ -744,14 +763,6 @@ void fsm_drawABSErrors_state()
 	OLEDScreen.refresh();
 
 	// Run repeatly for update.
-
-	if ( btnClick() )
-	{
-		fsm_state = &fsm_drawABSParameters_state;
-		fsm_enter_state_flag = true;
-		return;
-	}
-	fsm_enter_state_flag = false; // Reset flag
 }
 
 // ****************************************************************************************
@@ -776,12 +787,22 @@ void fsm_drawABSParameters_state()
 		ABSData.RRWheelSpeed = 47;
 	#endif
 
-	getABSData();
-	if(!fixAndCheckABSData(&ABSData))
+	if ( btnClick() )
 	{
-		fsm_enter_state_flag = false;
+		fsm_state = &fsm_drawECMErrors_state;
+		fsm_enter_state_flag = true;
 		return;
 	}
+	fsm_enter_state_flag = false; // Reset flag
+
+	getABSData();
+	#ifndef ECM_DEBUG
+		if(!fixAndCheckABSData(&ABSData))
+		{
+			fsm_enter_state_flag = false;
+			return;
+		}
+	#endif
 
 	OLEDScreen.drawstr(80, lineNumbers[0] + 3, getPaddedSpeed(ABSData.LFWheelSpeed), 1);
 	OLEDScreen.drawstr(30, lineNumbers[0] + 3, getPaddedSpeed(ABSData.LRWheelSpeed), 1);
@@ -790,40 +811,6 @@ void fsm_drawABSParameters_state()
 
 	OLEDScreen.refresh();	
 
-	if ( btnClick() )
-	{
-		fsm_state = &fsm_drawECMErrors_state;
-		fsm_enter_state_flag = true;
-		return;
-	}
-	fsm_enter_state_flag = false; // Reset flag
-}
-
-// ****************************************************************************************
-
-void waitForECMSync(void)
-{
-	// Init ECM conneсtion. ECM should respond with 4 bytes
-	// We have nothing to do if there is no response, so we try
-	// again and again
-	#ifdef ECM_DEBUG
-		unsigned char pokeECMResponse[4] = {0xF4, 0x56, 0x00, 0xB6};
-	#else
-		unsigned char pokeECMResponse[4] = {0};
-	#endif
-
-	while ( *(uint32_t*)pokeECMResponse != POKE_ECM_RESPONSE_FAST )
-	{
-		ENABLE_UART_WRITE();
-			ALDL_UART.write(pokeECMCmd, sizeof(pokeECMCmd));
-			ALDL_UART.flush();
-		DISABLE_UART_WRITE();
-
-		// wait for 50ms
-		delay_ms(50);
-
-		ALDL_UART.fillBuff(pokeECMResponse, sizeof(pokeECMResponse));
-	}
 }
 
 // ****************************************************************************************
@@ -838,6 +825,10 @@ void getADLDData(void)
 
 		#ifdef NEED_SILENT_MODE
 			ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd));
+			DISABLE_UART_WRITE();
+			delay_ms(SILENT_MESSAGE_MS);	
+			ENABLE_UART_WRITE();
+			ALDL_UART.write(silentModeCCMCmd, sizeof(silentModeCCMCmd)); // Set silent mode
 			DISABLE_UART_WRITE();
 			delay_ms(SILENT_MESSAGE_MS);
 			ENABLE_UART_WRITE();
@@ -856,7 +847,6 @@ void getADLDData(void)
 	#endif
 
 	delay_ms(ALDL_POLL_MS - SILENT_MESSAGE_MS - ALDL_MESSAGE_MS);
-
 }
 
 // ****************************************************************************************
@@ -868,7 +858,7 @@ void flushADLDErrors()
 		ALDL_UART.write(clearCodesCmd, sizeof(clearCodesCmd));
 	DISABLE_UART_WRITE();
 
-	// wait for 500ms
+	// wait
 	delay_ms(ALDL_POLL_MS);
 }
 
@@ -884,6 +874,12 @@ void getABSData(void)
 	DISABLE_UART_WRITE();
 
 	delay_ms(ABS_SILENT_MESSAGE_MS);	
+
+	ENABLE_UART_WRITE();
+		ALDL_UART.write(silentModeCCMCmd, sizeof(silentModeCCMCmd)); // Set silent mode
+	DISABLE_UART_WRITE();
+
+	delay_ms(ABS_SILENT_MESSAGE_MS);
 
 	ENABLE_UART_WRITE();
 		ALDL_UART.write(getABSDataCmd, sizeof(getABSDataCmd)); // Get data
@@ -902,7 +898,7 @@ void getABSData(void)
 		ALDL_UART.write(returnFromABSCmd, sizeof(returnFromABSCmd));
 	DISABLE_UART_WRITE();
 
-	delay_ms(ALDL_POLL_MS - ABS_MESSAGE_MS - ABS_SILENT_MESSAGE_MS);
+	delay_ms(ALDL_POLL_MS - ABS_MESSAGE_MS - ABS_SILENT_MESSAGE_MS * 2);
 }
 
 // ****************************************************************************************
@@ -972,18 +968,3 @@ inline void CLS(void)
 }
 
 // ****************************************************************************************
-
-char* getPaddedSpeed(uint8_t spd)
-{
-	static char buf[4];
-
-	*(uint32_t*) buf = 0UL;
-
-	itoa(spd << 1, buf, 10);
-	for (uint8_t i = strlen(buf); i < 3; i++)
-	{
-		buf[i] = ' ';
-	}
-
-	return buf;
-}

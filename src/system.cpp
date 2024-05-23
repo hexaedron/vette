@@ -11,23 +11,9 @@ static volatile bool         _keyPressed   = false;   // Button pressed flag
 static volatile bool         _keyHeld      = false;   // Button held flag
 static volatile bool         _keyRaw       = false;   // Raw key read status
 
-#define BUTTON_DEBOUNCE_MS       30
+#define BUTTON_DEBOUNCE_MS       10
 #define BUTTON_TICK_MS           10
 #define BUTTON_HOLD_TIMEOUT_MS 1000 
-
-//extern "C" INTERRUPT_HANDLER
-//void NMI_Handler(void)
-//{
-//}
-//
-//
-//extern "C" __attribute__((interrupt)) 
-//void HardFault_Handler(void)
-//{
-//  while (true)
-//  {
-//  }
-//}
 
 void system_initSystick(void)
 {
@@ -69,10 +55,16 @@ uint64_t millis(void)
   return tmp;
 }
 
+// Arduino-like millis(). Does not require intreerup masking
+uint32_t millis32(void)
+{
+  return _millis;
+}
+
 void delay_ms(uint32_t delay)
 {
-  uint64_t tmp = millis();
-  while (millis() < tmp + delay)
+  uint32_t tmp = millis32();
+  while (millis32() < tmp + delay)
   {
   }
 }
@@ -88,7 +80,7 @@ void keyTick()
     {
         ++keyTemp;    
     }
-    else                                // Button released  
+    else                    // Button released  
     {
         if (keyTemp >= (BUTTON_HOLD_TIMEOUT_MS / BUTTON_TICK_MS))        
         {

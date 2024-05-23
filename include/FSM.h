@@ -15,7 +15,6 @@ void fsm_drawABSErrors_state ();
 void fsm_drawFanStatus_state ();
 void fsm_connectECM_state();
 
-void waitForECMSync(void);
 void getADLDData(void);
 void flushADLDErrors(void);
 void getABSData(void);
@@ -31,10 +30,10 @@ char* getPaddedSpeed(uint8_t);
 #define ALDL_MESSAGE_MS 85
 #define ABS_MESSAGE_MS 50
 #define ALDL_POLL_MS 200
-#define ABS_SILENT_MESSAGE_MS 20
+#define ABS_SILENT_MESSAGE_MS 10
 
 #ifdef NEED_SILENT_MODE
-    #define SILENT_MESSAGE_MS 20
+    #define SILENT_MESSAGE_MS 10
 #else 
     #define SILENT_MESSAGE_MS 0
 #endif
