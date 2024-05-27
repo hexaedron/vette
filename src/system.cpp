@@ -20,9 +20,9 @@ void system_initSystick(void)
   NVIC_EnableIRQ(SysTicK_IRQn);
 
   SysTick->SR   = 0;
-  SysTick->CMP  = (FUNCONF_SYSTEM_CORE_CLOCK / 1000 - 1);  // 1 ms
+  SysTick->CMP  = DELAY_MS_TIME; // 1 ms
   SysTick->CNT  = 0; 
-  SysTick->CTLR |= STK_CTRL_STRE | STK_CTRL_STE | STK_CTRL_STIE | STK_CTRL_STCK;
+  SysTick->CTLR |= STK_CTRL_STE | STK_CTRL_STIE | STK_CTRL_STCK ;
 }
 
 void system_initEXTI(uint32_t pin, bool risingEdge = true, bool fallingEdge = false)
@@ -59,14 +59,6 @@ uint64_t millis(void)
 uint32_t millis32(void)
 {
   return _millis;
-}
-
-void delay_ms(uint32_t delay)
-{
-  uint32_t tmp = millis32();
-  while (millis32() < tmp + delay)
-  {
-  }
 }
 
 void keyTick()
@@ -125,6 +117,7 @@ void SysTick_Handler(void)
   _btn_millis++;
   _keyRaw = funDigitalRead(PC6);
   SysTick->SR = 0;
+  SysTick->CMP += DELAY_MS_TIME;
 }
 
 //extern "C" INTERRUPT_HANDLER 

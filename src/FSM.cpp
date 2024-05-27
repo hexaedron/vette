@@ -83,11 +83,11 @@ void getADLDData(void)
 		#ifdef NEED_SILENT_MODE
 			ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd));
 			DISABLE_UART_WRITE();
-			delay_ms(SILENT_MESSAGE_MS);	
+			Delay_Ms(SILENT_MESSAGE_MS);	
 			ENABLE_UART_WRITE();
 			ALDL_UART.write(silentModeCCMCmd, sizeof(silentModeCCMCmd)); // Set silent mode
 			DISABLE_UART_WRITE();
-			delay_ms(SILENT_MESSAGE_MS);
+			Delay_Ms(SILENT_MESSAGE_MS);
 			ENABLE_UART_WRITE();
 		#endif
 
@@ -97,13 +97,13 @@ void getADLDData(void)
 	DISABLE_UART_WRITE();
 
 	// wait to ensure we get all the data
-	delay_ms(ALDL_MESSAGE_MS);
+	Delay_Ms(ALDL_MESSAGE_MS);
 
 	#ifndef ECM_DEBUG
 		ALDL_UART.fillBuff((uint8_t*)&ALDLData, sizeof(ALDLData));
 	#endif
 
-	delay_ms(ALDL_POLL_MS - SILENT_MESSAGE_MS - ALDL_MESSAGE_MS);
+	Delay_Ms(ALDL_POLL_MS - SILENT_MESSAGE_MS - ALDL_MESSAGE_MS);
 }
 
 // ****************************************************************************************
@@ -116,7 +116,7 @@ void flushADLDErrors()
 	DISABLE_UART_WRITE();
 
 	// wait
-	delay_ms(ALDL_POLL_MS);
+	Delay_Ms(ALDL_POLL_MS);
 }
 
 // ****************************************************************************************
@@ -130,13 +130,13 @@ void getABSData(void)
 		ALDL_UART.write(silentModeCmd, sizeof(silentModeCmd)); // Set silent mode
 	DISABLE_UART_WRITE();
 
-	delay_ms(ABS_SILENT_MESSAGE_MS);	
+	Delay_Ms(ABS_SILENT_MESSAGE_MS);	
 
 	ENABLE_UART_WRITE();
 		ALDL_UART.write(silentModeCCMCmd, sizeof(silentModeCCMCmd)); // Set silent mode
 	DISABLE_UART_WRITE();
 
-	delay_ms(ABS_SILENT_MESSAGE_MS);
+	Delay_Ms(ABS_SILENT_MESSAGE_MS);
 
 	ENABLE_UART_WRITE();
 		ALDL_UART.write(getABSDataCmd, sizeof(getABSDataCmd)); // Get data
@@ -144,7 +144,7 @@ void getABSData(void)
 	DISABLE_UART_WRITE();
 
 	// wait to ensure we get all the data
-	delay_ms(ABS_MESSAGE_MS);
+	Delay_Ms(ABS_MESSAGE_MS);
 
 	#ifndef ECM_DEBUG
 		ALDL_UART.fillBuff((uint8_t*)&ABSData, sizeof(ABSData));
@@ -155,7 +155,7 @@ void getABSData(void)
 		ALDL_UART.write(returnFromABSCmd, sizeof(returnFromABSCmd));
 	DISABLE_UART_WRITE();
 
-	delay_ms(ALDL_POLL_MS - ABS_MESSAGE_MS - ABS_SILENT_MESSAGE_MS * 2);
+	Delay_Ms(ALDL_POLL_MS - ABS_MESSAGE_MS - ABS_SILENT_MESSAGE_MS * 2);
 }
 
 // ****************************************************************************************
