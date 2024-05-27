@@ -1,5 +1,14 @@
 #pragma once
 
+#include "include/cube_defs.h"
+#include "include/tim2Encoder.h"
+#include "sh1106.h"
+#include "include/bitmaps.h"
+#include "include/line_nums.h"
+
+#include "include/A172ALDL.h"
+#include "include/ABSALDL.h"
+
 void fsm_init();
 void fsm_update();
 void fsm_init_state ();
@@ -25,6 +34,12 @@ void makeStartScreen(void);
 void makeVersionScreen(void);
 void CLS(void);
 char* getPaddedSpeed(uint8_t);
+
+// from system.cpp
+bool btnClick(void);
+bool btnHeld(void);
+void keyTick(void);
+void delay_ms(uint32_t);
 
 //#define ECM_DEBUG
 #define NEED_SILENT_MODE
