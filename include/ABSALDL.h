@@ -188,9 +188,7 @@ typedef struct
 
 class ABSParser: protected ALDLParser
 {
-    
     public:
-        void attach(ABSALDL*);
         const char* getABSMessage(uint8_t);
         bool fixAndCheckABSData(ABSALDL*);
         char* getPaddedSpeed(uint8_t);  
