@@ -185,10 +185,6 @@ typedef struct
     const char* desc;
 } ABSCODE;
 
-const char* getABSMessage(uint8_t);
-uint8_t generateChecksum(uint8_t *, size_t );
-bool fixAndCheckABSData(ABSALDL*);
-
 
 class ABSParser: protected ALDLParser
 {
@@ -197,8 +193,5 @@ class ABSParser: protected ALDLParser
         void attach(ABSALDL*);
         const char* getABSMessage(uint8_t);
         bool fixAndCheckABSData(ABSALDL*);
-        char* getPaddedSpeed(uint8_t);
-
-    private:
-        ABSALDL* data;   
+        char* getPaddedSpeed(uint8_t);  
 };

@@ -35,8 +35,6 @@ const ABSCODE ABS_codes[30] =
   {0x83,        "Brake Fluid Low"}
 };
 
-//void    ABSParser::attach(ABSALDL* ABSdata) { this->data = ABSdata; };
-
 const char* ABSParser::getABSMessage(uint8_t msg)
 {
     for(uint8_t i = 0; i < 30; i++)
@@ -68,7 +66,7 @@ bool ABSParser::fixAndCheckABSData(ABSALDL* data)
     switch (N)
     {
         case MSG_LENGTH_RAW: // No errors stored
-            if(generateChecksum((uint8_t*)data, MSG_LENGTH_RAW) != ((uint8_t*)data)[MSG_LENGTH_RAW])
+            if(this->generateChecksum((uint8_t*)data, MSG_LENGTH_RAW) != ((uint8_t*)data)[MSG_LENGTH_RAW])
             {
                     return false;
             }
@@ -81,7 +79,7 @@ bool ABSParser::fixAndCheckABSData(ABSALDL* data)
         break;
 
         case MSG_LENGTH_1: // 1 error stored
-            if(generateChecksum((uint8_t*)data, MSG_LENGTH_1) != ((uint8_t*)data)[MSG_LENGTH_1])
+            if(this->generateChecksum((uint8_t*)data, MSG_LENGTH_1) != ((uint8_t*)data)[MSG_LENGTH_1])
             {
                     return false;
             }
@@ -93,7 +91,7 @@ bool ABSParser::fixAndCheckABSData(ABSALDL* data)
         break;
 
         case MSG_LENGTH_2: // 2 errors stored
-            if(generateChecksum((uint8_t*)data, MSG_LENGTH_2) != ((uint8_t*)data)[MSG_LENGTH_2])
+            if(this->generateChecksum((uint8_t*)data, MSG_LENGTH_2) != ((uint8_t*)data)[MSG_LENGTH_2])
             {
                     return false;
             }
@@ -104,7 +102,7 @@ bool ABSParser::fixAndCheckABSData(ABSALDL* data)
         break;
 
         case MSG_LENGTH_3: // 3 errors stored
-            if(generateChecksum((uint8_t*)data, MSG_LENGTH_3) != ((uint8_t*)data)[MSG_LENGTH_3])
+            if(this->generateChecksum((uint8_t*)data, MSG_LENGTH_3) != ((uint8_t*)data)[MSG_LENGTH_3])
             {
                     return false;
             }
