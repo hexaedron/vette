@@ -374,5 +374,7 @@ class ALDLParser
        char* errors[40] = {0};
        char ret_buf[8];
        void makeFloatStr(int32_t inValx10, char symbol);
+
+       protected:
        uint8_t generateChecksum(uint8_t *buf, size_t len);
 };

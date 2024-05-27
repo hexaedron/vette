@@ -35,7 +35,9 @@ const ABSCODE ABS_codes[30] =
   {0x83,        "Brake Fluid Low"}
 };
 
-const char* getABSMessage(uint8_t msg)
+//void    ABSParser::attach(ABSALDL* ABSdata) { this->data = ABSdata; };
+
+const char* ABSParser::getABSMessage(uint8_t msg)
 {
     for(uint8_t i = 0; i < 30; i++)
     {
@@ -53,15 +55,7 @@ const char* getABSMessage(uint8_t msg)
     return "UNDEFINED";
 }
 
-uint8_t generateChecksum(uint8_t *buf, size_t len) 
-{
-       uint8_t x = 0;
-       uint8_t sum = 0;
-       for(x = 0; x < len; x++) sum += buf[x];
-       return ( UINT8_MAX - sum + 1);
-};
-
-bool fixAndCheckABSData(ABSALDL* data)
+bool ABSParser::fixAndCheckABSData(ABSALDL* data)
 {
     uint8_t N = data->msgLen - 0x52 - 1;
 
@@ -124,7 +118,7 @@ bool fixAndCheckABSData(ABSALDL* data)
     return true;
 }
 
-char* getPaddedSpeed(uint8_t spd)
+char* ABSParser::getPaddedSpeed(uint8_t spd)
 {
 	static char buf[4];
 

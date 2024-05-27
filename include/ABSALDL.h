@@ -73,6 +73,8 @@
 #include <stdlib.h>    // itoa
 #include <string.h>    // strlen
 
+#include "include/A172ALDL.h"
+
 typedef struct 
 {
     uint8_t faultCodeNum;
@@ -186,3 +188,17 @@ typedef struct
 const char* getABSMessage(uint8_t);
 uint8_t generateChecksum(uint8_t *, size_t );
 bool fixAndCheckABSData(ABSALDL*);
+
+
+class ABSParser: protected ALDLParser
+{
+    
+    public:
+        void attach(ABSALDL*);
+        const char* getABSMessage(uint8_t);
+        bool fixAndCheckABSData(ABSALDL*);
+        char* getPaddedSpeed(uint8_t);
+
+    private:
+        ABSALDL* data;   
+};

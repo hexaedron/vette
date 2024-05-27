@@ -16,6 +16,8 @@ void fsm_drawABSParameters_state()
 {
 	// Declare local/static variable here.
 
+	ABSParser myABSParser;
+
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
@@ -42,17 +44,17 @@ void fsm_drawABSParameters_state()
 
 	getABSData();
 	#ifndef ECM_DEBUG
-		if(!fixAndCheckABSData(&ABSData))
+		if(!myABSParser.fixAndCheckABSData(&ABSData))
 		{
 			fsm_enter_state_flag = false;
 			return;
 		}
 	#endif
 
-	OLEDScreen.drawstr(80, lineNumbers[0] + 3, getPaddedSpeed(ABSData.LFWheelSpeed), 1);
-	OLEDScreen.drawstr(30, lineNumbers[0] + 3, getPaddedSpeed(ABSData.LRWheelSpeed), 1);
-	OLEDScreen.drawstr(30, lineNumbers[5] - 3, getPaddedSpeed(ABSData.RRWheelSpeed), 1);
-	OLEDScreen.drawstr(80, lineNumbers[5] - 3, getPaddedSpeed(ABSData.RFWheelSpeed), 1);
+	OLEDScreen.drawstr(80, lineNumbers[0] + 3, myABSParser.getPaddedSpeed(ABSData.LFWheelSpeed), 1);
+	OLEDScreen.drawstr(30, lineNumbers[0] + 3, myABSParser.getPaddedSpeed(ABSData.LRWheelSpeed), 1);
+	OLEDScreen.drawstr(30, lineNumbers[5] - 3, myABSParser.getPaddedSpeed(ABSData.RRWheelSpeed), 1);
+	OLEDScreen.drawstr(80, lineNumbers[5] - 3, myABSParser.getPaddedSpeed(ABSData.RFWheelSpeed), 1);
 
 	OLEDScreen.refresh();	
 

@@ -16,6 +16,8 @@ void fsm_drawABSErrors_state()
 {
 	// Declare local/static variable here.
 
+	ABSParser myABSParser;
+
 	if ( fsm_enter_state_flag )
 	{
 		// Run once when enter this state.
@@ -32,7 +34,7 @@ void fsm_drawABSErrors_state()
 
 	getABSData();
 	#ifndef ECM_DEBUG
-		if(!fixAndCheckABSData(&ABSData))
+		if(!myABSParser.fixAndCheckABSData(&ABSData))
 		{
 			fsm_enter_state_flag = false;
 			return;
@@ -52,9 +54,9 @@ void fsm_drawABSErrors_state()
 	}
 	else
 	{
-		OLEDScreen.drawstr(4, lineNumbers[1] - 4, (char*)getABSMessage(ABSData.fc1.faultCodeNum), 1);
-		OLEDScreen.drawstr(4, lineNumbers[3] - 4, (char*)getABSMessage(ABSData.fc2.faultCodeNum), 1);
-		OLEDScreen.drawstr(4, lineNumbers[5] - 4, (char*)getABSMessage(ABSData.fc3.faultCodeNum), 1);
+		OLEDScreen.drawstr(4, lineNumbers[1] - 4, (char*)myABSParser.getABSMessage(ABSData.fc1.faultCodeNum), 1);
+		OLEDScreen.drawstr(4, lineNumbers[3] - 4, (char*)myABSParser.getABSMessage(ABSData.fc2.faultCodeNum), 1);
+		OLEDScreen.drawstr(4, lineNumbers[5] - 4, (char*)myABSParser.getABSMessage(ABSData.fc3.faultCodeNum), 1);
 	}
 	
 	OLEDScreen.refresh();
