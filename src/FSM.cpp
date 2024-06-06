@@ -196,25 +196,6 @@ void makeVersionScreen(void)
 	OLEDScreen.setbuf(0);
 	OLEDScreen.drawFrame(1);
 
-	//OLEDScreen.drawstr(4,  lineNumbers[1] - 4, (char*)"Version:",    1);
-	//OLEDScreen.drawstr(56, lineNumbers[1] - 4, (char*)vette_version, 1);
-	//OLEDScreen.drawstr(4,  lineNumbers[3] - 4, (char*)"Date:",       1);
-	//OLEDScreen.drawstr(46, lineNumbers[3] - 4, (char*)__DATE__,      1);
-	//OLEDScreen.drawstr(4,  lineNumbers[5] - 4, (char*)"GCC",         1);
-
-	//char gcc_ver[10];
-	//char buf[4];
-	//itoa(__GNUC__, gcc_ver, 10);
-	//strcat(gcc_ver, ".");
-	//itoa(__GNUC_MINOR__, buf, 10);
-	//strcat(gcc_ver, buf);
-	//strcat(gcc_ver, ".");
-	//itoa(__GNUC_PATCHLEVEL__, buf, 10);
-	//strcat(gcc_ver, buf);
-
-	//OLEDScreen.drawstr(30, lineNumbers[5] - 4, gcc_ver,      1);
-
-
 	OLEDScreen.drawstr(4,  lineNumbers[0], (char*)"Version:",    1);
 	OLEDScreen.drawstr(56, lineNumbers[0], (char*)vette_version, 1);
 	OLEDScreen.drawstr(4,  lineNumbers[1], (char*)"Date:",       1);
